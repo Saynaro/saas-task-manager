@@ -1,0 +1,74 @@
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.active-tasks-card,
+.completed-tasks-card,
+.pending-tasks-card {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #C0C7D5;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.card-body h3 {
+    font-size: 17px;
+    font-weight: 500;
+    color: #404753;
+    margin-bottom: 5px;
+}
+
+
+.trend-percentage {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #454545;
+    background-color: #F3F4F5;
+    border-radius: 16px;
+    padding: 5px;
+}
+
+.active-icon {
+    background-color: #D4E3FF;
+    color: #005DA9;
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.completed-icon {
+    background-color: #d4ffe7;
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.pending-icon {
+    background-color: #fff4e6;
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.active-tasks-count,
+.completed-tasks-count,
+.pending-tasks-count {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #191C1D;
+    margin-bottom: 5px;
+
+}

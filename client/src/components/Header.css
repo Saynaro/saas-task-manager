@@ -1,0 +1,108 @@
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 280px;
+    right: 0;
+    height: 60px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    border-bottom: 1px solid #eef0f2;
+    z-index: 10;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background: #f4f7ff;
+    padding: 8px 15px;
+    border-radius: 8px;
+    width: 300px;
+}
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #a3acb9;
+    cursor: pointer;
+}
+
+.profile-badge img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+
+
+
+.burger-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #4f566b;
+}
+
+.close-menu {
+    display: none;
+    /* Кнопка крестика внутри меню */
+}
+
+/* Адаптив для экранов меньше 768px */
+@media (max-width: 768px) {
+    .burger-btn {
+        display: block;
+    }
+
+    .sidebar {
+        left: -280px;
+        /* Скрываем сайдбар за левым краем */
+        transition: left 0.3s ease;
+        z-index: 2000;
+    }
+
+    .sidebar.open {
+        left: 0;
+        /* Выезжаем при открытии */
+    }
+
+    .close-menu {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 20px;
+    }
+
+    .main-header {
+        left: 0;
+        /* Хедер теперь на всю ширину */
+    }
+
+    .first-container {
+        margin-left: 0 !important;
+        /* Убираем отступ контента */
+    }
+
+    /* Полупрозрачный фон при открытом меню */
+    .sidebar-overlay.active {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1500;
+    }
+}
