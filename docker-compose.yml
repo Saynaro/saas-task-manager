@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # 1. Database
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    environment:
+      # Эти переменные Postgres возьмет из твоего .env файла
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # To prevent data from being deleted when restarting
+
+  # 2. Backend
+  backend:
+    build: 
+      context: ./server
+    ports:
+      - "5001:5000"
+      - "5555:5555"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: npm run dev
+    env_file:
+      - .env
+    depends_on:
+      - db # Waiting for the database to start
+
+  # 3. Frontend
+  frontend:
+    build: 
+      context: ./client
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5001 
+    depends_on:
+      - backend # Waiting for the backend to start
+
+# Description of the volume for the database
+volumes:
+  postgres_data:
