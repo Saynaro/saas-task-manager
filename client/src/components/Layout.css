@@ -1,0 +1,38 @@
+.home-layout {
+    display: flex;
+}
+
+.first-container {
+    flex: 1;
+    margin-left: 280px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    margin-top: 60px;
+    padding: 30px;
+    background-color: #f9fafb;
+    flex: 1;
+}
+
+/* ─── Tablet (≤ 768px) ─── */
+@media (max-width: 768px) {
+    .first-container {
+        margin-left: 0;
+    }
+
+    .content {
+        padding: 20px 16px;
+        margin-top: 60px;
+    }
+}
+
+/* ─── Mobile (≤ 480px) ─── */
+@media (max-width: 480px) {
+    .content {
+        padding: 16px 12px;
+        margin-top: 56px;
+    }
+}

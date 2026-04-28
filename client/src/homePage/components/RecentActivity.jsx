@@ -12,7 +12,7 @@ export function RecentActivity() {
                     <div className="activity-dot" style={{ background: '#005DA9' }}></div>
                     <div className="activity-line"></div>
                     <div className="activity-content">
-                        <strong>Sarah Jenkins</strong> completed task <a href="#">Update API documentation</a>
+                        <strong>Sarah Jenkins</strong> completed task <a className='activity-link' href="#">Update API documentation</a>
                         <div className="activity-time">2 hours ago</div>
                     </div>
                 </div>
@@ -21,7 +21,7 @@ export function RecentActivity() {
                     <div className="activity-dot" style={{ background: '#D1D1D1' }}></div>
                     <div className="activity-line"></div>
                     <div className="activity-content">
-                        <strong>Mike Ross</strong> commented on <a href="#">Design Specs v2</a>
+                        <strong>Mike Ross</strong> commented on <a className='activity-link' href="#">Design Specs v2</a>
                         <div className="activity-quote">
                             "Looks good, but we need to verify the contrast ratios on the primary buttons."
                         </div>
@@ -33,7 +33,7 @@ export function RecentActivity() {
                     <div className="activity-dot" style={{ background: '#DDE2F1' }}></div>
                     <div className="activity-line"></div>
                     <div className="activity-content">
-                        <strong>System</strong> deployed release <a href="#">v1.4.2</a>
+                        <strong>System</strong> deployed release <a className='activity-link' href="#">v1.4.2</a>
                         <div className="activity-time">Yesterday</div>
                     </div>
                 </div>

@@ -83,3 +83,36 @@ nav {
     width: 100%;
 
 }
+
+/* ─── Tablet (≤ 768px) ─── */
+@media (max-width: 768px) {
+    .sidebar {
+        left: -280px;
+        transition: left 0.3s ease;
+        z-index: 2000;
+        box-shadow: 4px 0 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+}
+
+/* ─── Mobile (≤ 480px) ─── */
+@media (max-width: 480px) {
+    .sidebar {
+        width: 260px;
+    }
+
+    .sidebar-header {
+        padding: 20px 20px 30px 20px;
+    }
+
+    .sidebar-header h2 {
+        font-size: 18px;
+    }
+
+    .sidebar a {
+        padding: 10px 12px;
+    }
+}

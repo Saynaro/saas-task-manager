@@ -117,3 +117,25 @@
     height: 100%;
     border-radius: 3px;
 }
+
+/* ─── Mobile (≤ 480px) ─── */
+@media (max-width: 480px) {
+    .projects-container {
+        border-bottom: none;
+    }
+
+    .project-info {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .status-badge {
+        font-size: 11px;
+        padding: 6px;
+        height: 30px;
+    }
+
+    .projects-header {
+        font-size: 16px;
+    }
+}

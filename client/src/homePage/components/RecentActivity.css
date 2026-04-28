@@ -7,6 +7,23 @@
     padding-bottom: 0;
 }
 
+.activity-link {
+    text-decoration: none;
+    color: #005DA9;
+    font-weight: 500;
+}
+
+
+
+
+/* ─── Tablet & Mobile: ─── */
+@media (max-width: 768px) {
+    .activity-container {
+        max-width: 100%;
+    }
+}
+
+
 .activity-header {
     display: flex;
     justify-content: space-between;

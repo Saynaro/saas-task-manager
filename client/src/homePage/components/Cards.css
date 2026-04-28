@@ -70,5 +70,37 @@
     font-weight: 600;
     color: #191C1D;
     margin-bottom: 5px;
+}
 
+/* ─── Tablet (≤ 768px) ─── */
+@media (max-width: 768px) {
+    .cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+}
+
+/* ─── Mobile (≤ 480px) ─── */
+@media (max-width: 480px) {
+    .cards {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .active-tasks-card,
+    .completed-tasks-card,
+    .pending-tasks-card {
+        padding: 14px;
+    }
+
+    .card-header {
+        padding: 6px 0;
+        font-size: 13px;
+    }
+
+    .active-tasks-count,
+    .completed-tasks-count,
+    .pending-tasks-count {
+        font-size: 1.5rem;
+    }
 }

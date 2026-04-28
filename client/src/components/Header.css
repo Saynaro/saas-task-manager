@@ -57,10 +57,9 @@
 
 .close-menu {
     display: none;
-    /* Кнопка крестика внутри меню */
 }
 
-/* Адаптив для экранов меньше 768px */
+/* ─── Tablet (≤ 768px) ─── */
 @media (max-width: 768px) {
     .burger-btn {
         display: block;
@@ -68,14 +67,12 @@
 
     .sidebar {
         left: -280px;
-        /* Скрываем сайдбар за левым краем */
         transition: left 0.3s ease;
         z-index: 2000;
     }
 
     .sidebar.open {
         left: 0;
-        /* Выезжаем при открытии */
     }
 
     .close-menu {
@@ -87,15 +84,17 @@
 
     .main-header {
         left: 0;
-        /* Хедер теперь на всю ширину */
+        padding: 0 16px;
     }
 
     .first-container {
         margin-left: 0 !important;
-        /* Убираем отступ контента */
     }
 
-    /* Полупрозрачный фон при открытом меню */
+    .search-container {
+        width: 200px;
+    }
+
     .sidebar-overlay.active {
         position: fixed;
         top: 0;
@@ -104,5 +103,30 @@
         height: 100%;
         background: rgba(0, 0, 0, 0.4);
         z-index: 1500;
+    }
+}
+
+/* ─── Mobile (≤ 480px) ─── */
+@media (max-width: 480px) {
+    .main-header {
+        padding: 0 12px;
+        height: 56px;
+    }
+
+    .search-container {
+        display: none;
+    }
+
+    .header-left {
+        gap: 12px;
+    }
+
+    .header-right {
+        gap: 12px;
+    }
+
+    .profile-badge img {
+        width: 34px;
+        height: 34px;
     }
 }
