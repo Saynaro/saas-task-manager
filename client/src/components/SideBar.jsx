@@ -4,7 +4,6 @@ import './SideBar.css';
 
 const navLinks = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Projects', path: '/projects', icon: Briefcase },
     { name: 'Tasks', path: '/tasks', icon: CheckCircle },
     { name: 'Kanban', path: '/kanban', icon: Columns },
     { name: 'Activity', path: '/activity', icon: History },

@@ -1,3 +1,4 @@
+import { data } from '../../data/data.js';
 import { Plus } from 'lucide-react';
 import { Cards } from './components/Cards';
 import { ActiveProjects } from './components/ActiveProjects';
@@ -7,6 +8,14 @@ import { Layout } from '../components/Layout';
 import './HomePage.css';
 
 export function HomePage() {
+    // Map workspaces to flatten projects and inject the workspace metadata
+    const projects = data.workspaces.flatMap(ws =>
+        ws.projects.map(p => ({
+            ...p,
+            workspace: { name: ws.name }
+        }))
+    );
+
     return (
         <Layout>
             <div className="content-header">
@@ -14,18 +23,21 @@ export function HomePage() {
                     <h1>Overview</h1>
                     <p className='overview-text'>Here's what's happening with your projects today.</p>
                 </div>
-                <button className="add-task-btn"><Plus size={20} />New project</button>
+                <button className="add-task-btn">
+                    <Plus size={18} />
+                    <span>New project</span>
+                </button>
             </div>
 
             {/* cards */}
-            <Cards />
+            <Cards projects={projects} />
 
             <div className="second-container">
                 {/* Section des projets */}
-                <ActiveProjects />
+                <ActiveProjects projects={projects} />
 
                 {/* Section activity */}
-                <RecentActivity />
+                <RecentActivity projects={projects} />
             </div>
         </Layout>
     );

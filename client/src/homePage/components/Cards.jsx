@@ -2,7 +2,12 @@ import { Activity, CircleCheckBig, CircleDashed, TrendingUp } from 'lucide-react
 import './Cards.css'
 
 
-export function Cards() {
+export function Cards({ projects }) {
+    const tasks = projects.flatMap(p => p.tasks || []);
+
+    const activeTasks = tasks.filter(p => p.status === 'IN_PROGRESS').length;
+    const completedTasks = tasks.filter(p => p.status === 'DONE').length;
+    const pendingTasks = tasks.filter(p => p.status === 'TODO').length;
     return (
         <div className="content-body">
             <div className="cards">
@@ -16,7 +21,7 @@ export function Cards() {
                     </div>
                     <div className="card-body">
                         <h3>Active Tasks</h3>
-                        <p className='active-tasks-count'>12</p>
+                        <p className='active-tasks-count'>{activeTasks}</p>
                     </div>
                 </div>
 
@@ -30,7 +35,7 @@ export function Cards() {
                     </div>
                     <div className="card-body">
                         <h3>Completed Tasks</h3>
-                        <p className='completed-tasks-count'>12</p>
+                        <p className='completed-tasks-count'>{completedTasks}</p>
                     </div>
                 </div>
 
@@ -44,7 +49,7 @@ export function Cards() {
                     </div>
                     <div className="card-body">
                         <h3>Pending Tasks</h3>
-                        <p className='pending-tasks-count'>12</p>
+                        <p className='pending-tasks-count'>{pendingTasks}</p>
                     </div>
                 </div>
 

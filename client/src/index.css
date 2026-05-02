@@ -9,3 +9,29 @@ body,
 html {
   height: 100%;
 }
+
+.add-task-btn {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    gap: 10px;
+    padding: 8px 16px;
+    background-color: #005DA9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-task-btn:hover {
+    background-color: #046ec5;
+}
+
+@media (max-width: 480px) {
+    .add-task-btn {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+}

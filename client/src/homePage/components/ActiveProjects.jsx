@@ -1,6 +1,7 @@
 import './ActiveProjects.css'
 
-export function ActiveProjects() {
+export function ActiveProjects({ projects }) {
+
     return (
         <div className="projects-container">
             <div className="projects-header">
@@ -8,56 +9,41 @@ export function ActiveProjects() {
                 <button className="view-all-btn">View All</button>
             </div>
             <div className="projects-body">
-                {/* Project 1 */}
-                <div className="project-item">
-                    <div className="project-info">
-                        <div>
-                            <p className="project-name">Project Phoenix Restructure</p>
-                            <p className="project-client">Client: Acme Corp</p>
-                        </div>
-                        <span className="status-badge status-progress">In Progress</span>
-                    </div>
-                    <div className="progress-container">
-                        <div className="progress-labels"><span>Progress</span><span>65%</span></div>
-                        <div className="progress-bar-bg">
-                            <div className="progress-fill" style={{ width: '65%', background: '#005DA9' }}></div>
-                        </div>
-                    </div>
-                </div>
+                {projects.map((project) => {
+                    const totalTasks = project.tasks ? project.tasks.length : 0;
+                    const completedTasks = project.tasks ? project.tasks.filter(t => t.status === "DONE").length : 0;
+                    const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-                {/* Project 2 */}
-                <div className="project-item">
-                    <div className="project-info">
-                        <div>
-                            <p className="project-name">Q3 Marketing Campaign</p>
-                            <p className="project-client">Internal</p>
-                        </div>
-                        <span className="status-badge status-at-risk">At Risk</span>
-                    </div>
-                    <div className="progress-container">
-                        <div className="progress-labels"><span>Progress</span><span>32%</span></div>
-                        <div className="progress-bar-bg">
-                            <div className="progress-fill" style={{ width: '32%', background: '#BA1A1A' }}></div>
-                        </div>
-                    </div>
-                </div>
+                    let theme;
+                    if (progress === 0) {
+                        theme = { status: 'Planning', color: '#74777F', className: 'status-planning' };
+                    } else if (progress < 60) {
+                        theme = { status: 'At Risk', color: '#BA1A1A', className: 'status-at-risk' };
+                    } else {
+                        theme = { status: 'In Progress', color: '#005DA9', className: 'status-progress' };
+                    }
 
-                {/* Project 3 */}
-                <div className="project-item">
-                    <div className="project-info">
-                        <div>
-                            <p className="project-name">Security Audit 2024</p>
-                            <p className="project-client">Compliance</p>
+                    return (
+                        <div key={project.id} className="project-item">
+                            <div className="project-info">
+                                <div>
+                                    <p className="project-name">{project.name}</p>
+                                    <p className="project-client">{project.workspace?.name || 'No Workspace'}</p>
+                                </div>
+                                <span className={`status-badge ${theme.className}`}>{theme.status}</span>
+                            </div>
+                            <div className="progress-container">
+                                <div className="progress-labels">
+                                    <span>Progress</span>
+                                    <span>{progress}%</span>
+                                </div>
+                                <div className="progress-bar-bg">
+                                    <div className="progress-fill" style={{ width: `${progress}%`, background: theme.color }}></div>
+                                </div>
+                            </div>
                         </div>
-                        <span className="status-badge status-planning">Planning</span>
-                    </div>
-                    <div className="progress-container">
-                        <div className="progress-labels"><span>Progress</span><span>10%</span></div>
-                        <div className="progress-bar-bg">
-                            <div className="progress-fill" style={{ width: '10%', background: '#74777F' }}></div>
-                        </div>
-                    </div>
-                </div>
+                    );
+                })}
             </div>
         </div>
     )
