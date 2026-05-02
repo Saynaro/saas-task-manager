@@ -15,6 +15,9 @@
     padding: 30px;
     background-color: #f9fafb;
     flex: 1;
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* ─── Tablet (≤ 768px) ─── */

@@ -1,13 +1,17 @@
 import { data } from '../../data/data.js';
+import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Cards } from './components/Cards';
 import { ActiveProjects } from './components/ActiveProjects';
 import { RecentActivity } from './components/RecentActivity';
 import { Layout } from '../components/Layout';
+import { TaskModal } from '../components/TaskModal';
 
 import './HomePage.css';
 
 export function HomePage() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     // Map workspaces to flatten projects and inject the workspace metadata
     const projects = data.workspaces.flatMap(ws =>
         ws.projects.map(p => ({
@@ -23,7 +27,7 @@ export function HomePage() {
                     <h1>Overview</h1>
                     <p className='overview-text'>Here's what's happening with your projects today.</p>
                 </div>
-                <button className="add-task-btn">
+                <button className="add-task-btn" onClick={() => setIsModalOpen(true)}>
                     <Plus size={18} />
                     <span>New project</span>
                 </button>
@@ -39,6 +43,12 @@ export function HomePage() {
                 {/* Section activity */}
                 <RecentActivity projects={projects} />
             </div>
+
+            <TaskModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                mode="create"
+            />
         </Layout>
     );
 }

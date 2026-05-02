@@ -34,7 +34,43 @@
 .sidebar li {
     margin-bottom: 5px;
     padding: 0 10px;
+}
 
+.sidebar-action-container {
+    padding: 0 10px 20px 10px;
+}
+
+.sidebar-create-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: #005DA9;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.sidebar-create-btn:hover {
+    background-color: #046ec5;
+}
+
+.sidebar-create-btn:active {
+    transform: scale(0.98);
+}
+
+.sidebar-divider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 15px 25px !important;
+    padding: 0 !important;
 }
 
 .sidebar a {
@@ -95,6 +131,17 @@ nav {
 
     .sidebar.open {
         left: 0;
+    }
+
+    .close-menu {
+        display: block !important;
+        background: none;
+        border: none;
+        font-size: 20px;
+        position: absolute;
+        right: 15px;
+        top: 25px;
+        color: #4f566b;
     }
 }
 

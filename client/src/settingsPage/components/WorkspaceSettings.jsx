@@ -1,125 +1,144 @@
 import { useState } from 'react';
 import { Building, Users, CreditCard, Grid, Sun, Moon, UserPlus, Trash2 } from 'lucide-react';
-import './WorkspaceSettings.css';
+import './Settings.css';
 
 export function WorkspaceSettings({ workspace, members }) {
     const [activeTab, setActiveTab] = useState('identity');
 
+    const tabs = [
+        { id: 'identity', label: 'Workspace Identity', icon: Building },
+        { id: 'members', label: 'Members & Roles', icon: Users },
+        { id: 'billing', label: 'Billing', icon: CreditCard },
+        { id: 'integrations', label: 'Integrations', icon: Grid },
+    ];
+
     return (
-        <div className="ws-settings-container">
-            <div className="ws-header-row">
+        <div className="settings-container">
+            <div className="settings-page-header">
                 <div>
-                    <h2 className="ws-title">Workspace Settings</h2>
-                    <p className="ws-subtitle">Manage your team's workspace identity and member access.</p>
+                    <h2 className="settings-page-title">Workspace Settings</h2>
+                    <p className="settings-page-subtitle">Manage your team workspace, members and integrations.</p>
                 </div>
-                <div className="ws-actions">
-                    <div className="ws-theme-toggle">
-                        <button className="ws-theme-btn active"><Sun size={16} /></button>
-                        <button className="ws-theme-btn"><Moon size={16} /></button>
+                <div className="settings-header-actions">
+                    <div className="settings-theme-toggle">
+                        <button className="settings-theme-btn active"><Sun size={16} /></button>
+                        <button className="settings-theme-btn"><Moon size={16} /></button>
                     </div>
-                    <button className="ws-save-btn">Save Changes</button>
+                    <button className="settings-save-btn">Save Changes</button>
                 </div>
             </div>
 
-            <div className="ws-layout">
-                <div className="ws-sidebar">
-                    <button className={`ws-nav-btn ${activeTab === 'identity' ? 'active' : ''}`} onClick={() => setActiveTab('identity')}>
-                        <Building size={18} /> Workspace Identity
-                    </button>
-                    <button className={`ws-nav-btn ${activeTab === 'members' ? 'active' : ''}`} onClick={() => setActiveTab('members')}>
-                        <Users size={18} /> Members & Roles
-                    </button>
-                    <button className={`ws-nav-btn ${activeTab === 'billing' ? 'active' : ''}`} onClick={() => setActiveTab('billing')}>
-                        <CreditCard size={18} /> Billing
-                    </button>
-                    <button className={`ws-nav-btn ${activeTab === 'integrations' ? 'active' : ''}`} onClick={() => setActiveTab('integrations')}>
-                        <Grid size={18} /> Integrations
-                    </button>
+            <div className="settings-layout">
+                <div className="settings-sidebar">
+                    {tabs.map(tab => {
+                        const Icon = tab.icon;
+                        return (
+                            <button
+                                key={tab.id}
+                                className={`settings-nav-btn ${activeTab === tab.id ? 'active' : ''}`}
+                                onClick={() => setActiveTab(tab.id)}
+                            >
+                                <Icon size={18} className="nav-icon" />
+                                {tab.label}
+                            </button>
+                        );
+                    })}
                 </div>
 
-                <div className="ws-content">
+                <div className="settings-content">
                     {activeTab === 'identity' && (
-                        <div className="ws-card">
-                            <div className="ws-card-header-icon">
-                                <Building color="#2563eb" size={20} />
-                                <h3>Workspace Identity</h3>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <Building size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Workspace Identity</h3>
+                                        <p className="settings-card-subtitle">Configure your workspace name and branding.</p>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div className="ws-card-body">
-                                <div className="ws-logo-section">
-                                    <div className="ws-logo-box">
-                                        <span className="ws-logo-text">WORK<br />SPACE</span>
+                            <div className="settings-card-body">
+                                <div className="settings-logo-section">
+                                    <div className="settings-logo-box">
+                                        <span className="settings-logo-text">WORK<br />SPACE</span>
                                     </div>
-                                    <div className="ws-logo-info">
+                                    <div className="settings-logo-info">
                                         <strong>Workspace Logo</strong>
-                                        <p>Recommended size: 256x256px. Max file size: 2MB.</p>
-                                        <button className="ws-upload-btn">Upload New</button>
+                                        <p>Recommended 256×256px. Max 2MB.</p>
+                                        <button className="settings-upload-btn">Upload New</button>
                                     </div>
                                 </div>
 
-                                <hr className="ws-divider" />
+                                <hr className="settings-divider" />
 
-                                <div className="ws-form-group">
+                                <div className="settings-form-group">
                                     <label>Workspace Name</label>
-                                    <input type="text" defaultValue={workspace.name} className="ws-input" />
+                                    <input type="text" defaultValue={workspace.name} className="settings-input" />
                                 </div>
-
-                                <div className="ws-form-group">
+                                <div className="settings-form-group">
                                     <label>Workspace URL</label>
-                                    <div className="ws-url-input">
-                                        <span className="ws-url-prefix">app.saaspro.com/</span>
-                                        <input type="text" defaultValue={workspace.slug} className="ws-input-trailing" />
+                                    <div className="settings-url-row">
+                                        <span className="settings-url-prefix">app.saaspro.com/</span>
+                                        <input type="text" defaultValue={workspace.slug} className="settings-url-input" />
                                     </div>
                                 </div>
+                            </div>
+                            <div className="settings-actions-bar">
+                                <button className="settings-cancel-btn">Cancel</button>
+                                <button className="settings-primary-btn">Save Identity</button>
                             </div>
                         </div>
                     )}
 
                     {activeTab === 'members' && (
-                        <div className="ws-card">
-                            <div className="ws-card-header-icon ws-space-between">
-                                <div className="ws-icon-group">
-                                    <Users color="#2563eb" size={20} />
-                                    <h3>Members & Roles</h3>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <Users size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Members & Roles</h3>
+                                        <p className="settings-card-subtitle">Manage who has access to this workspace.</p>
+                                    </div>
                                 </div>
-                                <button className="ws-invite-btn"><UserPlus size={16} /> Invite Member</button>
+                                <button className="settings-invite-btn">
+                                    <UserPlus size={16} /> Invite Member
+                                </button>
                             </div>
-
-                            <div className="ws-table-container">
-                                <table className="ws-table">
+                            <div className="settings-table-wrap">
+                                <table className="settings-table">
                                     <thead>
                                         <tr>
                                             <th>User</th>
                                             <th>Role</th>
                                             <th>Status</th>
-                                            <th>Actions</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {members.map(m => (
                                             <tr key={m.id}>
                                                 <td>
-                                                    <div className="ws-user-cell">
+                                                    <div className="settings-user-cell">
                                                         <img src={`https://i.pravatar.cc/150?u=${m.user?.firstName || 'default'}`} alt="avatar" />
-                                                        <div className="ws-user-info">
+                                                        <div className="settings-user-info">
                                                             <strong>{m.user?.firstName} {m.user?.lastName}</strong>
                                                             <span>{m.user?.email}</span>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span className={`ws-badge ${m.role === 'OWNER' ? 'ws-owner' : 'ws-member'}`}>
+                                                    <span className={`settings-role-badge ${m.role === 'OWNER' ? 'settings-role-owner' : 'settings-role-member'}`}>
                                                         {m.role === 'OWNER' ? 'Owner' : 'Member'}
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div className="ws-status">
-                                                        <span className={`ws-status-dot ${m.active !== false ? 'ws-active-dot' : 'ws-invited-dot'}`}></span>
+                                                    <div className="settings-status-cell">
+                                                        <span className={`settings-status-dot ${m.active !== false ? 'settings-dot-active' : 'settings-dot-invited'}`}></span>
                                                         {m.active !== false ? 'Active' : 'Invited'}
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <button className="ws-delete-btn"><Trash2 size={16} /></button>
+                                                    <button className="settings-delete-btn"><Trash2 size={15} /></button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -130,30 +149,36 @@ export function WorkspaceSettings({ workspace, members }) {
                     )}
 
                     {activeTab === 'billing' && (
-                        <div className="ws-card">
-                            <div className="ws-card-header-icon">
-                                <CreditCard color="#2563eb" size={20} />
-                                <h3>Billing & Invoices</h3>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <CreditCard size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Billing & Invoices</h3>
+                                        <p className="settings-card-subtitle">Manage your subscription and payment history.</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="ws-card-body">
-                                <p>No active subscriptions found for this workspace.</p>
-                            </div>
+                            <div className="settings-empty-panel">No active subscriptions for this workspace.</div>
                         </div>
                     )}
 
                     {activeTab === 'integrations' && (
-                        <div className="ws-card">
-                            <div className="ws-card-header-icon">
-                                <Grid color="#2563eb" size={20} />
-                                <h3>Integrations</h3>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <Grid size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Integrations</h3>
+                                        <p className="settings-card-subtitle">Connect your favourite tools and services.</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="ws-card-body">
-                                <p>Connect popular tools like GitHub, Slack, and Zoom.</p>
-                            </div>
+                            <div className="settings-empty-panel">Connect tools like GitHub, Slack, and Zoom.</div>
                         </div>
                     )}
                 </div>
             </div>
         </div>
-    )
+    );
 }

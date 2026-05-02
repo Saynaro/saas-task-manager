@@ -3,6 +3,7 @@ import { useLocation } from 'react-router';
 import { Layout } from "../components/Layout"
 import { TasksHeader } from "./components/TasksHeader"
 import { TaskCards } from "./components/TaskCards"
+import { TaskModal } from "../components/TaskModal"
 import { data } from "../../data/data.js"
 import "./TasksPage.css"
 
@@ -12,6 +13,13 @@ export function TasksPage() {
     const projectId = searchParams.get('projectId');
     
     const [activeFilter, setActiveFilter] = useState('ALL');
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleTaskClick = (task) => {
+        setSelectedTask(task);
+        setIsModalOpen(true);
+    };
 
     // Flatten tasks
     let tasks = data.workspaces.flatMap(ws =>
@@ -42,7 +50,14 @@ export function TasksPage() {
         <Layout>
             <div className="tasks-page-content">
                 <TasksHeader tasks={tasks} activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
-                <TaskCards tasks={filteredTasks} />
+                <TaskCards tasks={filteredTasks} onTaskClick={handleTaskClick} />
+                
+                <TaskModal 
+                    isOpen={isModalOpen} 
+                    onClose={() => setIsModalOpen(false)} 
+                    task={selectedTask} 
+                    mode="update"
+                />
             </div>
         </Layout>
     );

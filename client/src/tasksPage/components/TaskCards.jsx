@@ -1,7 +1,7 @@
 import { Paperclip } from 'lucide-react';
 import './TaskCards.css';
 
-export function TaskCards({ tasks }) {
+export function TaskCards({ tasks, onTaskClick }) {
     const getStatusTheme = (status) => {
         if (status === 'IN_PROGRESS') return { bg: '#e0f2fe', color: '#0891b2', border: '#06b6d4', text: 'In Progress' };
         if (status === 'DONE') return { bg: '#dcfce7', color: '#16a34a', border: '#22c55e', text: 'Completed' };
@@ -25,7 +25,7 @@ export function TaskCards({ tasks }) {
                 const pct = (doneNum / totalNum) * 100;
 
                 return (
-                    <div className="task-card" key={task.id}>
+                    <div className="task-card" key={task.id} onClick={() => onTaskClick(task)} style={{ cursor: 'pointer' }}>
                         <div className="task-card-badges">
                             <span className="card-badge" style={{ backgroundColor: sTheme.bg, color: sTheme.color }}>
                                 {sTheme.text}

@@ -40,3 +40,23 @@
 .teampage-header .download-report-btn:hover {
     background: #d9f99d;
 }
+
+@media (max-width: 768px) {
+    .teampage-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .teampage-header h2 {
+        font-size: 22px;
+    }
+
+    .teampage-header .download-report-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

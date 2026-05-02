@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
-import { LayoutDashboard, Users, CheckCircle, History, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, CheckCircle, History, Settings, Plus } from 'lucide-react';
 import './SideBar.css';
 
 const navLinks = [
@@ -7,10 +7,9 @@ const navLinks = [
     { name: 'Tasks', path: '/tasks', icon: CheckCircle },
     { name: 'Team Members', path: '/team', icon: Users },
     { name: 'Activity', path: '/activity', icon: History },
-    { name: 'Settings', path: '/settings', icon: Settings },
 ];
 
-export function SideBar({ isOpen, toggleMenu }) {
+export function SideBar({ isOpen, toggleMenu, openCreateModal }) {
     return (
         <>
             <div className={`sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={toggleMenu}></div>
@@ -22,6 +21,14 @@ export function SideBar({ isOpen, toggleMenu }) {
                         <i className="fas fa-times"></i>
                     </button>
                 </div>
+                
+                <div className="sidebar-action-container">
+                    <button className="sidebar-create-btn" onClick={openCreateModal}>
+                        <Plus size={18} />
+                        <span>Create Project</span>
+                    </button>
+                </div>
+
                 <ul>
                     {navLinks.map((link) => {
                         const IconComponent = link.icon;
@@ -38,6 +45,18 @@ export function SideBar({ isOpen, toggleMenu }) {
                             </li>
                         );
                     })}
+                    
+                    <li className="sidebar-divider"></li>
+
+                    <li>
+                        <NavLink
+                            to="/settings"
+                            className={({ isActive }) => isActive ? 'active' : ''}
+                        >
+                            <Settings size={20} className="nav-icon" />
+                            <span>Settings</span>
+                        </NavLink>
+                    </li>
                 </ul>
             </div>
         </>

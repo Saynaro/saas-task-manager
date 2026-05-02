@@ -1,125 +1,153 @@
 import { useState } from 'react';
-import { Lock } from 'lucide-react';
-import './AccountSettings.css';
+import { User, Lock, Bell, CreditCard } from 'lucide-react';
+import './Settings.css';
 
 export function AccountSettings({ user }) {
     const [activeTab, setActiveTab] = useState('profile');
 
+    const tabs = [
+        { id: 'profile', label: 'Profile', icon: User },
+        { id: 'security', label: 'Security', icon: Lock },
+        { id: 'notifications', label: 'Notifications', icon: Bell },
+        { id: 'billing', label: 'Billing', icon: CreditCard },
+    ];
+
     return (
-        <div className="acc-settings-container">
-            <div className="acc-header">
+        <div className="settings-container">
+            <div className="settings-page-header">
                 <div>
-                    <h2 className="acc-title">Account Settings</h2>
-                    <p className="acc-subtitle">Manage your account details and preferences.</p>
+                    <h2 className="settings-page-title">Account Settings</h2>
+                    <p className="settings-page-subtitle">Manage your personal profile and preferences.</p>
                 </div>
             </div>
 
-            <div className="acc-layout">
-                <div className="acc-sidebar">
-                    <button className={`acc-nav-btn ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>Profile</button>
-                    <button className={`acc-nav-btn ${activeTab === 'security' ? 'active' : ''}`} onClick={() => setActiveTab('security')}>Security</button>
-                    <button className={`acc-nav-btn ${activeTab === 'notifications' ? 'active' : ''}`} onClick={() => setActiveTab('notifications')}>Notifications</button>
-                    <button className={`acc-nav-btn ${activeTab === 'billing' ? 'active' : ''}`} onClick={() => setActiveTab('billing')}>Billing</button>
+            <div className="settings-layout">
+                <div className="settings-sidebar">
+                    {tabs.map(tab => {
+                        const Icon = tab.icon;
+                        return (
+                            <button
+                                key={tab.id}
+                                className={`settings-nav-btn ${activeTab === tab.id ? 'active' : ''}`}
+                                onClick={() => setActiveTab(tab.id)}
+                            >
+                                <Icon size={18} className="nav-icon" />
+                                {tab.label}
+                            </button>
+                        );
+                    })}
                 </div>
 
-                <div className="acc-content">
+                <div className="settings-content">
                     {activeTab === 'profile' && (
-                        <div className="acc-card">
-                            <div className="acc-card-header">
-                                <div>
-                                    <h3 className="acc-card-title">Personal Information</h3>
-                                    <p className="acc-card-subtitle">Update your basic profile details.</p>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <User size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Personal Information</h3>
+                                        <p className="settings-card-subtitle">Update your name, role, and bio.</p>
+                                    </div>
                                 </div>
-                                <img src={`https://i.pravatar.cc/150?u=${user.firstName}`} alt="profile" className="acc-profile-avatar" />
+                                <img
+                                    src={`https://i.pravatar.cc/150?u=${user.firstName}`}
+                                    alt="profile"
+                                    className="settings-profile-avatar"
+                                />
                             </div>
-                            
-                            <div className="acc-card-body">
-                                <div className="acc-form-row">
-                                    <div className="acc-form-group">
+                            <div className="settings-card-body">
+                                <div className="settings-form-row">
+                                    <div className="settings-form-group">
                                         <label>Full Name</label>
-                                        <input type="text" defaultValue={`${user.firstName} ${user.lastName}`} className="acc-input" />
+                                        <input type="text" defaultValue={`${user.firstName} ${user.lastName}`} className="settings-input" />
                                     </div>
-                                    <div className="acc-form-group">
+                                    <div className="settings-form-group">
                                         <label>Email Address</label>
-                                        <input type="email" defaultValue={user.email} className="acc-input" />
-                                        <span className="acc-lock-text"><Lock size={12}/> Managed by organization</span>
+                                        <input type="email" defaultValue={user.email} className="settings-input" />
+                                        <span className="settings-lock-hint"><Lock size={12} /> Managed by organization</span>
                                     </div>
                                 </div>
-                                
-                                <div className="acc-form-group">
+                                <div className="settings-form-group">
                                     <label>Job Title</label>
-                                    <input type="text" defaultValue={user.jobTitle || "Senior Product Designer"} className="acc-input" />
+                                    <input type="text" defaultValue={user.jobTitle || 'Senior Product Designer'} className="settings-input" />
                                 </div>
-                                
-                                <div className="acc-form-group">
+                                <div className="settings-form-group">
                                     <label>Bio</label>
-                                    <textarea className="acc-textarea" defaultValue={user.bio || "Passionate about creating intuitive user experiences and scalable design systems."}></textarea>
+                                    <textarea
+                                        className="settings-textarea"
+                                        defaultValue={user.bio || 'Passionate about creating intuitive user experiences and scalable design systems.'}
+                                    />
                                 </div>
                             </div>
-                            <div className="acc-actions-bar">
-                                <button className="acc-cancel-btn">Cancel</button>
-                                <button className="acc-save-btn">Save Changes</button>
+                            <div className="settings-actions-bar">
+                                <button className="settings-cancel-btn">Cancel</button>
+                                <button className="settings-primary-btn">Save Changes</button>
                             </div>
                         </div>
                     )}
 
                     {activeTab === 'security' && (
-                        <div className="acc-card">
-                            <div className="acc-card-header">
-                                <div>
-                                    <h3 className="acc-card-title">Security Settings</h3>
-                                    <p className="acc-card-subtitle">Update your password to keep your account secure.</p>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <Lock size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Security Settings</h3>
+                                        <p className="settings-card-subtitle">Change your password to keep your account safe.</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="acc-card-body">
-                                <div className="acc-form-group">
+                            <div className="settings-card-body">
+                                <div className="settings-form-group">
                                     <label>Current Password</label>
-                                    <input type="password" placeholder="Enter current password" className="acc-input" />
+                                    <input type="password" placeholder="Enter current password" className="settings-input" />
                                 </div>
-                                <div className="acc-form-group">
+                                <div className="settings-form-group">
                                     <label>New Password</label>
-                                    <input type="password" placeholder="Enter new password" className="acc-input" />
+                                    <input type="password" placeholder="Enter new password" className="settings-input" />
                                 </div>
-                                <div className="acc-form-group">
-                                    <label>Confirm Password</label>
-                                    <input type="password" placeholder="Confirm new password" className="acc-input" />
+                                <div className="settings-form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" placeholder="Confirm new password" className="settings-input" />
                                 </div>
                             </div>
-                            <div className="acc-actions-bar">
-                                <button className="acc-save-btn">Update Password</button>
+                            <div className="settings-actions-bar">
+                                <button className="settings-primary-btn">Update Password</button>
                             </div>
                         </div>
                     )}
 
                     {activeTab === 'notifications' && (
-                        <div className="acc-card">
-                            <div className="acc-card-header">
-                                <div>
-                                    <h3 className="acc-card-title">Notification Preferences</h3>
-                                    <p className="acc-card-subtitle">Select when and how you'll be notified.</p>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <Bell size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Notification Preferences</h3>
+                                        <p className="settings-card-subtitle">Choose how and when you receive alerts.</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="acc-card-body">
-                                <p style={{ fontSize: '14px', color: '#475569' }}>Push notifications are currently enabled.</p>
-                            </div>
+                            <div className="settings-empty-panel">Push notifications are currently enabled.</div>
                         </div>
                     )}
 
                     {activeTab === 'billing' && (
-                        <div className="acc-card">
-                            <div className="acc-card-header">
-                                <div>
-                                    <h3 className="acc-card-title">Billing History</h3>
-                                    <p className="acc-card-subtitle">Your personal receipts and billing methods.</p>
+                        <div className="settings-card">
+                            <div className="settings-card-header">
+                                <div className="settings-card-title-group">
+                                    <CreditCard size={20} className="icon" />
+                                    <div>
+                                        <h3 className="settings-card-title">Billing History</h3>
+                                        <p className="settings-card-subtitle">View your receipts and payment methods.</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="acc-card-body">
-                                <p style={{ fontSize: '14px', color: '#475569' }}>No payment methods are attached to this account.</p>
-                            </div>
+                            <div className="settings-empty-panel">No payment methods attached to this account.</div>
                         </div>
                     )}
                 </div>
             </div>
         </div>
-    )
+    );
 }
