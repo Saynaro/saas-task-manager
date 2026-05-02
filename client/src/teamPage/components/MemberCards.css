@@ -1,0 +1,118 @@
+.members-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.member-card-min {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.member-card-min:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.member-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.member-avatar-min {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e5e7eb;
+}
+
+.member-info-min {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.member-name-min {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.member-email-min {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.member-stats-min {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.stat-box-min {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.stat-label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Specific colors for stats matching slightly the photo but feeling premium */
+.pending-stat .stat-value {
+    color: #9333ea;
+}
+
+.pending-stat .stat-label {
+    color: #c084fc;
+}
+
+.active-stat .stat-value {
+    color: #2563eb;
+}
+
+.active-stat .stat-label {
+    color: #60a5fa;
+}
+
+.done-stat .stat-value {
+    color: #16a34a;
+}
+
+.done-stat .stat-label {
+    color: #4ade80;
+}
+
+@media (max-width: 1100px) {
+    .members-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .members-grid {
+        grid-template-columns: 1fr;
+    }
+}

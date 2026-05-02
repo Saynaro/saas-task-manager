@@ -1,11 +1,11 @@
 import { NavLink } from "react-router";
-import { LayoutDashboard, Briefcase, CheckCircle, Columns, History, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, CheckCircle, History, Settings } from 'lucide-react';
 import './SideBar.css';
 
 const navLinks = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Tasks', path: '/tasks', icon: CheckCircle },
-    { name: 'Kanban', path: '/kanban', icon: Columns },
+    { name: 'Team Members', path: '/team', icon: Users },
     { name: 'Activity', path: '/activity', icon: History },
     { name: 'Settings', path: '/settings', icon: Settings },
 ];

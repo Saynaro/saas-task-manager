@@ -1,0 +1,381 @@
+.ws-settings-container {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1f2937;
+    width: 100%;
+}
+
+.ws-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.ws-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: #111827;
+}
+
+.ws-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.ws-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ws-theme-toggle {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 2px;
+    border: 1px solid #e2e8f0;
+}
+
+.ws-theme-btn {
+    background: none;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.ws-theme-btn.active {
+    background: white;
+    color: #0f172a;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.ws-save-btn {
+    background: #005DA9;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.ws-layout {
+    display: flex;
+    gap: 30px;
+}
+
+.ws-sidebar {
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ws-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #475569;
+    cursor: pointer;
+    text-align: left;
+}
+
+.ws-nav-btn.active {
+    background: #e2e8f0;
+    color: #1d4ed8;
+}
+
+.ws-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ws-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ws-card-header-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ws-card-header-icon h3,
+.ws-card-title-group h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.ws-space-between {
+    justify-content: space-between;
+}
+
+.ws-icon-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ws-card-body {
+    padding: 24px;
+}
+
+.ws-logo-section {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.ws-logo-box {
+    width: 100px;
+    height: 100px;
+    background: #0f172a;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ws-logo-text {
+    color: white;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.ws-logo-info strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.ws-logo-info p {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 12px 0;
+}
+
+.ws-upload-btn {
+    background: white;
+    border: 1px solid #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.ws-divider {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 30px 0;
+}
+
+.ws-form-group {
+    margin-bottom: 20px;
+}
+
+.ws-form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.ws-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #334155;
+}
+
+.ws-url-input {
+    display: flex;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.ws-url-prefix {
+    background: #f1f5f9;
+    padding: 10px 14px;
+    color: #64748b;
+    font-size: 14px;
+    border-right: 1px solid #cbd5e1;
+}
+
+.ws-input-trailing {
+    flex: 1;
+    border: none;
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+}
+
+.ws-invite-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ws-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.ws-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ws-table th,
+.ws-table td {
+    text-align: left;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ws-table th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.ws-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ws-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ws-user-cell img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ws-user-info strong {
+    display: block;
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.ws-user-info span {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.ws-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ws-owner {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.ws-member {
+    background: white;
+    color: #475569;
+}
+
+.ws-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.ws-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.ws-active-dot {
+    background: #2563eb;
+}
+
+.ws-invited-dot {
+    background: #cbd5e1;
+}
+
+.ws-delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background-color: #fee2e2;
+    color: #dc2626;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ws-delete-btn:hover {
+    background-color: #dc2626;
+    color: white;
+    transform: scale(1.05);
+}
+
+.ws-delete-btn:active {
+    transform: scale(0.95);
+}
+
+/* Responsiveness */
+@media (max-width: 800px) {
+    .ws-layout {
+        flex-direction: column;
+    }
+
+    .ws-sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .ws-nav-btn {
+        flex-shrink: 0;
+    }
+}

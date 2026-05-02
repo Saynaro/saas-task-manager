@@ -1,0 +1,42 @@
+.teampage-content {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1f2937;
+    margin-top: 10px;
+    padding: 0 10px;
+    width: 100%;
+}
+
+.teampage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.teampage-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 0;
+    color: #111827;
+}
+
+.teampage-header .download-report-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ecfccb;
+    color: #4d7c0f;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.teampage-header .download-report-btn:hover {
+    background: #d9f99d;
+}
