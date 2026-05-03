@@ -12,8 +12,163 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --- Enums ---
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+// --- Models ---
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id           String  @id @default(uuid())
+  email        String  @unique
+  passwordHash String
+  firstName    String?
+  lastName     String?
+  avatarUrl    String?
+
+  // Relations
+  workspaces    WorkspaceMember[]
+  projects      ProjectMember[]
+  assignedTasks Task[]            @relation("TaskAssignee")
+  createdTasks  Task[]            @relation("TaskCreator")
+  comments      Comment[]
+  activities    ActivityLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Workspace {
+  id   String @id @default(uuid())
+  name String
+  slug String @unique
+
+  // Relations
+  members    WorkspaceMember[]
+  projects   Project[]
+  tasks      Task[]
+  activities ActivityLog[]
+
+  createdAt DateTime @default(now())
+}
+
+model WorkspaceMember {
+  id   String @id @default(uuid())
+  role Role   @default(MEMBER)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workspaceId]) // User cannot be in the same workspace twice
+}
+
+model Project {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  // Access settings
+  isPrivate Boolean @default(false) // If false - visible to all in workspace
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  // Relations
+  members ProjectMember[] // List of users allowed to access the project
+  tasks   Task[]
+
+  createdAt DateTime @default(now())
+}
+
+model ProjectMember {
+  id String @id @default(uuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId]) // User cannot be in the same project twice
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  dueDate     DateTime?
+  order       Float      @default(0) // For Drag & Drop (sorting)
+
+  // Hierarchy
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  // People
+  creatorId String
+  creator   User   @relation("TaskCreator", fields: [creatorId], references: [id])
+
+  assigneeId String?
+  assignee   User?   @relation("TaskAssignee", fields: [assigneeId], references: [id])
+
+  // Content
+  comments Comment[]
+  history  ActivityLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comment {
+  id      String @id @default(uuid())
+  content String
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id       String  @id @default(uuid())
+  action   String // Ex: "CHANGED_STATUS", "ADDED_COMMENT"
+  oldValue String?
+  newValue String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  taskId String?
+  task   Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
 }

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Header } from './Header';
 import { SideBar } from './SideBar';
-import './Layout.css';
-
 import { TaskModal } from './TaskModal';
+import { WorkspaceModal } from './WorkspaceModal';
+import './Layout.css';
 
 export function Layout({ children }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+    const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -16,6 +17,10 @@ export function Layout({ children }) {
     const openTaskModal = () => {
         setIsTaskModalOpen(true);
         if (isMenuOpen) setIsMenuOpen(false); // Close sidebar on mobile after clicking
+    };
+
+    const openWorkspaceModal = () => {
+        setIsWorkspaceModalOpen(true);
     };
 
     return (
@@ -27,7 +32,10 @@ export function Layout({ children }) {
             />
 
             <div className="first-container">
-                <Header toggleMenu={toggleMenu} />
+                <Header 
+                    toggleMenu={toggleMenu} 
+                    openWorkspaceModal={openWorkspaceModal} 
+                />
                 <main className="content">
                     {children}
                 </main>
@@ -37,6 +45,11 @@ export function Layout({ children }) {
                 isOpen={isTaskModalOpen} 
                 onClose={() => setIsTaskModalOpen(false)} 
                 mode="create" 
+            />
+
+            <WorkspaceModal 
+                isOpen={isWorkspaceModalOpen} 
+                onClose={() => setIsWorkspaceModalOpen(false)} 
             />
         </div>
     );

@@ -28,20 +28,20 @@ export function SettingsPage() {
                 {/* Dev Toggle — remove when backend auth is connected */}
                 <div className="dev-toggle-bar">
                     <strong>View:</strong>
-                    <button
-                        className="dev-toggle-btn"
-                        style={{ background: viewAdmin ? '#2563eb' : 'white', color: viewAdmin ? 'white' : '#374151' }}
-                        onClick={() => setViewAdmin(true)}
-                    >
-                        Workspace (Admin)
-                    </button>
-                    <button
-                        className="dev-toggle-btn"
-                        style={{ background: !viewAdmin ? '#2563eb' : 'white', color: !viewAdmin ? 'white' : '#374151' }}
-                        onClick={() => setViewAdmin(false)}
-                    >
-                        Account (User)
-                    </button>
+                    <div className="toggle-container">
+                        <button
+                            className={`dev-toggle-btn ${viewAdmin ? 'active' : ''}`}
+                            onClick={() => setViewAdmin(true)}
+                        >
+                            Workspace (Admin)
+                        </button>
+                        <button
+                            className={`dev-toggle-btn ${!viewAdmin ? 'active' : ''}`}
+                            onClick={() => setViewAdmin(false)}
+                        >
+                            Account (User)
+                        </button>
+                    </div>
                 </div>
 
                 {viewAdmin ? (

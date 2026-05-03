@@ -6,7 +6,7 @@ const navLinks = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Tasks', path: '/tasks', icon: CheckCircle },
     { name: 'Team Members', path: '/team', icon: Users },
-    { name: 'Activity', path: '/activity', icon: History },
+    // { name: 'Activity', path: '/activity', icon: History },
 ];
 
 export function SideBar({ isOpen, toggleMenu, openCreateModal }) {
@@ -21,7 +21,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal }) {
                         <i className="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <div className="sidebar-action-container">
                     <button className="sidebar-create-btn" onClick={openCreateModal}>
                         <Plus size={18} />
@@ -45,7 +45,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal }) {
                             </li>
                         );
                     })}
-                    
+
                     <li className="sidebar-divider"></li>
 
                     <li>

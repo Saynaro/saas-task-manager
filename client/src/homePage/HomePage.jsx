@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Cards } from './components/Cards';
 import { ActiveProjects } from './components/ActiveProjects';
-import { RecentActivity } from './components/RecentActivity';
+import { RecentTasks } from './components/RecentTasks';
 import { Layout } from '../components/Layout';
 import { TaskModal } from '../components/TaskModal';
 
@@ -40,8 +40,8 @@ export function HomePage() {
                 {/* Section des projets */}
                 <ActiveProjects projects={projects} />
 
-                {/* Section activity */}
-                <RecentActivity projects={projects} />
+                {/* Section tasks */}
+                <RecentTasks projects={projects} />
             </div>
 
             <TaskModal

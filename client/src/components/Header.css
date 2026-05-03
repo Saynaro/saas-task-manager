@@ -16,7 +16,71 @@
 .header-left {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 16px;
+}
+
+.workspace-selector {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.workspace-select {
+    appearance: none;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px 36px 8px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 160px;
+}
+
+.workspace-select:hover {
+    border-color: #cbd5e1;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.workspace-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.select-icon {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    color: #64748b;
+}
+
+.add-workspace-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-workspace-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+}
+
+.add-workspace-btn svg {
+    color: white;
 }
 
 .search-container {
@@ -32,9 +96,43 @@
 .header-right {
     display: flex;
     align-items: center;
-    gap: 20px;
-    color: #a3acb9;
+    gap: 24px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #94a3b8;
+}
+
+.header-actions i {
+    font-size: 18px;
     cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.header-actions i:hover {
+    color: #64748b;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 20px;
+    border-left: 1px solid #f1f5f9;
+}
+
+.user-role-badge {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .profile-badge img {
@@ -123,6 +221,29 @@
 
     .header-right {
         gap: 12px;
+    }
+
+    .workspace-select {
+        min-width: 110px;
+        font-size: 13px;
+        padding: 6px 30px 6px 10px;
+    }
+
+    .add-workspace-btn span {
+        display: none;
+    }
+
+    .add-workspace-btn {
+        padding: 8px;
+    }
+
+    .user-role-badge {
+        display: none;
+    }
+
+    .user-info {
+        padding-left: 0;
+        border-left: none;
     }
 
     .profile-badge img {

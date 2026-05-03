@@ -53,6 +53,7 @@ export function AccountSettings({ user }) {
                                     src={`https://i.pravatar.cc/150?u=${user.firstName}`}
                                     alt="profile"
                                     className="settings-profile-avatar"
+                                    width={80}
                                 />
                             </div>
                             <div className="settings-card-body">

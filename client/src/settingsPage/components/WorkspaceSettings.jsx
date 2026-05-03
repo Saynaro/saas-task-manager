@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building, Users, CreditCard, Grid, Sun, Moon, UserPlus, Trash2 } from 'lucide-react';
+import { Building, Users, CreditCard, Grid, UserPlus, Trash2 } from 'lucide-react';
 import './Settings.css';
 
 export function WorkspaceSettings({ workspace, members }) {
@@ -18,13 +18,6 @@ export function WorkspaceSettings({ workspace, members }) {
                 <div>
                     <h2 className="settings-page-title">Workspace Settings</h2>
                     <p className="settings-page-subtitle">Manage your team workspace, members and integrations.</p>
-                </div>
-                <div className="settings-header-actions">
-                    <div className="settings-theme-toggle">
-                        <button className="settings-theme-btn active"><Sun size={16} /></button>
-                        <button className="settings-theme-btn"><Moon size={16} /></button>
-                    </div>
-                    <button className="settings-save-btn">Save Changes</button>
                 </div>
             </div>
 
