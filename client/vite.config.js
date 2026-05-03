@@ -10,5 +10,11 @@ export default defineConfig({
     watch: {
       usePolling: true, // Enables polling mode so Hot Reload works in Docker
     },
+    proxy: {
+      "/api": {
+        target: "http://backend:5001",
+        changeOrigin: true,
+      },
+    },
   }
 })

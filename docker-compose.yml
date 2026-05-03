@@ -5,7 +5,7 @@ services:
   db:
     image: postgres:16-alpine
     env_file:
-      - .env
+      - ./server/.env
     environment:
       # Those variables Postgres will take from your .env file
       POSTGRES_USER: ${DB_USER}
@@ -28,7 +28,7 @@ services:
       - /app/node_modules
     command: npx nodemon src/server.js
     env_file:
-      - .env
+      - ./server/.env
     depends_on:
       - db # Waiting for the database to start
 
