@@ -7,6 +7,7 @@ import { config } from "dotenv";
 import { prisma } from './config/db.js';
 
 import authRoutes from "./routes/authRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
 
 config();
 
@@ -19,5 +20,6 @@ app.use(cors());
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
 
 export default app;

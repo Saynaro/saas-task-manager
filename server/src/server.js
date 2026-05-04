@@ -14,30 +14,30 @@ const startServer = async () => {
         // graceful shutdown for docker
         // make sure that the server is closed before the database
         const gracefulShutdown = async () => {
-            console.log('Signal for exit received. Starts closing...');
+            console.log('Signal received. Shutting down...');
 
             const forceExitTimeout = setTimeout(() => {
-                console.error('Shutdown timeout reached, forcing exit..');
+                console.error('Shutdown timeout, forcing exit...');
                 process.exit(1);
             }, 30000);
 
-            // Stop HTTP server before
+            // Forcefully close all keep-alive connections
+            server.closeAllConnections?.(); // Node.js 18.2+
+
             server.close(async () => {
-                console.log('HTTP server closed. There is no new requests.');
-
                 try {
-                    // Close Database just after closing server
                     await disconnectDB();
-                    console.log('DATABASE connection closed successfully.');
-
+                    console.log('DB disconnected.');
                     clearTimeout(forceExitTimeout);
                     process.exit(0);
                 } catch (err) {
-                    console.error('Error while exit DATABASE:', err);
+                    console.error('DB disconnect error:', err);
                     process.exit(1);
                 }
             });
         };
+
+
 
         //SIGINT - Ctrl+C in local machine
         process.on('SIGINT', gracefulShutdown);
