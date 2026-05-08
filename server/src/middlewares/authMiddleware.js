@@ -27,6 +27,12 @@ export const authMiddleware = async (req, res, next) => {
                 firstName: true,
                 lastName: true,
                 avatarUrl: true,
+                role: true,
+                workspaces: {
+                    include: {
+                        workspace: true
+                    }
+                }
             }
         });
 
@@ -34,7 +40,12 @@ export const authMiddleware = async (req, res, next) => {
             return res.status(401).json({ error: "User no longer exists" });
         };
 
-        req.user = user;
+        // Attach primary workspace if exists
+        const primaryWorkspace = user.workspaces?.[0]?.workspace;
+        req.user = {
+            ...user,
+            workspace: primaryWorkspace
+        };
 
         next();
     } catch (error) {

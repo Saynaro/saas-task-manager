@@ -2,9 +2,9 @@ import './Header.css';
 import { Menu, Plus, ChevronDown } from 'lucide-react';
 import { data } from '../../data/data.js';
 
-export function Header({ toggleMenu, openWorkspaceModal }) {
+export function Header({ toggleMenu, openWorkspaceModal, currentUser }) {
     // For demo purposes, we'll take the role of the first member of the first workspace
-    const userRole = data.workspaces[0]?.members[0]?.role || 'USER';
+    const userRole = currentUser?.role || 'USER';
 
     return (
         <header className="main-header">
@@ -33,7 +33,7 @@ export function Header({ toggleMenu, openWorkspaceModal }) {
                 </button> */}
 
                 <div className="workspace">
-                    <h3>{data.workspaces[0]?.name}</h3>
+                    <h3>{currentUser?.workspace?.name || 'Your Workspace'}</h3>
                 </div>
             </div>
             <div className="header-right">

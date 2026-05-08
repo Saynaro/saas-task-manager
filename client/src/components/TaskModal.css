@@ -145,6 +145,12 @@
     pointer-events: none;
 }
 
+.modal-input:disabled, .modal-textarea:disabled, .modal-select:disabled {
+    cursor: not-allowed;
+    background-color: #f3f4f6;
+    color: #9ca3af;
+}
+
 .add-members-btn {
     display: flex;
     align-items: center;
@@ -176,6 +182,27 @@
     margin-left: 0;
 }
 
+.add-assignee-btn-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px dashed #e2e8f0;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: all 0.2s;
+}
+
+.add-assignee-btn-circle:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background-color: #eff6ff;
+}
+
 /* Checklist Styling */
 .checklist-items {
     display: flex;
@@ -193,16 +220,30 @@
     gap: 12px;
 }
 
-.item-index {
-    font-size: 12px;
-    font-weight: 700;
-    color: #9ca3af;
+.checklist-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #3b82f6;
 }
 
 .item-text {
     flex: 1;
     font-size: 14px;
     color: #1f2937;
+    transition: all 0.2s;
+}
+
+.item-text.completed {
+    text-decoration: line-through;
+    color: #9ca3af;
 }
 
 .remove-item-btn {

@@ -3,15 +3,31 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken.js";
 
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
 
 ///////// REGISTER ////////
 export const register = async (req, res) => {
     try {
-        const { firstname, lastname, email, password, avatarUrl } = req.body;
+        const { firstname, lastname, email, password, avatarUrl, inviteCode } = req.body;
+
+        let role = "MEMBER";
+        if (inviteCode === process.env.ADMIN_INVITE_CODE) role = "ADMIN";
+        if (inviteCode === process.env.OWNER_INVITE_CODE) role = "OWNER";
+
 
         if (!firstname || !lastname || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
+        }
+
+
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ message: "Password must be at least 8 characters long, contain 1 uppercase letter, 1 lowercase letter, and 1 number" });
         }
 
         const userExists = await prisma.user.findUnique({
@@ -26,17 +42,38 @@ export const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const user = await prisma.user.create({
-            data: {
-                firstName: firstname,
-                lastName: lastname,
-                email: email,
-                passwordHash: hashedPassword,
-                avatarUrl: avatarUrl
-            },
+        const user = await prisma.$transaction(async (tx) => {
+            const newUser = await tx.user.create({
+                data: {
+                    firstName: firstname,
+                    lastName: lastname,
+                    email: email,
+                    passwordHash: hashedPassword,
+                    avatarUrl: avatarUrl,
+                    role: role
+                },
+            });
+
+            // Auto-create workspace for OWNERS only
+            if (role === "OWNER") {
+                await tx.workspace.create({
+                    data: {
+                        name: `${firstname}'s Workspace`,
+                        slug: `${firstname.toLowerCase()}-${newUser.id.slice(0, 5)}`,
+                        members: {
+                            create: {
+                                userId: newUser.id,
+                                role: "OWNER"
+                            }
+                        }
+                    }
+                });
+            }
+
+            return newUser;
         });
 
-        const token = generateToken(user.id, res);
+        const token = generateToken(user.id, user.role, res);
 
         res.status(201).json({
             status: "success",
@@ -72,6 +109,14 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ message: "Invalid password format" });
+        }
+
         const user = await prisma.user.findUnique({
             where: { email: email },
         });
@@ -90,7 +135,7 @@ export const login = async (req, res) => {
             });
         }
 
-        const token = generateToken(user.id, res);
+        const token = generateToken(user.id, user.role, res);
 
         res.status(200).json({
             status: "success",
@@ -122,9 +167,10 @@ export const logout = async (req, res) => {
     try {
         res.cookie("jwt", "", {
             httpOnly: true,
-            expires: new Date(0),   // time now
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            expires: new Date(0),
+            secure: true,
+            sameSite: "none",
+            path: "/"
         });
 
         res.status(200).json({

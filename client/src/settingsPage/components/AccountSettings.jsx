@@ -1,15 +1,27 @@
 import { useState } from 'react';
-import { User, Lock, Bell, CreditCard } from 'lucide-react';
+import { User, Lock, LogOut } from 'lucide-react';
+import { ConfirmationModal } from '../../components/ConfirmationModal';
 import './Settings.css';
 
 export function AccountSettings({ user }) {
     const [activeTab, setActiveTab] = useState('profile');
+    const [isLogOutOpen, setIsLogOutOpen] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            await fetch('http://localhost:5001/api/auth/logout', { 
+                method: 'POST', 
+                credentials: 'include' 
+            });
+            window.location.href = '/login';
+        } catch (err) {
+            console.error('Logout failed:', err);
+        }
+    };
 
     const tabs = [
         { id: 'profile', label: 'Profile', icon: User },
         { id: 'security', label: 'Security', icon: Lock },
-        { id: 'notifications', label: 'Notifications', icon: Bell },
-        { id: 'billing', label: 'Billing', icon: CreditCard },
     ];
 
     return (
@@ -19,7 +31,21 @@ export function AccountSettings({ user }) {
                     <h2 className="settings-page-title">Account Settings</h2>
                     <p className="settings-page-subtitle">Manage your personal profile and preferences.</p>
                 </div>
+                <button className="settings-logout-btn" onClick={() => setIsLogOutOpen(true)}>
+                    <LogOut size={18} />
+                    Logout
+                </button>
             </div>
+
+            <ConfirmationModal 
+                isOpen={isLogOutOpen}
+                onClose={() => setIsLogOutOpen(false)}
+                onConfirm={handleLogout}
+                title="Logout"
+                message="Are you sure you want to log out?"
+                confirmText="Logout"
+                confirmVariant="danger"
+            />
 
             <div className="settings-layout">
                 <div className="settings-sidebar">
@@ -118,7 +144,11 @@ export function AccountSettings({ user }) {
                         </div>
                     )}
 
-                    {activeTab === 'notifications' && (
+
+
+                    {/* TODO: Add notifications and billing */}
+
+                    {/* {activeTab === 'notifications' && (
                         <div className="settings-card">
                             <div className="settings-card-header">
                                 <div className="settings-card-title-group">
@@ -146,7 +176,7 @@ export function AccountSettings({ user }) {
                             </div>
                             <div className="settings-empty-panel">No payment methods attached to this account.</div>
                         </div>
-                    )}
+                    )} */}
                 </div>
             </div>
         </div>

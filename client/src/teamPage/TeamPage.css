@@ -22,12 +22,12 @@
     color: #111827;
 }
 
-.teampage-header .download-report-btn {
+.teampage-header .add-members-page-btn {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #ecfccb;
-    color: #4d7c0f;
+    background: #026aa7;
+    color: white;
     border: none;
     padding: 10px 18px;
     border-radius: 8px;
@@ -37,8 +37,8 @@
     transition: background 0.2s ease;
 }
 
-.teampage-header .download-report-btn:hover {
-    background: #d9f99d;
+.teampage-header .add-members-page-btn:hover {
+    background: #015c91;
 }
 
 @media (max-width: 768px) {
@@ -55,7 +55,7 @@
         font-size: 22px;
     }
 
-    .teampage-header .download-report-btn {
+    .teampage-header .add-members-page-btn {
         width: 100%;
         justify-content: center;
     }

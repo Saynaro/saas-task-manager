@@ -45,10 +45,12 @@ model User {
   // Relations
   workspaces    WorkspaceMember[]
   projects      ProjectMember[]
-  assignedTasks Task[]            @relation("TaskAssignee")
-  createdTasks  Task[]            @relation("TaskCreator")
-  comments      Comment[]
-  activities    ActivityLog[]
+  assignedTasks   Task[]            @relation("TaskAssignee")
+  createdTasks    Task[]            @relation("TaskCreator")
+  createdProjects Project[]         @relation("ProjectCreator")
+  comments        Comment[]
+  activities      ActivityLog[]
+  role            Role              @default(MEMBER)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -98,6 +100,9 @@ model Project {
   // Relations
   members ProjectMember[] // List of users allowed to access the project
   tasks   Task[]
+
+  creatorId String?
+  creator   User?   @relation("ProjectCreator", fields: [creatorId], references: [id])
 
   createdAt DateTime @default(now())
 }

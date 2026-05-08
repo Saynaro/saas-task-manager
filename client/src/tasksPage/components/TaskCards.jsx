@@ -20,9 +20,10 @@ export function TaskCards({ tasks, onTaskClick }) {
                 const sTheme = getStatusTheme(task.status);
                 const pTheme = getPriorityTheme(task.priority);
                 
-                const doneNum = task.status === 'DONE' ? 5 : task.status === 'IN_PROGRESS' ? 2 : 0;
-                const totalNum = 5;
-                const pct = (doneNum / totalNum) * 100;
+                const tasksList = task.tasks || [];
+                const totalNum = tasksList.length;
+                const doneNum = tasksList.filter(t => t.status === 'DONE').length;
+                const pct = totalNum > 0 ? (doneNum / totalNum) * 100 : 0;
 
                 return (
                     <div className="task-card" key={task.id} onClick={() => onTaskClick(task)} style={{ cursor: 'pointer' }}>
@@ -36,8 +37,8 @@ export function TaskCards({ tasks, onTaskClick }) {
                         </div>
 
                         <div className="task-card-content" style={{ borderLeft: `4px solid ${sTheme.border}` }}>
-                            <h4>{task.title}</h4>
-                            <p className="task-desc">{task.description || "Create a clean and modern layout using Tailwind CSS. Ensure the design is responsive and..."}</p>
+                            <h4>{task.name || task.title}</h4>
+                            <p className="task-desc">{task.description}</p>
                             
                             <div className="task-progress-text">
                                 Task Done: <strong>{doneNum} / {totalNum}</strong>
@@ -50,11 +51,11 @@ export function TaskCards({ tasks, onTaskClick }) {
                         <div className="task-card-dates">
                             <div className="date-block">
                                 <span className="date-label">Start Date</span>
-                                <span className="date-value">16th Mar 2025</span>
+                                <span className="date-value">{new Date(task.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                             </div>
                             <div className="date-block text-right">
                                 <span className="date-label">Due Date</span>
-                                <span className="date-value">{task.id === 't1' ? '31st Mar 2025' : task.id === 't2' ? '27th Mar 2025' : '15th Apr 2025'}</span>
+                                <span className="date-value">{task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'No due date'}</span>
                             </div>
                         </div>
 

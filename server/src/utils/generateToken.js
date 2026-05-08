@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 
-export const generateToken = (userId, res) => {
-    const payload = { id: userId };
+export const generateToken = (userId, userRole, res) => {
+    const payload = { id: userId, role: userRole };
 
     if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET is not defined in .env file");
@@ -16,6 +16,7 @@ export const generateToken = (userId, res) => {
         secure: process.env.NODE_ENV === "production",
         sameSite: "Lax",
         maxAge: (1000 * 60 * 60 * 24) * 7,
+        path: "/"
     });
 
     return token;

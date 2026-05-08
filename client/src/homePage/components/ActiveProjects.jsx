@@ -1,7 +1,6 @@
 import './ActiveProjects.css'
 
 export function ActiveProjects({ projects }) {
-
     return (
         <div className="projects-container">
             <div className="projects-header">
@@ -28,7 +27,8 @@ export function ActiveProjects({ projects }) {
                             <div className="project-info">
                                 <div>
                                     <p className="project-name">{project.name}</p>
-                                    <p className="project-client">{project.workspace?.name || 'No Workspace'}</p>
+                                    {/* TODO: Add workspace name */}
+                                    {/* <p className="project-client">{project.workspace?.name || 'No Workspace'}</p> */}
                                 </div>
                                 <span className={`status-badge ${theme.className}`}>{theme.status}</span>
                             </div>

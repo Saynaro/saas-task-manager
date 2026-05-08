@@ -5,7 +5,7 @@ import { TaskModal } from './TaskModal';
 import { WorkspaceModal } from './WorkspaceModal';
 import './Layout.css';
 
-export function Layout({ children }) {
+export function Layout({ children, currentUser, onSuccess }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
@@ -25,31 +25,36 @@ export function Layout({ children }) {
 
     return (
         <div className="home-layout">
-            <SideBar 
-                isOpen={isMenuOpen} 
-                toggleMenu={toggleMenu} 
-                openCreateModal={openTaskModal} 
+            <SideBar
+                isOpen={isMenuOpen}
+                toggleMenu={toggleMenu}
+                openCreateModal={openTaskModal}
+                currentUser={currentUser}
             />
 
             <div className="first-container">
-                <Header 
-                    toggleMenu={toggleMenu} 
-                    openWorkspaceModal={openWorkspaceModal} 
+                <Header
+                    toggleMenu={toggleMenu}
+                    openWorkspaceModal={openWorkspaceModal}
+                    currentUser={currentUser}
                 />
                 <main className="content">
                     {children}
                 </main>
             </div>
 
-            <TaskModal 
-                isOpen={isTaskModalOpen} 
-                onClose={() => setIsTaskModalOpen(false)} 
-                mode="create" 
+            <TaskModal
+                isOpen={isTaskModalOpen}
+                onClose={() => setIsTaskModalOpen(false)}
+                mode="create"
+                onSuccess={onSuccess}
+                currentUser={currentUser}
             />
 
-            <WorkspaceModal 
-                isOpen={isWorkspaceModalOpen} 
-                onClose={() => setIsWorkspaceModalOpen(false)} 
+            <WorkspaceModal
+                isOpen={isWorkspaceModalOpen}
+                onClose={() => setIsWorkspaceModalOpen(false)}
+                currentUser={currentUser}
             />
         </div>
     );

@@ -1,12 +1,13 @@
 .cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
 .active-tasks-card,
 .completed-tasks-card,
-.pending-tasks-card {
+.pending-tasks-card,
+.total-projects-card {
     background-color: #fff;
     padding: 20px;
     border: 1px solid #C0C7D5;
@@ -75,7 +76,7 @@
 /* ─── Tablet (≤ 768px) ─── */
 @media (max-width: 768px) {
     .cards {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 }
@@ -89,7 +90,8 @@
 
     .active-tasks-card,
     .completed-tasks-card,
-    .pending-tasks-card {
+    .pending-tasks-card,
+    .total-projects-card {
         padding: 14px;
     }
 

@@ -62,8 +62,19 @@
     border-bottom: 1px solid #f1f5f9;
 }
 
+/* Center align Status, Priority and Created at columns */
+.tasks-table th:nth-child(3),
+.tasks-table td:nth-child(3),
+.tasks-table th:nth-child(4),
+.tasks-table td:nth-child(4),
+.tasks-table th:nth-child(5),
+.tasks-table td:nth-child(5) {
+    text-align: center;
+}
+
+
 .tasks-table td {
-    padding: 16px;
+    padding: 12px 16px;
     font-size: 14px;
     color: #475569;
     border-bottom: 1px solid #f8fafc;

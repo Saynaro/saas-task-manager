@@ -1,5 +1,5 @@
-import { data } from '../../data/data.js';
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Cards } from './components/Cards';
 import { ActiveProjects } from './components/ActiveProjects';
@@ -9,28 +9,46 @@ import { TaskModal } from '../components/TaskModal';
 
 import './HomePage.css';
 
-export function HomePage() {
+export function HomePage({ currentUser }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Map workspaces to flatten projects and inject the workspace metadata
-    const projects = data.workspaces.flatMap(ws =>
-        ws.projects.map(p => ({
-            ...p,
-            workspace: { name: ws.name }
-        }))
-    );
+
+    const [projects, setProjects] = useState([]);
+
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            const response = await fetch("http://localhost:5001/api/projects", {
+                credentials: "include"
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch projects");
+            }
+            const data = await response.json();
+            setProjects(data.data || []);
+        };
+
+        fetchProjects();
+    }, []);
+
+    const handleProjectCreated = (newProject) => {
+        setProjects(prev => [newProject, ...prev]);
+    };
 
     return (
-        <Layout>
+        <Layout currentUser={currentUser} onSuccess={handleProjectCreated}>
             <div className="content-header">
                 <div>
                     <h1>Overview</h1>
                     <p className='overview-text'>Here's what's happening with your projects today.</p>
                 </div>
-                <button className="add-task-btn" onClick={() => setIsModalOpen(true)}>
-                    <Plus size={18} />
-                    <span>New project</span>
-                </button>
+                {currentUser?.role !== 'MEMBER' && (
+                    <button className="add-task-btn" onClick={() => setIsModalOpen(true)}>
+                        <Plus size={18} />
+                        <span>New project</span>
+                    </button>
+                )}
             </div>
 
             {/* cards */}
@@ -48,6 +66,7 @@ export function HomePage() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 mode="create"
+                onSuccess={handleProjectCreated}
             />
         </Layout>
     );

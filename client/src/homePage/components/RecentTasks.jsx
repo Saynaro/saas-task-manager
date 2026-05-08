@@ -3,7 +3,7 @@ import { MoreHorizontal, ArrowRight } from 'lucide-react';
 
 export function RecentTasks({ projects }) {
     // Collect all tasks from all projects
-    const allTasks = projects.flatMap(project => 
+    const allTasks = projects.flatMap(project =>
         project.tasks.map(task => ({
             ...task,
             projectName: project.name
@@ -36,7 +36,7 @@ export function RecentTasks({ projects }) {
                     See All <ArrowRight size={14} />
                 </button>
             </div>
-            
+
             <div className="tasks-table-wrapper">
                 <table className="tasks-table">
                     <thead>
@@ -45,7 +45,9 @@ export function RecentTasks({ projects }) {
                             <th>Project</th>
                             <th>Status</th>
                             <th>Priority</th>
-                            <th className="text-right">Action</th>
+                            <th>Created at</th>
+                            {/* TODO: Add action column */}
+                            {/* <th className="text-right">Action</th> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -63,11 +65,15 @@ export function RecentTasks({ projects }) {
                                         {task.priority}
                                     </span>
                                 </td>
-                                <td className="text-right">
+                                <td>
+                                    {new Date(task.createdAt).toLocaleDateString()}
+                                </td>
+                                {/* TODO: Add action column */}
+                                {/* <td className="text-right">
                                     <button className="task-action-btn">
                                         <MoreHorizontal size={18} />
                                     </button>
-                                </td>
+                                </td> */}
                             </tr>
                         ))}
                     </tbody>

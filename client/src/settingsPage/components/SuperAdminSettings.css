@@ -1,0 +1,161 @@
+.super-admin-settings {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.admin-header {
+    margin-bottom: 30px;
+}
+
+.admin-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.admin-header h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+}
+
+.admin-icon {
+    color: #3b82f6;
+}
+
+.admin-header p {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+}
+
+.admin-section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    color: #4b5563;
+}
+
+.section-head h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: #111827;
+}
+
+.workspace-table-container {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.admin-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #475569;
+}
+
+.ws-name {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.plan-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.plan-badge.premium { background-color: #f0f9ff; color: #0369a1; }
+.plan-badge.basic { background-color: #f8fafc; color: #64748b; }
+
+.manage-btn {
+    background: none;
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.manage-btn:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.admin-sidebar-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-card svg {
+    color: #3b82f6;
+    background: #eff6ff;
+    padding: 10px;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.stat-count {
+    font-size: 20px;
+    font-weight: 800;
+    color: #1e293b;
+}

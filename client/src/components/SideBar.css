@@ -7,6 +7,38 @@
     display: flex;
     flex-direction: column;
     padding: 0 0;
+    justify-content: space-between;
+}
+
+.sidebar-main {
+    flex: 1;
+}
+
+.sidebar-footer {
+    padding: 20px 10px;
+    border-top: 1px solid #eef2f6;
+}
+
+.nav-logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #ef4444;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 10px;
+}
+
+.nav-logout-btn:hover {
+    background-color: #fef2f2;
 }
 
 .sidebar-header {
