@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Calendar, Users, Paperclip } from 'lucide-react';
+import { X, Plus, Trash2, Calendar, Users, Paperclip, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ConfirmationModal } from './ConfirmationModal';
 import './TaskModal.css';
 
 export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, onDelete, currentUser }) {
+    const today = new Date().toISOString().split('T')[0];
     const [taskData, setTaskData] = useState({
         title: '',
         description: '',
         priority: 'Low',
-        dueDate: '2025-04-05',
+        dueDate: today,
         checklist: [],
         attachments: [],
         assignee: []
@@ -17,38 +18,57 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
 
     const [newChecklistItem, setNewChecklistItem] = useState('');
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [workspaceMembers, setWorkspaceMembers] = useState([]);
+    const [isMemberPickerOpen, setIsMemberPickerOpen] = useState(false);
 
     const isMember = currentUser?.role === 'MEMBER';
-    const canManage = currentUser?.role === 'ADMIN' || (currentUser?.role === 'OWNER' && (mode === 'create' || task?.creatorId === currentUser?.id));
-    
+    const canManageValue = currentUser?.role === 'ADMIN' || currentUser?.role === 'OWNER';
+
     // For members, let's keep it simple: if NOT admin/owner OR if is member
     const isReadOnly = isMember;
 
     useEffect(() => {
-        if (task && mode === 'update') {
-            setTaskData({
-                title: task.name || task.title || '',
-                description: task.description || '',
-                priority: task.priority ? (task.priority.charAt(0) + task.priority.slice(1).toLowerCase()) : 'Medium',
-                dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '2025-04-05',
-                checklist: task.tasks ? task.tasks.map((t, index) => ({
-                    id: t.id || index,
-                    text: t.title,
-                    completed: t.status === 'DONE'
-                })) : [],
-                attachments: task.attachments || [],
-                assignee: task.assignee ? [task.assignee] : []
-            });
-        } else {
-            setTaskData({
-                title: '',
-                description: '',
-                priority: 'Low',
-                dueDate: '2025-04-05',
-                checklist: [],
-                attachments: [],
-                assignee: []
-            });
+        if (isOpen) {
+            const fetchMembers = async () => {
+                try {
+                    const res = await fetch("http://localhost:5001/api/workspaces/members", {
+                        credentials: "include"
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setWorkspaceMembers(data);
+                    }
+                } catch (err) {
+                    console.error("Error fetching workspace members:", err);
+                }
+            };
+            fetchMembers();
+
+            if (task && mode === 'update') {
+                setTaskData({
+                    title: task.name || task.title || '',
+                    description: task.description || '',
+                    priority: task.priority ? (task.priority.charAt(0) + task.priority.slice(1).toLowerCase()) : 'Medium',
+                    dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : today,
+                    checklist: task.tasks ? task.tasks.map((t, index) => ({
+                        id: t.id || index,
+                        text: t.title,
+                        completed: t.status === 'DONE'
+                    })) : [],
+                    attachments: task.attachments || [],
+                    assignee: task.members ? task.members.map(m => m.user.id) : []
+                });
+            } else {
+                setTaskData({
+                    title: '',
+                    description: '',
+                    priority: 'Low',
+                    dueDate: today,
+                    checklist: [],
+                    attachments: [],
+                    assignee: []
+                });
+            }
         }
     }, [task, mode, isOpen]);
 
@@ -76,9 +96,20 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
     const toggleChecklistCount = (id) => {
         setTaskData({
             ...taskData,
-            checklist: taskData.checklist.map(item => 
+            checklist: taskData.checklist.map(item =>
                 item.id === id ? { ...item, completed: !item.completed } : item
             )
+        });
+    };
+
+    const toggleMemberSelection = (memberId) => {
+        setTaskData(prev => {
+            const isSelected = prev.assignee.includes(memberId);
+            if (isSelected) {
+                return { ...prev, assignee: prev.assignee.filter(id => id !== memberId) };
+            } else {
+                return { ...prev, assignee: [...prev.assignee, memberId] };
+            }
         });
     };
 
@@ -109,7 +140,8 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                 description: taskData.description,
                 priority: taskData.priority.toUpperCase(),
                 dueDate: taskData.dueDate, // Will be parsed by new Date() in backend
-                tasks: taskData.checklist.map(item => ({ title: item.text }))
+                tasks: taskData.checklist.map(item => ({ title: item.text })),
+                memberIds: taskData.assignee
             };
 
             const url = mode === 'create'
@@ -128,17 +160,21 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
             if (res.ok) {
                 const data = await res.json();
                 toast.success(mode === 'create' ? "Project created successfully" : "Project updated successfully");
-                // call onSuccess callback to update the parent component
                 onSuccess?.(data.data);
                 onClose();
 
             } else {
-                toast.error(`Failed to ${mode} project`);
+                const errorData = await res.json();
+                toast.error(errorData.error || `Failed to ${mode} project`);
             }
         } catch (err) {
             toast.error(`Error during ${mode}`);
             console.error(`Error submitting task for ${mode}:`, err);
         }
+    };
+
+    const getSelectedMembers = () => {
+        return workspaceMembers.filter(m => taskData.assignee.includes(m.id));
     };
 
     return (
@@ -211,20 +247,59 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                         </div>
                         <div className="modal-form-group flex-1">
                             <label>Assign To</label>
-                            <div className="assignee-selector">
-                                {mode === 'create' ? (
-                                    <button className="add-members-btn">
+                            <div className="assignee-selector-container">
+                                {taskData.assignee.length === 0 ? (
+                                    <button
+                                        className="add-members-btn"
+                                        onClick={() => setIsMemberPickerOpen(!isMemberPickerOpen)}
+                                        disabled={isReadOnly}
+                                    >
                                         <Users size={16} /> Add Members
                                     </button>
                                 ) : (
-                                    <div className="avatar-group">
-                                        <img src="https://i.pravatar.cc/150?u=1" alt="avatar" />
-                                        <img src="https://i.pravatar.cc/150?u=2" alt="avatar" />
-                                        {currentUser?.role === 'OWNER' && (
+                                    <div className="avatar-group" onClick={() => !isReadOnly && setIsMemberPickerOpen(!isMemberPickerOpen)}>
+                                        {getSelectedMembers().map(member => (
+                                            <img
+                                                key={member.id}
+                                                src={member.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.fullName)}&background=random`}
+                                                alt={member.fullName}
+                                                title={member.fullName}
+                                            />
+                                        ))}
+                                        {!isReadOnly && (
                                             <button className="add-assignee-btn-circle" title="Add members">
                                                 <Plus size={16} />
                                             </button>
                                         )}
+                                    </div>
+                                )}
+
+                                {isMemberPickerOpen && (
+                                    <div className="member-picker-dropdown">
+                                        <div className="member-picker-header">
+                                            <span>Select Members</span>
+                                            <button onClick={() => setIsMemberPickerOpen(false)}><X size={14} /></button>
+                                        </div>
+                                        <div className="member-picker-list">
+                                            {workspaceMembers.map(member => (
+                                                <div
+                                                    key={member.id}
+                                                    className={`member-picker-item ${taskData.assignee.includes(member.id) ? 'selected' : ''}`}
+                                                    onClick={() => toggleMemberSelection(member.id)}
+                                                >
+                                                    <img src={member.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.fullName)}&background=random`} alt="" />
+                                                    <div className="member-info">
+                                                        <span className="member-name">{member.fullName}</span>
+                                                        <span className="member-email">{member.email}</span>
+                                                    </div>
+                                                    {taskData.assignee.includes(member.id) && <Check size={16} className="check-icon" />}
+                                                </div>
+                                            ))}
+                                            {workspaceMembers.length === 0 && <div className="no-members">No members in workspace</div>}
+                                        </div>
+                                        <div className="member-picker-footer">
+                                            <button className="picker-ok-btn" onClick={() => setIsMemberPickerOpen(false)}>OK</button>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -238,9 +313,9 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                                 <div key={item.id} className="checklist-item">
                                     <div className="checklist-item-left">
                                         {currentUser?.role !== 'OWNER' && (
-                                            <input 
-                                                type="checkbox" 
-                                                checked={item.completed} 
+                                            <input
+                                                type="checkbox"
+                                                checked={item.completed}
                                                 onChange={() => toggleChecklistCount(item.id)}
                                                 className="task-checkbox"
                                             />
@@ -260,15 +335,15 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                                 <input
                                     type="text"
                                     placeholder="Enter Task"
-                                className="modal-input"
-                                value={newChecklistItem}
-                                onChange={(e) => setNewChecklistItem(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleAddChecklist()}
-                            />
-                            <button type="button" className="add-btn" onClick={handleAddChecklist}>
-                                <Plus size={16} /> Add
-                            </button>
-                        </div>
+                                    className="modal-input"
+                                    value={newChecklistItem}
+                                    onChange={(e) => setNewChecklistItem(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleAddChecklist()}
+                                />
+                                <button type="button" className="add-btn" onClick={handleAddChecklist}>
+                                    <Plus size={16} /> Add
+                                </button>
+                            </div>
                         )}
                     </div>
 
@@ -303,7 +378,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                     </button>
                 </div>
 
-                <ConfirmationModal 
+                <ConfirmationModal
                     isOpen={isConfirmOpen}
                     onClose={() => setIsConfirmOpen(false)}
                     onConfirm={handleDeleteProject}

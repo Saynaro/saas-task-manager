@@ -103,25 +103,12 @@ export const getProjects = async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        let whereClause = {};
-
-        if (req.user.role === 'ADMIN') {
-            // Admin sees all projects
-            whereClause = {};
-        } else if (req.user.role === 'OWNER') {
-            // Owner sees all projects in THEIR workspace
-            whereClause = { workspaceId: workspaceId };
-        } else {
-            // Member sees only projects they are members of in their workspace
-            whereClause = {
-                workspaceId: workspaceId,
-                members: {
-                    some: {
-                        userId: userId
-                    }
-                }
-            };
-        }
+        let whereClause = { 
+            workspaceId: workspaceId,
+            members: {
+                some: { userId: userId }
+            }
+        };
 
         const projects = await prisma.project.findMany({
             where: whereClause,
@@ -171,90 +158,75 @@ export const updateProject = async (req, res) => {
     try {
         const { id } = req.params;
         const userId = req.user?.id;
-        const { name, description, dueDate, status, priority, tasks } = req.body;
 
-        // Check if the project exists and the user is a member
+        // Add memberIds from the request body
+        const { name, description, dueDate, status, priority, tasks, memberIds } = req.body;
+
         const project = await prisma.project.findFirst({
-            where: {
-                id,
-                members: {
-                    some: { userId }
-                }
-            }
+            where: { id, workspaceId: req.user?.workspace?.id }
         });
 
-        if (!project) {
-            return res.status(404).json({ error: "Project not found or access denied" });
-        }
+        if (!project) return res.status(404).json({ error: "Project not found" });
 
-        // Use a transaction to update project and its tasks atomically
         const updatedProjectWithDetails = await prisma.$transaction(async (tx) => {
-            // Update the project basic fields
+            // Update basic fields properly - only if defined
+            const updateData = {};
+            if (name !== undefined) updateData.name = name;
+            if (description !== undefined) updateData.description = description;
+            if (status !== undefined) updateData.status = status;
+            if (priority !== undefined) updateData.priority = priority;
+            if (dueDate !== undefined) updateData.dueDate = dueDate ? new Date(dueDate) : null;
+
             await tx.project.update({
                 where: { id },
-                data: {
-                    ...(name !== undefined && { name }),
-                    ...(description !== undefined && { description }),
-                    ...(dueDate !== undefined && { dueDate: dueDate ? new Date(dueDate) : null }),
-                    ...(status !== undefined && { status }),
-                    ...(priority !== undefined && { priority }),
-                }
+                data: updateData
             });
 
-            // If tasks are provided, sync them (replace-all strategy for checklists)
-            if (tasks !== undefined) {
-                // Delete existing tasks
-                await tx.task.deleteMany({
+            //  Update members (Sync)
+            if (memberIds !== undefined) {
+                // Delete all current project members
+                await tx.projectMember.deleteMany({
                     where: { projectId: id }
                 });
 
-                // Create new tasks from the checklist
+                // add new list of members
+                await tx.projectMember.createMany({
+                    data: memberIds.map(mId => ({
+                        userId: mId,
+                        projectId: id
+                    }))
+                });
+            }
+
+            //  Update tasks (Checklist)
+            if (tasks !== undefined) {
+                await tx.task.deleteMany({ where: { projectId: id } });
                 if (tasks.length > 0) {
                     await tx.task.createMany({
-                        data: tasks.map((task, index) => ({
-                            title: task.title,
+                        data: tasks.map((t, index) => ({
+                            title: t.title,
+                            status: t.status || "TODO",
                             projectId: id,
                             creatorId: userId,
-                            status: task.status || "TODO",
                             order: index * 1000
                         }))
                     });
                 }
             }
 
-            // Fetch the fully updated object with relations
             return await tx.project.findUnique({
                 where: { id },
-                include: {
-                    tasks: {
-                        orderBy: {
-                            order: 'asc'
-                        }
-                    },
-                    members: {
-                        include: {
-                            user: {
-                                select: {
-                                    id: true,
-                                    firstName: true,
-                                    lastName: true,
-                                    avatarUrl: true
-                                }
-                            }
-                        }
-                    }
-                }
+                include: { tasks: true, members: { include: { user: true } } }
             });
         });
 
-        res.status(200).json({
-            status: "success", data: updatedProjectWithDetails
-        });
+        res.json({ status: "success", data: updatedProjectWithDetails });
     } catch (error) {
-        console.error("UPDATE PROJECT ERROR:", error);
-        res.status(500).json({ error: "Internal server error during project update" });
+        res.status(500).json({ error: error.message });
     }
 };
+
+
 
 export const deleteProject = async (req, res) => {
     try {

@@ -60,3 +60,16 @@
         justify-content: center;
     }
 }
+
+.workspace-name-display {
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 100px;
+    font-size: 18px;
+    color: #9ca3af;
+}

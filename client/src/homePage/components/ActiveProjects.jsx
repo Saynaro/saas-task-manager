@@ -27,8 +27,7 @@ export function ActiveProjects({ projects }) {
                             <div className="project-info">
                                 <div>
                                     <p className="project-name">{project.name}</p>
-                                    {/* TODO: Add workspace name */}
-                                    {/* <p className="project-client">{project.workspace?.name || 'No Workspace'}</p> */}
+                                    <p className="project-client">{project.workspace?.name || 'No Workspace'}</p>
                                 </div>
                                 <span className={`status-badge ${theme.className}`}>{theme.status}</span>
                             </div>

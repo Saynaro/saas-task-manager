@@ -227,3 +227,29 @@
 .attachment-icon {
     color: #9ca3af;
 }
+.member-modal-footer {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.finish-btn {
+    padding: 12px 30px;
+    background-color: #ecfdf5;
+    color: #059669;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.finish-btn:hover {
+    background-color: #d1fae5;
+    transform: translateY(-1px);
+}
+
+.finish-btn:active {
+    transform: translateY(0);
+}

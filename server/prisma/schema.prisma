@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,8 +6,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-// --- Enums ---
 
 enum Role {
   OWNER
@@ -32,151 +25,145 @@ enum Priority {
   HIGH
 }
 
-// --- Models ---
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
 
 model User {
-  id           String  @id @default(uuid())
-  email        String  @unique
-  passwordHash String
-  firstName    String?
-  lastName     String?
-  avatarUrl    String?
-
-  // Relations
-  workspaces    WorkspaceMember[]
-  projects      ProjectMember[]
+  id              String            @id @default(uuid())
+  email           String            @unique
+  avatarUrl       String?
+  createdAt       DateTime          @default(now())
+  firstName       String?
+  lastName        String?
+  passwordHash    String
+  updatedAt       DateTime          @updatedAt
+  role            Role              @default(MEMBER)
+  activities      ActivityLog[]
+  comments        Comment[]
+  createdProjects Project[]         @relation("ProjectCreator")
+  projects        ProjectMember[]
   assignedTasks   Task[]            @relation("TaskAssignee")
   createdTasks    Task[]            @relation("TaskCreator")
-  createdProjects Project[]         @relation("ProjectCreator")
-  comments        Comment[]
-  activities      ActivityLog[]
-  role            Role              @default(MEMBER)
+  workspaces      WorkspaceMember[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  sentInvitations     Invitation[] @relation("SentInvitations")
+  receivedInvitations Invitation[] @relation("ReceivedInvitations")
 }
 
 model Workspace {
-  id   String @id @default(uuid())
-  name String
-  slug String @unique
-
-  // Relations
-  members    WorkspaceMember[]
-  projects   Project[]
-  tasks      Task[]
-  activities ActivityLog[]
-
-  createdAt DateTime @default(now())
+  id          String            @id @default(uuid())
+  name        String
+  slug        String            @unique
+  createdAt   DateTime          @default(now())
+  activities  ActivityLog[]
+  projects    Project[]
+  tasks       Task[]
+  members     WorkspaceMember[]
+  invitations Invitation[]
 }
 
 model WorkspaceMember {
-  id   String @id @default(uuid())
-  role Role   @default(MEMBER)
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id          String    @id @default(uuid())
+  role        Role      @default(MEMBER)
+  userId      String
   workspaceId String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, workspaceId]) // User cannot be in the same workspace twice
+  @@unique([userId, workspaceId])
 }
 
 model Project {
-  id          String     @id @default(uuid())
+  id          String          @id @default(uuid())
   name        String
   description String?
   dueDate     DateTime?
-  status      TaskStatus @default(TODO)
-  priority    Priority   @default(LOW)
-
-  // Access settings
-  isPrivate Boolean @default(false) // If false - visible to all in workspace
-
+  isPrivate   Boolean         @default(false)
   workspaceId String?
-  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  // Relations
-  members ProjectMember[] // List of users allowed to access the project
-  tasks   Task[]
-
-  creatorId String?
-  creator   User?   @relation("ProjectCreator", fields: [creatorId], references: [id])
-
-  createdAt DateTime @default(now())
+  createdAt   DateTime        @default(now())
+  priority    Priority        @default(LOW)
+  status      TaskStatus      @default(TODO)
+  creatorId   String?
+  creator     User?           @relation("ProjectCreator", fields: [creatorId], references: [id])
+  workspace   Workspace?      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  members     ProjectMember[]
+  tasks       Task[]
 }
 
 model ProjectMember {
-  id String @id @default(uuid())
-
+  id        String  @id @default(uuid())
   projectId String
+  userId    String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([projectId, userId]) // User cannot be in the same project twice
+  @@unique([projectId, userId])
 }
 
 model Task {
-  id          String     @id @default(uuid())
+  id          String        @id @default(uuid())
   title       String
   description String?
-  status      TaskStatus @default(TODO)
-  priority    Priority   @default(MEDIUM)
+  status      TaskStatus    @default(TODO)
+  priority    Priority      @default(MEDIUM)
   dueDate     DateTime?
-  order       Float      @default(0) // For Drag & Drop (sorting)
-
-  // Hierarchy
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
+  order       Float         @default(0)
+  projectId   String
   workspaceId String?
-  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  // People
-  creatorId String
-  creator   User   @relation("TaskCreator", fields: [creatorId], references: [id])
-
-  assigneeId String?
-  assignee   User?   @relation("TaskAssignee", fields: [assigneeId], references: [id])
-
-  // Content
-  comments Comment[]
-  history  ActivityLog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  creatorId   String
+  assigneeId  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  history     ActivityLog[]
+  comments    Comment[]
+  assignee    User?         @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  creator     User          @relation("TaskCreator", fields: [creatorId], references: [id])
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  workspace   Workspace?    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
-  id      String @id @default(uuid())
-  content String
-
-  taskId String
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
+  id        String   @id @default(uuid())
+  content   String
+  taskId    String
+  userId    String
   createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model ActivityLog {
-  id       String  @id @default(uuid())
-  action   String // Ex: "CHANGED_STATUS", "ADDED_COMMENT"
-  oldValue String?
-  newValue String?
+  id          String    @id @default(uuid())
+  action      String
+  oldValue    String?
+  newValue    String?
+  userId      String
+  workspaceId String
+  taskId      String?
+  createdAt   DateTime  @default(now())
+  task        Task?     @relation(fields: [taskId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+model Invitation {
+  id        String           @id @default(uuid())
+  email     String
+  role      Role             @default(MEMBER)
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime         @default(now())
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  taskId String?
-  task   Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  inviterId String
+  inviter   User   @relation("SentInvitations", fields: [inviterId], references: [id])
 
-  createdAt DateTime @default(now())
+  userId   String?
+  receiver User?   @relation("ReceivedInvitations", fields: [userId], references: [id])
+
+  @@unique([email, workspaceId])
 }

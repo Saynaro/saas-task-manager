@@ -11,7 +11,8 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
         priority: 'Medium',
         dueDate: '',
         checklist: [],
-        attachments: []
+        attachments: [],
+        members: []
     });
 
     useEffect(() => {
@@ -27,7 +28,8 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
                     text: t.title,
                     completed: t.status === 'DONE'
                 })) : [],
-                attachments: task.attachments || []
+                attachments: task.attachments || [],
+                members: task.members || []
             });
         }
     }, [task, isOpen]);
@@ -122,9 +124,15 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
                     <div className="meta-box">
                         <span className="meta-label">Assigned To</span>
                         <div className="member-avatars">
-                            <img src="https://i.pravatar.cc/150?u=1" alt="avatar" />
-                            <img src="https://i.pravatar.cc/150?u=2" alt="avatar" />
-                            <img src="https://i.pravatar.cc/150?u=3" alt="avatar" />
+                            {taskData.members.map(m => (
+                                <img
+                                    key={m.user.id}
+                                    src={m.user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(`${m.user.firstName || ''} ${m.user.lastName || ''}`)}&background=random`}
+                                    alt={`${m.user.firstName} ${m.user.lastName}`}
+                                    title={`${m.user.firstName} ${m.user.lastName}`}
+                                />
+                            ))}
+                            {taskData.members.length === 0 && <span className="no-assignees">No one assigned</span>}
                         </div>
                     </div>
                 </div>
@@ -159,6 +167,10 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
                             <ExternalLink size={14} className="attachment-icon" />
                         </div>
                     </div>
+                </div>
+
+                <div className="member-modal-footer">
+                    <button className="finish-btn" onClick={onClose}>Done</button>
                 </div>
             </div>
         </div>

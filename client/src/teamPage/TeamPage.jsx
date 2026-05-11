@@ -1,43 +1,75 @@
-import { Layout } from "../components/Layout"
-import { MemberCards } from "./components/MemberCards"
-import { Plus } from 'lucide-react'
-import { data } from "../../data/data.js"
-import "./TeamPage.css"
+import { useState, useEffect } from 'react';
+import { Layout } from "../components/Layout";
+import { MemberCards } from "./components/MemberCards";
+import { InviteModal } from "../components/InviteModal";
+import { Plus } from 'lucide-react';
+import "./TeamPage.css";
 
 export function TeamPage({ currentUser }) {
-    // Flatten all nested tasks across all workspaces and projects
-    const allTasks = data.workspaces.flatMap(ws => 
-        ws.projects.flatMap(p => p.tasks)
-    );
+    const [members, setMembers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
-    // Map the users and calculate their tasks counts
-    const members = data.users.map(user => {
-        const userTasks = allTasks.filter(t => t.assigneeId === user.id);
-        const pending = userTasks.filter(t => t.status === 'TODO').length;
-        const inProgress = userTasks.filter(t => t.status === 'IN_PROGRESS').length;
-        const completed = userTasks.filter(t => t.status === 'DONE').length;
-
-        return {
-            ...user,
-            pending,
-            inProgress,
-            completed
+    useEffect(() => {
+        const fetchMembers = async () => {
+            try {
+                const res = await fetch("http://localhost:5001/api/workspaces/members", {
+                    credentials: "include"
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    // Add dummy stats for now as requested by the UI design
+                    const formattedMembers = data.map(m => ({
+                        ...m,
+                        // If backend doesn't provide stats yet, we use 0
+                        pending: m.pending || 0,
+                        inProgress: m.inProgress || 0,
+                        completed: m.completed || 0
+                    }));
+                    
+                    setMembers(formattedMembers);
+                }
+            } catch (err) {
+                console.error("Error fetching members:", err);
+            } finally {
+                setLoading(false);
+            }
         };
-    });
+
+        fetchMembers();
+    }, []);
 
     return (
         <Layout currentUser={currentUser}>
             <div className="teampage-content">
                 <div className="teampage-header">
-                    <h2>Team Members</h2>
+                    <div className="header-text">
+                        <h2>Team Members</h2>
+                        <p className="workspace-name-display">{currentUser?.workspace?.name}</p>
+                    </div>
                     {currentUser?.role === 'OWNER' && (
-                        <button className="add-members-page-btn">
+                        <button 
+                            className="add-members-page-btn"
+                            onClick={() => setIsInviteModalOpen(true)}
+                        >
                             <Plus size={16} /> Add Members
                         </button>
                     )}
                 </div>
 
-                <MemberCards members={members} />
+                {loading ? (
+                    <div className="loading-state">Loading members...</div>
+                ) : (
+                    <MemberCards members={members} currentUserId={currentUser?.id} />
+                )}
+
+                <InviteModal 
+                    isOpen={isInviteModalOpen}
+                    onClose={() => setIsInviteModalOpen(false)}
+                    workspaceName={currentUser?.workspace?.name}
+                    workspaceId={currentUser?.workspace?.id}
+                />
             </div>
         </Layout>
     );

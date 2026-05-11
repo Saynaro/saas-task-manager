@@ -8,6 +8,8 @@ import { prisma } from './config/db.js';
 
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
+import invitationRoutes from "./routes/invitationRoutes.js";
+import workspaceRoutes from "./routes/workspaceRoutes.js";
 
 config();
 
@@ -24,5 +26,7 @@ app.use(cors({
 
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/invitations", invitationRoutes);
+app.use("/api/workspaces", workspaceRoutes);
 
 export default app;

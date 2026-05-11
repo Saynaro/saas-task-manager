@@ -61,13 +61,17 @@ export function TaskCards({ tasks, onTaskClick }) {
 
                         <div className="task-card-footer">
                             <div className="card-avatar-group">
-                                {task.assignee ? (
-                                     <img src={`https://i.pravatar.cc/150?u=${task.assignee.id}`} alt="avatar" />
+                                {task.members && task.members.length > 0 ? (
+                                    task.members.map(m => (
+                                        <img 
+                                            key={m.user.id} 
+                                            src={m.user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(`${m.user.firstName || ''} ${m.user.lastName || ''}`)}&background=random`} 
+                                            alt="avatar" 
+                                            title={`${m.user.firstName} ${m.user.lastName}`}
+                                        />
+                                    ))
                                 ) : (
-                                    <>
-                                        <img src="https://i.pravatar.cc/150?u=12" alt="avatar" />
-                                        <img src="https://i.pravatar.cc/150?u=23" alt="avatar" />
-                                    </>
+                                    <div className="no-members-small">No members</div>
                                 )}
                             </div>
                             <div className="attachment-badge">
