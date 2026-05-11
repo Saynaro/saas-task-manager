@@ -3,17 +3,17 @@ import { calculateMonthOverMonthChange } from '../../utils/statsUtils';
 import './Cards.css'
 
 
-export function Cards({ projects }) {
-    const totalProjects = projects.length;
+export function Cards({ projects = [], stats = null }) {
+    const totalProjects = stats ? stats.totalProjects : projects.length;
     const tasks = projects.flatMap(p => p.tasks || []);
 
-    const activeTasksCount = tasks.filter(p => p.status === 'IN_PROGRESS').length;
-    const completedTasksCount = tasks.filter(p => p.status === 'DONE').length;
-    const pendingTasksCount = tasks.filter(p => p.status === 'TODO').length;
-    const totalTasksCount = tasks.length;
-
-    const projectGrowth = calculateMonthOverMonthChange(projects);
-    const taskGrowth = calculateMonthOverMonthChange(tasks);
+    const activeTasksCount = stats ? stats.activeTasks : tasks.filter(p => p.status === 'IN_PROGRESS').length;
+    const completedTasksCount = stats ? stats.completedTasks : tasks.filter(p => p.status === 'DONE').length;
+    const pendingTasksCount = stats ? stats.pendingTasks : tasks.filter(p => p.status === 'TODO').length;
+    
+    // Use 0 growth if we are in admin mode for now, or fetch history later
+    const projectGrowth = stats ? 0 : calculateMonthOverMonthChange(projects);
+    const taskGrowth = stats ? 0 : calculateMonthOverMonthChange(tasks);
 
     const TrendIcon = ({ change }) => {
         if (change >= 0) return <TrendingUp size={15} color='green' />;

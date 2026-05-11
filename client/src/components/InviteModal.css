@@ -114,7 +114,7 @@
     justify-content: center;
     gap: 8px;
     padding: 12px;
-    background: #111827;
+    background: #3b82f6;
     color: white;
     border: none;
     border-radius: 8px;
@@ -125,7 +125,7 @@
 }
 
 .send-invite-btn:hover:not(:disabled) {
-    background: #1f2937;
+    background: #2563eb;
     transform: translateY(-1px);
 }
 

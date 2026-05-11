@@ -1,11 +1,48 @@
 import { useState } from 'react';
-import { User, Lock, LogOut } from 'lucide-react';
+import { User, Lock, LogOut, Loader2 } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
+import toast from 'react-hot-toast';
 import './Settings.css';
 
-export function AccountSettings({ user }) {
+export function AccountSettings({ user, onUpdate }) {
     const [activeTab, setActiveTab] = useState('profile');
     const [isLogOutOpen, setIsLogOutOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+        jobTitle: '', // Placeholder as it's not in schema
+        bio: ''       // Placeholder
+    });
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            const res = await fetch('http://localhost:5001/api/auth/me', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(formData)
+            });
+
+            if (res.ok) {
+                toast.success('Profile updated!');
+                if (onUpdate) onUpdate();
+            } else {
+                toast.error('Failed to update profile');
+            }
+        } catch (err) {
+            console.error('Update account error:', err);
+            toast.error('Network error');
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     const handleLogout = async () => {
         try {
@@ -76,7 +113,7 @@ export function AccountSettings({ user }) {
                                     </div>
                                 </div>
                                 <img
-                                    src={`https://i.pravatar.cc/150?u=${user.firstName}`}
+                                    src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&background=random`}
                                     alt="profile"
                                     className="settings-profile-avatar"
                                     width={80}
@@ -85,30 +122,65 @@ export function AccountSettings({ user }) {
                             <div className="settings-card-body">
                                 <div className="settings-form-row">
                                     <div className="settings-form-group">
-                                        <label>Full Name</label>
-                                        <input type="text" defaultValue={`${user.firstName} ${user.lastName}`} className="settings-input" />
+                                        <label>First Name</label>
+                                        <input 
+                                            type="text" 
+                                            name="firstName"
+                                            value={formData.firstName} 
+                                            onChange={handleInputChange}
+                                            className="settings-input" 
+                                        />
                                     </div>
                                     <div className="settings-form-group">
-                                        <label>Email Address</label>
-                                        <input type="email" defaultValue={user.email} className="settings-input" />
-                                        <span className="settings-lock-hint"><Lock size={12} /> Managed by organization</span>
+                                        <label>Last Name</label>
+                                        <input 
+                                            type="text" 
+                                            name="lastName"
+                                            value={formData.lastName} 
+                                            onChange={handleInputChange}
+                                            className="settings-input" 
+                                        />
                                     </div>
                                 </div>
                                 <div className="settings-form-group">
+                                    <label>Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        value={user.email} 
+                                        disabled
+                                        className="settings-input disabled" 
+                                    />
+                                    <span className="settings-lock-hint"><Lock size={12} /> Email cannot be changed here</span>
+                                </div>
+                                <div className="settings-form-group">
                                     <label>Job Title</label>
-                                    <input type="text" defaultValue={user.jobTitle || 'Senior Product Designer'} className="settings-input" />
+                                    <input 
+                                        type="text" 
+                                        name="jobTitle"
+                                        value={formData.jobTitle} 
+                                        onChange={handleInputChange}
+                                        className="settings-input" 
+                                    />
                                 </div>
                                 <div className="settings-form-group">
                                     <label>Bio</label>
                                     <textarea
+                                        name="bio"
                                         className="settings-textarea"
-                                        defaultValue={user.bio || 'Passionate about creating intuitive user experiences and scalable design systems.'}
+                                        value={formData.bio}
+                                        onChange={handleInputChange}
                                     />
                                 </div>
                             </div>
                             <div className="settings-actions-bar">
-                                <button className="settings-cancel-btn">Cancel</button>
-                                <button className="settings-primary-btn">Save Changes</button>
+                                <button className="settings-cancel-btn" onClick={() => setFormData({ firstName: user.firstName, lastName: user.lastName, jobTitle: '', bio: '' })}>Cancel</button>
+                                <button 
+                                    className="settings-primary-btn" 
+                                    onClick={handleSave}
+                                    disabled={isSaving}
+                                >
+                                    {isSaving ? <><Loader2 size={16} className="animate-spin" /> Saving...</> : 'Save Changes'}
+                                </button>
                             </div>
                         </div>
                     )}

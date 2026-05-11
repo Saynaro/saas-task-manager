@@ -5,20 +5,24 @@ import { InviteModal } from "../components/InviteModal";
 import { Plus } from 'lucide-react';
 import "./TeamPage.css";
 
-export function TeamPage({ currentUser }) {
+export function TeamPage({ currentUser, refreshUser }) {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchMembers = async () => {
+            if (!currentUser?.workspace?.id) {
+                setLoading(false);
+                return;
+            }
             try {
                 const res = await fetch("http://localhost:5001/api/workspaces/members", {
                     credentials: "include"
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    
+
                     // Add dummy stats for now as requested by the UI design
                     const formattedMembers = data.map(m => ({
                         ...m,
@@ -27,7 +31,7 @@ export function TeamPage({ currentUser }) {
                         inProgress: m.inProgress || 0,
                         completed: m.completed || 0
                     }));
-                    
+
                     setMembers(formattedMembers);
                 }
             } catch (err) {
@@ -38,10 +42,10 @@ export function TeamPage({ currentUser }) {
         };
 
         fetchMembers();
-    }, []);
+    }, [currentUser?.workspace?.id]);
 
     return (
-        <Layout currentUser={currentUser}>
+        <Layout currentUser={currentUser} refreshUser={refreshUser}>
             <div className="teampage-content">
                 <div className="teampage-header">
                     <div className="header-text">
@@ -49,11 +53,11 @@ export function TeamPage({ currentUser }) {
                         <p className="workspace-name-display">{currentUser?.workspace?.name}</p>
                     </div>
                     {currentUser?.role === 'OWNER' && (
-                        <button 
+                        <button
                             className="add-members-page-btn"
                             onClick={() => setIsInviteModalOpen(true)}
                         >
-                            <Plus size={16} /> Add Members
+                            <Plus size={16} /> Invite Members
                         </button>
                     )}
                 </div>
@@ -64,7 +68,7 @@ export function TeamPage({ currentUser }) {
                     <MemberCards members={members} currentUserId={currentUser?.id} />
                 )}
 
-                <InviteModal 
+                <InviteModal
                     isOpen={isInviteModalOpen}
                     onClose={() => setIsInviteModalOpen(false)}
                     workspaceName={currentUser?.workspace?.name}

@@ -1,35 +1,59 @@
+import { useState, useEffect } from 'react';
 import { Layout } from "../components/Layout"
 import { WorkspaceSettings } from "./components/WorkspaceSettings"
 import { AccountSettings } from "./components/AccountSettings"
 import { SuperAdminSettings } from "./components/SuperAdminSettings"
-import { data } from "../../data/data.js"
 import "./SettingsPage.css"
 
-export function SettingsPage({ currentUser }) {
-    // Determine which settings to show based on Role
+export function SettingsPage({ currentUser, refreshUser }) {
+    const [workspaceMembers, setWorkspaceMembers] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     const isSuperAdmin = currentUser?.role === 'ADMIN';
     const isOwner = currentUser?.role === 'OWNER';
-    const isMember = currentUser?.role === 'MEMBER';
+    
+    const fetchMembers = async () => {
+        if (!currentUser?.workspace?.id) return;
+        setWorkspaceMembers([]);
+        setIsLoading(true);
+        try {
+            const res = await fetch("http://localhost:5001/api/workspaces/members", {
+                credentials: "include"
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setWorkspaceMembers(data);
+            }
+        } catch (err) {
+            console.error("Error fetching workspace members:", err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    // Temporary data integration - in real app from currentUser
-    const loggedInUser = currentUser || data.users[0];
-    const workspace = data.workspaces[0];
+    useEffect(() => {
+        fetchMembers();
+    }, [currentUser?.workspace?.id]); 
 
-    const members = workspace.members.map(member => {
-        const user = data.users.find(u => u.id === member.userId);
-        return { ...member, user, active: true };
-    });
+    const handleUpdate = async () => {
+        if (refreshUser) await refreshUser();
+        await fetchMembers();
+    };
 
     const renderContent = () => {
         if (isSuperAdmin) return <SuperAdminSettings />;
-        if (isOwner) return <WorkspaceSettings workspace={workspace} members={members} />;
-        return <AccountSettings user={loggedInUser} />;
+        if (isOwner) return <WorkspaceSettings workspace={currentUser?.workspace} members={workspaceMembers} onUpdate={handleUpdate} />;
+        return <AccountSettings user={currentUser} onUpdate={refreshUser} />;
     };
 
     return (
-        <Layout currentUser={currentUser}>
+        <Layout currentUser={currentUser} refreshUser={refreshUser}>
             <div className="settings-page-wrapper">
-                {renderContent()}
+                {isLoading && isOwner ? (
+                    <div className="loading-state">Loading settings...</div>
+                ) : (
+                    renderContent()
+                )}
             </div>
         </Layout>
     );

@@ -10,6 +10,7 @@ import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import invitationRoutes from "./routes/invitationRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 config();
 
@@ -28,5 +29,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/invitations", invitationRoutes);
 app.use("/api/workspaces", workspaceRoutes);
+app.use("/api/admin", adminRoutes);
 
 export default app;

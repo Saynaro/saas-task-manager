@@ -30,6 +30,10 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
     useEffect(() => {
         if (isOpen) {
             const fetchMembers = async () => {
+                if (!currentUser?.workspace?.id) {
+                    setWorkspaceMembers([]);
+                    return;
+                }
                 try {
                     const res = await fetch("http://localhost:5001/api/workspaces/members", {
                         credentials: "include"
@@ -181,7 +185,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>{mode === 'create' ? 'Create Task' : 'Update Task'}</h2>
+                    <h2>{mode === 'create' ? 'Create Project' : 'Update Project'}</h2>
                     <div className="modal-header-right">
                         {mode === 'update' && !isReadOnly && (
                             <button className="delete-task-btn" onClick={() => setIsConfirmOpen(true)}>
@@ -312,7 +316,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                             {taskData.checklist.map((item, index) => (
                                 <div key={item.id} className="checklist-item">
                                     <div className="checklist-item-left">
-                                        {currentUser?.role !== 'OWNER' && (
+                                        {currentUser?.role === 'MEMBER' && (
                                             <input
                                                 type="checkbox"
                                                 checked={item.completed}

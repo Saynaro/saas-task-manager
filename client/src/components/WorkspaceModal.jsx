@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Mail, Globe, Palette, AlignLeft, Image as ImageIcon } from 'lucide-react';
+import { X, Plus, Mail, Globe, Palette, AlignLeft, Image as ImageIcon, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import './WorkspaceModal.css';
 
-export function WorkspaceModal({ isOpen, onClose }) {
+export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
     const [formData, setFormData] = useState({
         name: '',
         slug: '',
@@ -65,6 +66,54 @@ export function WorkspaceModal({ isOpen, onClose }) {
             ...formData,
             invites: formData.invites.filter(e => e !== email)
         });
+    };
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = async () => {
+        if (!formData.name || !formData.slug) {
+            toast.error("Please fill in name and slug");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            // 1. Create Workspace
+            const res = await fetch("http://localhost:5001/api/workspaces", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(formData)
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                const newWsId = data.data?.id; // backend should return the workspace object in data.data
+
+                toast.success("Workspace created successfully!");
+                
+                // 2. Automatically select the new workspace
+                if (newWsId) {
+                    await fetch("http://localhost:5001/api/auth/select-workspace", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ workspaceId: newWsId })
+                    });
+                }
+
+                if (onUpdate) await onUpdate();
+                onClose();
+            } else {
+                const data = await res.json();
+                toast.error(data.error || "Failed to create workspace");
+            }
+        } catch (err) {
+            console.error("Create workspace error:", err);
+            toast.error("Network error");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (!isOpen) return null;
@@ -169,8 +218,13 @@ export function WorkspaceModal({ isOpen, onClose }) {
 
                 <div className="modal-footer">
                     <button className="cancel-btn" onClick={onClose}>Cancel</button>
-                    <button className="workspace-submit-btn" style={{ backgroundColor: formData.color }}>
-                        Create Workspace
+                    <button 
+                        className="workspace-submit-btn" 
+                        style={{ backgroundColor: formData.color }}
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : 'Create Workspace'}
                     </button>
                 </div>
             </div>

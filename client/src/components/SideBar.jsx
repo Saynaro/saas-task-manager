@@ -13,6 +13,14 @@ const navLinks = [
 export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
+    // Filter nav links based on role
+    const filteredNavLinks = navLinks.filter(link => {
+        if (currentUser?.role === 'ADMIN') {
+            return link.name === 'Dashboard'; // Only Dashboard for System Admins
+        }
+        return true;
+    });
+
     const handleLogout = async () => {
         try {
             await fetch('http://localhost:5001/api/auth/logout', { 
@@ -39,7 +47,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                     </div>
 
                     <div className="sidebar-action-container">
-                        {currentUser?.role !== 'MEMBER' && (
+                        {(currentUser?.role === 'OWNER' || (currentUser?.role !== 'MEMBER' && currentUser?.workspace)) && (
                             <button className="sidebar-create-btn" onClick={openCreateModal}>
                                 <Plus size={18} />
                                 <span>Create Project</span>
@@ -48,7 +56,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                     </div>
 
                     <ul>
-                        {navLinks.map((link) => {
+                        {filteredNavLinks.map((link) => {
                             const IconComponent = link.icon;
 
                             return (

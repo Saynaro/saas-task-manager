@@ -60,6 +60,7 @@ export const register = async (req, res) => {
                     data: {
                         name: `${firstname}'s Workspace`,
                         slug: `${firstname.toLowerCase()}-${newUser.id.slice(0, 5)}`,
+                        creatorId: newUser.id,
                         members: {
                             create: {
                                 userId: newUser.id,
@@ -215,14 +216,14 @@ export const getMe = async (req, res) => {
 
 export const updateMe = async (req, res) => {
     try {
-        const { firstname, lastname, email, avatarUrl } = req.body;
+        const { firstName, lastName, email, avatarUrl, jobTitle, bio } = req.body;
         const userId = req.user.id;
 
         const updatedUser = await prisma.user.update({
             where: { id: userId },
             data: {
-                firstName: firstname,
-                lastName: lastname,
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 avatarUrl: avatarUrl
             }
@@ -243,5 +244,27 @@ export const updateMe = async (req, res) => {
     } catch (error) {
         console.error("UPDATE ME ERROR:", error);
         res.status(500).json({ error: "Could not update profile" });
+    }
+};
+
+export const selectWorkspace = async (req, res) => {
+    try {
+        const { workspaceId } = req.body;
+        
+        res.cookie("activeWorkspace", workspaceId, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            path: "/"
+        });
+
+        res.status(200).json({
+            status: "success",
+            message: "Workspace selected"
+        });
+    } catch (error) {
+        console.error("SELECT WORKSPACE ERROR:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 };

@@ -7,50 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  OWNER
-  ADMIN
-  MEMBER
-}
-
-enum TaskStatus {
-  TODO
-  IN_PROGRESS
-  DONE
-}
-
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-enum InvitationStatus {
-  PENDING
-  ACCEPTED
-  DECLINED
-}
-
 model User {
-  id              String            @id @default(uuid())
-  email           String            @unique
-  avatarUrl       String?
-  createdAt       DateTime          @default(now())
-  firstName       String?
-  lastName        String?
-  passwordHash    String
-  updatedAt       DateTime          @updatedAt
-  role            Role              @default(MEMBER)
-  activities      ActivityLog[]
-  comments        Comment[]
-  createdProjects Project[]         @relation("ProjectCreator")
-  projects        ProjectMember[]
-  assignedTasks   Task[]            @relation("TaskAssignee")
-  createdTasks    Task[]            @relation("TaskCreator")
-  workspaces      WorkspaceMember[]
-
-  sentInvitations     Invitation[] @relation("SentInvitations")
-  receivedInvitations Invitation[] @relation("ReceivedInvitations")
+  id                  String            @id @default(uuid())
+  email               String            @unique
+  avatarUrl           String?
+  createdAt           DateTime          @default(now())
+  firstName           String?
+  lastName            String?
+  passwordHash        String
+  updatedAt           DateTime          @updatedAt
+  role                Role              @default(MEMBER)
+  activities          ActivityLog[]
+  comments            Comment[]
+  sentInvitations     Invitation[]      @relation("SentInvitations")
+  receivedInvitations Invitation[]      @relation("ReceivedInvitations")
+  createdProjects     Project[]         @relation("ProjectCreator")
+  projects            ProjectMember[]
+  assignedTasks       Task[]            @relation("TaskAssignee")
+  createdTasks        Task[]            @relation("TaskCreator")
+  createdWorkspaces   Workspace[]       @relation("WorkspaceCreator")
+  workspaces          WorkspaceMember[]
 }
 
 model Workspace {
@@ -58,11 +34,13 @@ model Workspace {
   name        String
   slug        String            @unique
   createdAt   DateTime          @default(now())
+  creatorId   String?
   activities  ActivityLog[]
+  invitations Invitation[]
   projects    Project[]
   tasks       Task[]
+  creator     User?             @relation("WorkspaceCreator", fields: [creatorId], references: [id])
   members     WorkspaceMember[]
-  invitations Invitation[]
 }
 
 model WorkspaceMember {
@@ -150,20 +128,41 @@ model ActivityLog {
 }
 
 model Invitation {
-  id        String           @id @default(uuid())
-  email     String
-  role      Role             @default(MEMBER)
-  status    InvitationStatus @default(PENDING)
-  createdAt DateTime         @default(now())
-
+  id          String           @id @default(uuid())
+  email       String
+  role        Role             @default(MEMBER)
+  status      InvitationStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  inviterId String
-  inviter   User   @relation("SentInvitations", fields: [inviterId], references: [id])
-
-  userId   String?
-  receiver User?   @relation("ReceivedInvitations", fields: [userId], references: [id])
+  inviterId   String
+  userId      String?
+  inviter     User             @relation("SentInvitations", fields: [inviterId], references: [id])
+  receiver    User?            @relation("ReceivedInvitations", fields: [userId], references: [id])
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([email, workspaceId])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }

@@ -9,41 +9,59 @@ import { TaskModal } from '../components/TaskModal';
 
 import './HomePage.css';
 
-export function HomePage({ currentUser }) {
+export function HomePage({ currentUser, refreshUser }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Map workspaces to flatten projects and inject the workspace metadata
 
     const [projects, setProjects] = useState([]);
-
+    const [adminStats, setAdminStats] = useState(null);
 
     useEffect(() => {
-        const fetchProjects = async () => {
-            const response = await fetch("http://localhost:5001/api/projects", {
-                credentials: "include"
-            });
-            if (!response.ok) {
-                throw new Error("Failed to fetch projects");
+        const fetchData = async () => {
+            if (currentUser?.role === 'ADMIN') {
+                try {
+                    const res = await fetch("http://localhost:5001/api/admin/stats", {
+                        credentials: "include"
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setAdminStats(data);
+                    }
+                } catch (err) {
+                    console.error("Admin stats fetch error:", err);
+                }
+            } else {
+                setProjects([]); // Clear old projects
+                try {
+                    const response = await fetch("http://localhost:5001/api/projects", {
+                        credentials: "include"
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        setProjects(data.data || []);
+                    }
+                } catch (err) {
+                    console.error("Projects fetch error:", err);
+                }
             }
-            const data = await response.json();
-            setProjects(data.data || []);
         };
 
-        fetchProjects();
-    }, []);
+        fetchData();
+    }, [currentUser?.workspace?.id, currentUser?.role]);
 
     const handleProjectCreated = (newProject) => {
         setProjects(prev => [newProject, ...prev]);
     };
 
     return (
-        <Layout currentUser={currentUser} onSuccess={handleProjectCreated}>
+        <Layout currentUser={currentUser} onSuccess={handleProjectCreated} refreshUser={refreshUser}>
             <div className="content-header">
                 <div>
                     <h1>Overview</h1>
                     <p className='overview-text'>Here's what's happening with your projects today.</p>
                 </div>
-                {currentUser?.role !== 'MEMBER' && (
+                {(currentUser?.role === 'OWNER' || (currentUser?.role !== 'MEMBER' && currentUser?.workspace)) && (
                     <button className="add-task-btn" onClick={() => setIsModalOpen(true)}>
                         <Plus size={18} />
                         <span>New project</span>
@@ -52,15 +70,17 @@ export function HomePage({ currentUser }) {
             </div>
 
             {/* cards */}
-            <Cards projects={projects} />
+            <Cards projects={projects} stats={adminStats} />
 
-            <div className="second-container">
-                {/* Section des projets */}
-                <ActiveProjects projects={projects} />
+            {currentUser?.role !== 'ADMIN' && (
+                <div className="second-container">
+                    {/* Section des projets */}
+                    <ActiveProjects projects={projects} />
 
-                {/* Section tasks */}
-                <RecentTasks projects={projects} />
-            </div>
+                    {/* Section tasks */}
+                    <RecentTasks projects={projects} />
+                </div>
+            )}
 
             <TaskModal
                 isOpen={isModalOpen}

@@ -15,7 +15,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchCurrentUser = async () => {
-    setIsLoading(true);
+    if (!currentUser) setIsLoading(true);
     try {
       const response = await fetch("http://localhost:5001/api/auth/me", {
         credentials: "include",
@@ -57,11 +57,11 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<HomePage currentUser={currentUser} />} />
-        <Route path='/tasks' element={<TasksPage currentUser={currentUser} />} />
-        <Route path='/settings' element={<SettingsPage currentUser={currentUser} />} />
-        <Route path='/activity' element={<ActivityPage currentUser={currentUser} />} />
-        <Route path='/team' element={<TeamPage currentUser={currentUser} />} />
+        <Route path="/" element={<HomePage currentUser={currentUser} refreshUser={fetchCurrentUser} />} />
+        <Route path='/tasks' element={<TasksPage currentUser={currentUser} refreshUser={fetchCurrentUser} />} />
+        <Route path='/settings' element={<SettingsPage currentUser={currentUser} refreshUser={fetchCurrentUser} />} />
+        <Route path='/activity' element={<ActivityPage currentUser={currentUser} refreshUser={fetchCurrentUser} />} />
+        <Route path='/team' element={<TeamPage currentUser={currentUser} refreshUser={fetchCurrentUser} />} />
         <Route path='/register' element={<RegisterPage onLoginSuccess={handleLoginSuccess} />} />
         <Route path='/login' element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
       </Routes>

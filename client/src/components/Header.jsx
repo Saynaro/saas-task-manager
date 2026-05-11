@@ -1,15 +1,45 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Bell, Check, X, Loader2 } from 'lucide-react';
+import { Menu, Bell, Check, X, Loader2, Plus, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { WorkspaceModal } from './WorkspaceModal';
 import './Header.css';
 
-export function Header({ toggleMenu, openWorkspaceModal, currentUser }) {
+export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUser }) {
     const [invitations, setInvitations] = useState([]);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const [isWsSelectorOpen, setIsWsSelectorOpen] = useState(false);
     const [loadingIds, setLoadingIds] = useState(new Set());
+    const [isSwitching, setIsSwitching] = useState(false);
     const notifRef = useRef(null);
+    const wsRef = useRef(null);
 
     const userRole = currentUser?.role || 'USER';
+
+    const handleWorkspaceSelect = async (workspaceId) => {
+        if (workspaceId === currentUser?.workspace?.id) return;
+        
+        setIsSwitching(true);
+        try {
+            const res = await fetch("http://localhost:5001/api/auth/select-workspace", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ workspaceId })
+            });
+
+            if (res.ok) {
+                if (refreshUser) await refreshUser();
+                setIsWsSelectorOpen(false);
+            } else {
+                toast.error("Failed to switch workspace");
+            }
+        } catch (err) {
+            console.error("Switch workspace error:", err);
+            toast.error("Network error");
+        } finally {
+            setIsSwitching(false);
+        }
+    };
 
     useEffect(() => {
         const fetchInvitations = async () => {
@@ -38,6 +68,9 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser }) {
         const handleClickOutside = (event) => {
             if (notifRef.current && !notifRef.current.contains(event.target)) {
                 setIsNotifOpen(false);
+            }
+            if (wsRef.current && !wsRef.current.contains(event.target)) {
+                setIsWsSelectorOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -81,8 +114,47 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser }) {
                     <Menu size={24} color="#4f566b" />
                 </button>
 
-                <div className="workspace">
-                    <h3>{currentUser?.workspace?.name || 'Your Workspace'}</h3>
+                <div className="workspace" ref={wsRef}>
+                    {currentUser?.workspace ? (
+                        <>
+                            <div 
+                                className="workspace-selector-trigger clickable"
+                                onClick={() => setIsWsSelectorOpen(!isWsSelectorOpen)}
+                            >
+                                <h3>{currentUser.workspace.name}</h3>
+                                <ChevronDown size={16} className={`chevron-icon ${isWsSelectorOpen ? 'open' : ''}`} />
+                            </div>
+
+                            {isWsSelectorOpen && (
+                                <div className="workspace-dropdown">
+                                    <div className="dropdown-label">Switch Workspace</div>
+                                    <div className="workspace-list">
+                                        {currentUser.allWorkspaces.map(ws => (
+                                            <div 
+                                                key={ws.id} 
+                                                className={`workspace-item ${ws.id === currentUser.workspace.id ? 'active' : ''}`}
+                                                onClick={() => handleWorkspaceSelect(ws.id)}
+                                            >
+                                                <div className="ws-dot" />
+                                                <span className="ws-name">{ws.name}</span>
+                                                {ws.id === currentUser.workspace.id && <Check size={14} className="check-icon" />}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="dropdown-divider" />
+                                    <button className="dropdown-action-btn" onClick={() => { openWorkspaceModal(); setIsWsSelectorOpen(false); }}>
+                                        <Plus size={14} />
+                                        Create New Workspace
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <button className="create-ws-header-btn" onClick={() => openWorkspaceModal()}>
+                            <Plus size={16} />
+                            Create workspace
+                        </button>
+                    )}
                 </div>
             </div>
             

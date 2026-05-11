@@ -40,11 +40,32 @@ export const authMiddleware = async (req, res, next) => {
             return res.status(401).json({ error: "User no longer exists" });
         };
 
-        // Attach primary workspace if exists
-        const primaryWorkspace = user.workspaces?.[0]?.workspace;
+        // Active workspace selection logic
+        const selectedWsId = req.cookies?.activeWorkspace;
+        let primaryWorkspace;
+
+        if (selectedWsId) {
+            primaryWorkspace = user.workspaces.find(ws => ws.workspaceId === selectedWsId)?.workspace;
+        }
+
+        // Fallback to first if not selected or selection invalid
+        if (!primaryWorkspace) {
+            primaryWorkspace = user.workspaces?.[0]?.workspace;
+        }
+
         req.user = {
-            ...user,
-            workspace: primaryWorkspace
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatarUrl: user.avatarUrl,
+            role: user.role,
+            workspace: primaryWorkspace,
+            allWorkspaces: user.workspaces.map(w => ({
+                id: w.workspace.id,
+                name: w.workspace.name,
+                role: w.role
+            }))
         };
 
         next();

@@ -1,9 +1,87 @@
-import { useState } from 'react';
-import { Building, Users, CreditCard, Grid, UserPlus, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Building, Users, CreditCard, Grid, UserPlus, Trash2, Loader2, Mail } from 'lucide-react';
+import { ConfirmationModal } from '../../components/ConfirmationModal';
+import toast from 'react-hot-toast';
 import './Settings.css';
 
-export function WorkspaceSettings({ workspace, members }) {
+export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const [activeTab, setActiveTab] = useState('identity');
+    const [isSaving, setIsSaving] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
+    const [formData, setFormData] = useState({
+        name: workspace?.name || '',
+        slug: workspace?.slug || ''
+    });
+
+    useEffect(() => {
+        if (workspace) {
+            setFormData({
+                name: workspace.name || '',
+                slug: workspace.slug || ''
+            });
+        }
+    }, [workspace]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSaveIdentity = async () => {
+        setIsSaving(true);
+        try {
+            const res = await fetch('http://localhost:5001/api/workspaces/update', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(formData)
+            });
+
+            if (res.ok) {
+                toast.success('Workspace updated successfully!');
+                if (onUpdate) onUpdate();
+            } else {
+                const data = await res.json();
+                toast.error(data.error || 'Failed to update workspace');
+            }
+        } catch (err) {
+            console.error('Update workspace failed:', err);
+            toast.error('Network error');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const openDeleteModal = (member) => {
+        setUserToDelete(member);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleDeleteMember = async () => {
+        if (!userToDelete) return;
+        
+        try {
+            const res = await fetch(`http://localhost:5001/api/workspaces/members/${userToDelete.id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (res.ok) {
+                toast.success('Member removed from workspace');
+                if (onUpdate) await onUpdate(); // Refresh whole user/settings context
+            } else {
+                const data = await res.json();
+                toast.error(data.error || 'Failed to remove member');
+            }
+        } catch (err) {
+            console.error('Delete member error:', err);
+            toast.error('Error occurred');
+        } finally {
+            setIsDeleteModalOpen(false);
+            setUserToDelete(null);
+        }
+    };
 
     const tabs = [
         { id: 'identity', label: 'Workspace Identity', icon: Building },
@@ -14,6 +92,16 @@ export function WorkspaceSettings({ workspace, members }) {
 
     return (
         <div className="settings-container">
+            <ConfirmationModal 
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteMember}
+                title="Remove Member"
+                message={`Are you sure you want to remove ${userToDelete?.fullName} from the workspace? They will lose access to all projects and tasks.`}
+                confirmText="Remove"
+                confirmVariant="danger"
+            />
+
             <div className="settings-page-header">
                 <div>
                     <h2 className="settings-page-title">Workspace Settings</h2>
@@ -66,19 +154,37 @@ export function WorkspaceSettings({ workspace, members }) {
 
                                 <div className="settings-form-group">
                                     <label>Workspace Name</label>
-                                    <input type="text" defaultValue={workspace.name} className="settings-input" />
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        className="settings-input"
+                                    />
                                 </div>
                                 <div className="settings-form-group">
                                     <label>Workspace URL</label>
                                     <div className="settings-url-row">
                                         <span className="settings-url-prefix">app.saaspro.com/</span>
-                                        <input type="text" defaultValue={workspace.slug} className="settings-url-input" />
+                                        <input
+                                            type="text"
+                                            name="slug"
+                                            value={formData.slug}
+                                            onChange={handleInputChange}
+                                            className="settings-url-input"
+                                        />
                                     </div>
                                 </div>
                             </div>
                             <div className="settings-actions-bar">
-                                <button className="settings-cancel-btn">Cancel</button>
-                                <button className="settings-primary-btn">Save Identity</button>
+                                <button className="settings-cancel-btn" onClick={() => setFormData({ name: workspace.name, slug: workspace.slug })}>Cancel</button>
+                                <button
+                                    className="settings-primary-btn"
+                                    onClick={handleSaveIdentity}
+                                    disabled={isSaving}
+                                >
+                                    {isSaving ? <><Loader2 size={16} className="animate-spin" /> Saving...</> : 'Save Identity'}
+                                </button>
                             </div>
                         </div>
                     )}
@@ -112,27 +218,35 @@ export function WorkspaceSettings({ workspace, members }) {
                                             <tr key={m.id}>
                                                 <td>
                                                     <div className="settings-user-cell">
-                                                        <img src={`https://i.pravatar.cc/150?u=${m.user?.firstName || 'default'}`} alt="avatar" />
+                                                        <img src={m.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.fullName)}&background=random`} alt="avatar" />
                                                         <div className="settings-user-info">
-                                                            <strong>{m.user?.firstName} {m.user?.lastName}</strong>
-                                                            <span>{m.user?.email}</span>
+                                                            <strong>{m.fullName}</strong>
+                                                            <span>{m.email}</span>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span className={`settings-role-badge ${m.role === 'OWNER' ? 'settings-role-owner' : 'settings-role-member'}`}>
-                                                        {m.role === 'OWNER' ? 'Owner' : 'Member'}
+                                                    <span className={`settings-role-badge ${m.isCreator ? 'settings-role-owner' : (m.role === 'OWNER' ? 'settings-role-admin' : 'settings-role-member')}`}>
+                                                        {m.isCreator ? 'Owner' : (m.role === 'OWNER' ? 'Admin' : 'Member')}
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <div className="settings-status-cell">
-                                                        <span className={`settings-status-dot ${m.active !== false ? 'settings-dot-active' : 'settings-dot-invited'}`}></span>
-                                                        {m.active !== false ? 'Active' : 'Invited'}
+                                                        <span className={`settings-status-dot settings-dot-active`}></span>
+                                                        Active
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <button className="settings-delete-btn"><Trash2 size={15} /></button>
-                                                </td>
+                                                     {!m.isCreator && (
+                                                         <button 
+                                                             className="settings-delete-btn"
+                                                             onClick={() => openDeleteModal(m)}
+                                                             title="Remove member"
+                                                         >
+                                                             <Trash2 size={15} />
+                                                         </button>
+                                                     )}
+                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>

@@ -5,7 +5,7 @@ import { TaskModal } from './TaskModal';
 import { WorkspaceModal } from './WorkspaceModal';
 import './Layout.css';
 
-export function Layout({ children, currentUser, onSuccess }) {
+export function Layout({ children, currentUser, onSuccess, refreshUser }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [isWorkspaceModalOpen, setIsWorkspaceModalOpen] = useState(false);
@@ -37,6 +37,7 @@ export function Layout({ children, currentUser, onSuccess }) {
                     toggleMenu={toggleMenu}
                     openWorkspaceModal={openWorkspaceModal}
                     currentUser={currentUser}
+                    refreshUser={refreshUser}
                 />
                 <main className="content">
                     {children}
@@ -55,6 +56,7 @@ export function Layout({ children, currentUser, onSuccess }) {
                 isOpen={isWorkspaceModalOpen}
                 onClose={() => setIsWorkspaceModalOpen(false)}
                 currentUser={currentUser}
+                onUpdate={refreshUser}
             />
         </div>
     );
