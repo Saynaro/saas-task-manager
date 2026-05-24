@@ -374,3 +374,51 @@ export const selectWorkspace = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+export const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user?.id;
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ message: "Both current password and new password are required" });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const isPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: "Invalid current password" });
+        }
+
+        if (!passwordRegex.test(newPassword)) {
+            return res.status(400).json({ message: "Password must be at least 8 characters long, contain 1 uppercase letter, 1 lowercase letter, and 1 number" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: { passwordHash: hashedPassword }
+        });
+
+        res.status(200).json({
+            status: "success",
+            message: "Password updated successfully"
+        });
+    } catch (error) {
+        console.error("CHANGE PASSWORD ERROR:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};

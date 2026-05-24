@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Lock, LogOut, Loader2 } from 'lucide-react';
+import { User, Lock, LogOut, Loader2, Eye, EyeOff } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../utils/apiFetch';
@@ -16,6 +16,74 @@ export function AccountSettings({ user, onUpdate }) {
         bio: ''       // Placeholder
     });
     const [isSaving, setIsSaving] = useState(false);
+
+    // Password Update States
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: ''
+    });
+    const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleUpdatePassword = async () => {
+        if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmNewPassword) {
+            toast.error('All password fields are required');
+            return;
+        }
+
+        if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+            toast.error('New passwords do not match');
+            return;
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(passwordData.newPassword)) {
+            toast.error('Password must be at least 8 characters long, contain 1 uppercase letter, 1 lowercase letter, and 1 number');
+            return;
+        }
+
+        setIsUpdatingPassword(true);
+        try {
+            const res = await apiFetch('http://localhost:5001/api/auth/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    currentPassword: passwordData.currentPassword,
+                    newPassword: passwordData.newPassword
+                })
+            });
+
+            if (res.ok) {
+                toast.success('Password updated successfully!');
+                setPasswordData({
+                    currentPassword: '',
+                    newPassword: '',
+                    confirmNewPassword: ''
+                });
+                // Reset eye states
+                setShowCurrentPassword(false);
+                setShowNewPassword(false);
+                setShowConfirmNewPassword(false);
+            } else {
+                const data = await res.json();
+                toast.error(data.message || data.error || 'Failed to update password');
+            }
+        } catch (err) {
+            console.error('Password update error:', err);
+            toast.error('Network error');
+        } finally {
+            setIsUpdatingPassword(false);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -201,19 +269,76 @@ export function AccountSettings({ user, onUpdate }) {
                             <div className="settings-card-body">
                                 <div className="settings-form-group">
                                     <label>Current Password</label>
-                                    <input type="password" placeholder="Enter current password" className="settings-input" />
+                                    <div className="password-wrapper">
+                                        <input 
+                                            type={showCurrentPassword ? "text" : "password"} 
+                                            name="currentPassword"
+                                            placeholder="Enter current password" 
+                                            className="settings-input" 
+                                            value={passwordData.currentPassword}
+                                            onChange={handlePasswordChange}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="password-toggle"
+                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                            aria-label="Toggle password visibility"
+                                        >
+                                            {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="settings-form-group">
                                     <label>New Password</label>
-                                    <input type="password" placeholder="Enter new password" className="settings-input" />
+                                    <div className="password-wrapper">
+                                        <input 
+                                            type={showNewPassword ? "text" : "password"} 
+                                            name="newPassword"
+                                            placeholder="Enter new password" 
+                                            className="settings-input" 
+                                            value={passwordData.newPassword}
+                                            onChange={handlePasswordChange}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="password-toggle"
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            aria-label="Toggle password visibility"
+                                        >
+                                            {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="settings-form-group">
                                     <label>Confirm New Password</label>
-                                    <input type="password" placeholder="Confirm new password" className="settings-input" />
+                                    <div className="password-wrapper">
+                                        <input 
+                                            type={showConfirmNewPassword ? "text" : "password"} 
+                                            name="confirmNewPassword"
+                                            placeholder="Confirm new password" 
+                                            className="settings-input" 
+                                            value={passwordData.confirmNewPassword}
+                                            onChange={handlePasswordChange}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="password-toggle"
+                                            onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                                            aria-label="Toggle password visibility"
+                                        >
+                                            {showConfirmNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div className="settings-actions-bar">
-                                <button className="settings-primary-btn">Update Password</button>
+                                <button 
+                                    className="settings-primary-btn"
+                                    onClick={handleUpdatePassword}
+                                    disabled={isUpdatingPassword}
+                                >
+                                    {isUpdatingPassword ? <><Loader2 size={16} className="animate-spin" /> Updating...</> : 'Update Password'}
+                                </button>
                             </div>
                         </div>
                     )}

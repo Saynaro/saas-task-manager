@@ -519,3 +519,27 @@
     background: #fdf2f8;
     color: #be185d;
 }
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    padding: 4px;
+}
+

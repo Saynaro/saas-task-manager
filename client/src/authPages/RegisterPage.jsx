@@ -135,7 +135,7 @@ export function RegisterPage({ onLoginSuccess }) {
                 className={isEmailInvalid ? "invalid-input" : ""}
                 required
               />
-              {isEmailInvalid && <span className="error-text">Check email email format.</span>}
+              {isEmailInvalid && <span className="error-text">Неверный формат электронной почты.</span>}
             </div>
             <div className="form-group">
               <label htmlFor="reg-invite">Invite Code</label>
@@ -186,9 +186,9 @@ export function RegisterPage({ onLoginSuccess }) {
               </button>
             </div>
             {isPasswordInvalid ? (
-              <span className="error-text">Must be at least 8 characters and contain 1 uppercase, 1 lowercase, and 1 number.</span>
+              <span className="error-text">Пароль должен содержать не менее 8 символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.</span>
             ) : (
-              <span className="form-hint">Must be at least 8 characters.</span>
+              <span className="form-hint">Не менее 8 символов.</span>
             )}
           </div>
 

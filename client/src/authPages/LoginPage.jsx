@@ -43,7 +43,11 @@ export function LoginPage({ onLoginSuccess }) {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || data.error || "Login failed");
+        if (data.error === "Invalid email or password" || data.message === "Invalid email or password" || response.status === 401) {
+          toast.error("Invalid email or password");
+        } else {
+          toast.error(data.message || data.error || "Login failed");
+        }
         return;
       }
 
@@ -98,7 +102,7 @@ export function LoginPage({ onLoginSuccess }) {
               autoComplete="email"
               className={isEmailInvalid ? "invalid-input" : ""}
             />
-            {isEmailInvalid && <span className="error-text">Please enter a valid email address.</span>}
+            {isEmailInvalid && <span className="error-text">Пожалуйста, введите корректный адрес электронной почты.</span>}
           </div>
 
           <div className="form-group">
@@ -137,7 +141,7 @@ export function LoginPage({ onLoginSuccess }) {
               </button>
             </div>
             {isPasswordInvalid && (
-              <span className="error-text" style={{ marginTop: '4px' }}>Password does not meet requirements. 8+ characters, 1 uppercase, 1 lowercase, and 1 number.</span>
+              <span className="error-text" style={{ marginTop: '4px' }}>Пароль должен содержать не менее 8 символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.</span>
             )}
           </div>
 

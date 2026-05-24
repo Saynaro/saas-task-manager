@@ -28,14 +28,47 @@ export const getWorkspaceMembers = async (req, res) => {
             }
         });
 
-        // Format response
-        const formattedMembers = members.map(m => ({
-            id: m.user.id,
-            fullName: `${m.user.firstName || ''} ${m.user.lastName || ''}`.trim() || m.user.email,
-            email: m.user.email,
-            avatarUrl: m.user.avatarUrl,
-            role: m.role,
-            isCreator: m.user.id === m.workspace.creatorId
+        // Format response and calculate stats
+        const formattedMembers = await Promise.all(members.map(async (m) => {
+            const [pendingCount, inProgressCount, completedCount] = await Promise.all([
+                prisma.project.count({
+                    where: {
+                        workspaceId,
+                        status: 'TODO',
+                        members: {
+                            some: { userId: m.user.id }
+                        }
+                    }
+                }),
+                prisma.project.count({
+                    where: {
+                        workspaceId,
+                        status: 'IN_PROGRESS',
+                        members: {
+                            some: { userId: m.user.id }
+                        }
+                    }
+                }),
+                prisma.task.count({
+                    where: {
+                        workspaceId,
+                        assigneeId: m.user.id,
+                        status: 'DONE'
+                    }
+                })
+            ]);
+
+            return {
+                id: m.user.id,
+                fullName: `${m.user.firstName || ''} ${m.user.lastName || ''}`.trim() || m.user.email,
+                email: m.user.email,
+                avatarUrl: m.user.avatarUrl,
+                role: m.role,
+                isCreator: m.user.id === m.workspace.creatorId,
+                pending: pendingCount,
+                inProgress: inProgressCount,
+                completed: completedCount
+            };
         }));
 
         res.status(200).json(formattedMembers);

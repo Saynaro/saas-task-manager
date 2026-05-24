@@ -200,16 +200,41 @@ export const updateProject = async (req, res) => {
 
             //  Update tasks (Checklist)
             if (tasks !== undefined) {
+                const existingTasks = await tx.task.findMany({ where: { projectId: id } });
+                
+                const tasksToCreate = tasks.map((t, index) => {
+                    const matchedTask = existingTasks.find(et => et.id === t.id || et.title === t.title);
+                    
+                    let assigneeId = null;
+                    if (matchedTask) {
+                        if (matchedTask.status === 'TODO' && t.status === 'DONE') {
+                            assigneeId = userId;
+                        } else if (matchedTask.status === 'DONE' && t.status === 'TODO') {
+                            assigneeId = null;
+                        } else {
+                            assigneeId = matchedTask.assigneeId;
+                        }
+                    } else {
+                        if (t.status === 'DONE') {
+                            assigneeId = userId;
+                        }
+                    }
+
+                    return {
+                        title: t.title,
+                        status: t.status || "TODO",
+                        projectId: id,
+                        creatorId: matchedTask ? matchedTask.creatorId : userId,
+                        assigneeId: assigneeId,
+                        order: index * 1000,
+                        workspaceId: project.workspaceId
+                    };
+                });
+
                 await tx.task.deleteMany({ where: { projectId: id } });
-                if (tasks.length > 0) {
+                if (tasksToCreate.length > 0) {
                     await tx.task.createMany({
-                        data: tasks.map((t, index) => ({
-                            title: t.title,
-                            status: t.status || "TODO",
-                            projectId: id,
-                            creatorId: userId,
-                            order: index * 1000
-                        }))
+                        data: tasksToCreate
                     });
                 }
             }
