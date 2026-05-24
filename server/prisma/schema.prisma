@@ -27,6 +27,16 @@ model User {
   createdTasks        Task[]            @relation("TaskCreator")
   createdWorkspaces   Workspace[]       @relation("WorkspaceCreator")
   workspaces          WorkspaceMember[]
+  refreshTokens       RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Workspace {
