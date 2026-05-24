@@ -30,7 +30,7 @@ export const generateRefreshToken = async (userId, res) => {
         },
     });
 
-    res.cookie("refreshToken", token, {
+    res.cookie("saas_refresh_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "Lax",

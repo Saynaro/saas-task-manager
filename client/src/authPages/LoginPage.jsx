@@ -49,10 +49,19 @@ export function LoginPage({ onLoginSuccess }) {
 
       //handle response
       if (response.ok) {
-        toast.success("Welcome back!");
-        onLoginSuccess?.(data.data.user);
         setAccessToken(data.data.accessToken);
-        window.location.href = "/";
+
+        // Fetch full profile (includes role, workspace, allWorkspaces)
+        const meRes = await fetch("http://localhost:5001/api/auth/me", {
+          credentials: "include",
+          headers: { "Authorization": `Bearer ${data.data.accessToken}` }
+        });
+        const meData = await meRes.json();
+        const fullUser = meData.data?.user || data.data.user;
+
+        toast.success("Welcome back!");
+        onLoginSuccess?.(fullUser);
+        navigate("/");
       }
       console.log(data);
     } catch (error) {

@@ -6,6 +6,7 @@ import { apiFetch } from '../../utils/apiFetch';
 import './Settings.css';
 
 export function AccountSettings({ user, onUpdate }) {
+    if (!user) return null;
     const [activeTab, setActiveTab] = useState('profile');
     const [isLogOutOpen, setIsLogOutOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -47,9 +48,9 @@ export function AccountSettings({ user, onUpdate }) {
 
     const handleLogout = async () => {
         try {
-            await apiFetch('http://localhost:5001/api/auth/logout', { 
-                method: 'POST', 
-                credentials: 'include' 
+            await apiFetch('http://localhost:5001/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
             });
             window.location.href = '/login';
         } catch (err) {
@@ -75,7 +76,7 @@ export function AccountSettings({ user, onUpdate }) {
                 </button>
             </div>
 
-            <ConfirmationModal 
+            <ConfirmationModal
                 isOpen={isLogOutOpen}
                 onClose={() => setIsLogOutOpen(false)}
                 onConfirm={handleLogout}
@@ -124,43 +125,43 @@ export function AccountSettings({ user, onUpdate }) {
                                 <div className="settings-form-row">
                                     <div className="settings-form-group">
                                         <label>First Name</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             name="firstName"
-                                            value={formData.firstName} 
+                                            value={formData.firstName}
                                             onChange={handleInputChange}
-                                            className="settings-input" 
+                                            className="settings-input"
                                         />
                                     </div>
                                     <div className="settings-form-group">
                                         <label>Last Name</label>
-                                        <input 
-                                            type="text" 
+                                        <input
+                                            type="text"
                                             name="lastName"
-                                            value={formData.lastName} 
+                                            value={formData.lastName}
                                             onChange={handleInputChange}
-                                            className="settings-input" 
+                                            className="settings-input"
                                         />
                                     </div>
                                 </div>
                                 <div className="settings-form-group">
                                     <label>Email Address</label>
-                                    <input 
-                                        type="email" 
-                                        value={user.email} 
+                                    <input
+                                        type="email"
+                                        value={user.email}
                                         disabled
-                                        className="settings-input disabled" 
+                                        className="settings-input disabled"
                                     />
                                     <span className="settings-lock-hint"><Lock size={12} /> Email cannot be changed here</span>
                                 </div>
                                 <div className="settings-form-group">
                                     <label>Job Title</label>
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         name="jobTitle"
-                                        value={formData.jobTitle} 
+                                        value={formData.jobTitle}
                                         onChange={handleInputChange}
-                                        className="settings-input" 
+                                        className="settings-input"
                                     />
                                 </div>
                                 <div className="settings-form-group">
@@ -175,8 +176,8 @@ export function AccountSettings({ user, onUpdate }) {
                             </div>
                             <div className="settings-actions-bar">
                                 <button className="settings-cancel-btn" onClick={() => setFormData({ firstName: user.firstName, lastName: user.lastName, jobTitle: '', bio: '' })}>Cancel</button>
-                                <button 
-                                    className="settings-primary-btn" 
+                                <button
+                                    className="settings-primary-btn"
                                     onClick={handleSave}
                                     disabled={isSaving}
                                 >

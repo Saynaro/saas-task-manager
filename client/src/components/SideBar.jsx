@@ -24,13 +24,14 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
 
     const handleLogout = async () => {
         try {
-            await apiFetch('http://localhost:5001/api/auth/logout', { 
-                method: 'POST', 
-                credentials: 'include' 
+            await fetch('http://localhost:5001/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
             });
-            window.location.href = '/login';
         } catch (err) {
             console.error('Logout failed:', err);
+        } finally {
+            window.location.href = '/login';
         }
     };
 
@@ -95,7 +96,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                 </div>
             </div>
 
-            <ConfirmationModal 
+            <ConfirmationModal
                 isOpen={isConfirmOpen}
                 onClose={() => setIsConfirmOpen(false)}
                 onConfirm={handleLogout}

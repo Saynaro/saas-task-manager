@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { prisma } from "../config/db.js";
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../utils/generateToken.js";
@@ -170,7 +171,7 @@ export const login = async (req, res) => {
 ///////// LOGOUT ////////
 export const logout = async (req, res) => {
     try {
-        const token = req.cookies?.refreshToken;
+        const token = req.cookies?.saas_refresh_token;
 
         if (token) {
             const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
@@ -192,17 +193,26 @@ export const logout = async (req, res) => {
                     break;
                 }
             }
-
-            if (!validToken) {
-                return res.status(401).json({
-                    error: "No valid refresh token found"
-                });
-            }
         }
-
     } catch (err) {
-        // token is invalid or expired - clean cookie
+        // token is invalid or expired - just log and continue to clean cookie
         console.error("Logout token error:", err.message);
+    } finally {
+        res.clearCookie("saas_refresh_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Lax",
+            path: "/"
+        });
+        
+        res.clearCookie("activeWorkspace", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Lax",
+            path: "/"
+        });
+
+        res.status(200).json({ status: "success", message: "Logged out successfully" });
     }
 };
 
@@ -211,7 +221,7 @@ export const logout = async (req, res) => {
 ///////// REFRESH ////////
 export const refresh = async (req, res) => {
 
-    const token = req.cookies?.refreshToken;
+    const token = req.cookies?.saas_refresh_token;
     if (!token) {
         return res.status(401).json({
             error: "No refresh token found"
@@ -227,7 +237,7 @@ export const refresh = async (req, res) => {
         const storedTokens = await prisma.refreshToken.findMany({
             where: {
                 userId: decoded.id,
-                expriesAt: {
+                expiresAt: {
                     gt: new Date()  // greater than current date
                 },
             },
@@ -252,17 +262,17 @@ export const refresh = async (req, res) => {
         }
 
 
-        // delete old token
+        // generate new tokens FIRST, then delete old one
+        // This way, if something fails mid-way, the old token still works
+        const accessToken = generateAccessToken(validToken.user.id, validToken.user.role);
+        await generateRefreshToken(validToken.user.id, res);
+
+        // delete old token only after new one is safely issued
         await prisma.refreshToken.delete({
             where: {
                 id: validToken.id
             }
         });
-
-
-        // generate new tokens
-        const accessToken = generateAccessToken(validToken.user.id, validToken.user.role);
-        await generateRefreshToken(validToken.user.id, res);
 
         res.status(200).json({
             status: "success",
@@ -270,6 +280,7 @@ export const refresh = async (req, res) => {
         });
 
     } catch (error) {
+        console.error("REFRESH ERROR:", error.message);
         return res.status(401).json({ error: "Invalid refresh token" });
     }
 }

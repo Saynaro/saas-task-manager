@@ -2,9 +2,9 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const data = [
-    { name: 'Pending', value: 11, color: '#8b5cf6' },    // Фиолетовый
-    { name: 'In Progress', value: 5, color: '#06b6d4' }, // Голубой
-    { name: 'Completed', value: 2, color: '#84cc16' },   // Зеленый
+    { name: 'Pending', value: 11, color: '#8b5cf6' },
+    { name: 'In Progress', value: 5, color: '#06b6d4' },
+    { name: 'Completed', value: 2, color: '#84cc16' },
 ];
 
 export const TaskDonutChart = () => {
@@ -16,14 +16,14 @@ export const TaskDonutChart = () => {
                 <PieChart>
                     <Pie
                         data={data}
-                        cx="50%"         // Центровка по горизонтали
-                        cy="50%"         // Центровка по вертикали
-                        innerRadius={60} // Радиус внутреннего отверстия
-                        outerRadius={80} // Внешний радиус
-                        paddingAngle={5} // Расстояние между сегментами
+                        cx="50%"         // center x
+                        cy="50%"         // center y
+                        innerRadius={60} // inner radius
+                        outerRadius={80} // outer radius
+                        paddingAngle={5} // padding angle
                         dataKey="value"
-                        stroke="none"    // Убираем белую обводку
-                        cornerRadius={10} // Закругление краев (доступно в новых версиях)
+                        stroke="none"    // remove white border
+                        cornerRadius={10} // corner radius
                     >
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
@@ -33,7 +33,7 @@ export const TaskDonutChart = () => {
                 </PieChart>
             </ResponsiveContainer>
 
-            {/* Кастомная легенда как на скрине */}
+            {/* custom legend */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '10px', fontFamily: 'sans-serif', fontSize: '14px' }}>
                 {data.map((item) => (
                     <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
