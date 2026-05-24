@@ -1,14 +1,11 @@
 import './RecentTasks.css';
-import { MoreHorizontal, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
-export function RecentTasks({ projects }) {
-    // Collect all tasks from all projects
-    const allTasks = projects.flatMap(project =>
-        project.tasks.map(task => ({
-            ...task,
-            projectName: project.name
-        }))
-    ).slice(0, 7); // Taking first 7 for "Recent"
+export function RecentTasks({ projects = [] }) {
+    // Sort projects by createdAt descending and take top 7
+    const recentProjects = [...projects]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 7);
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -20,7 +17,7 @@ export function RecentTasks({ projects }) {
     };
 
     const getPriorityColor = (priority) => {
-        switch (priority) {
+        switch (priority?.toUpperCase()) {
             case 'HIGH': return 'priority-high';
             case 'MEDIUM': return 'priority-medium';
             case 'LOW': return 'priority-low';
@@ -31,7 +28,7 @@ export function RecentTasks({ projects }) {
     return (
         <div className="recent-tasks-container">
             <div className="tasks-header">
-                <h3>Recent Tasks</h3>
+                <h3>Recent Projects</h3>
                 <button className="see-all-btn">
                     See All <ArrowRight size={14} />
                 </button>
@@ -42,38 +39,30 @@ export function RecentTasks({ projects }) {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Project</th>
+                            <th>Description</th>
                             <th>Status</th>
                             <th>Priority</th>
                             <th>Created at</th>
-                            {/* TODO: Add action column */}
-                            {/* <th className="text-right">Action</th> */}
                         </tr>
                     </thead>
                     <tbody>
-                        {allTasks.map(task => (
-                            <tr key={task.id}>
-                                <td className="task-name-cell">{task.title}</td>
-                                <td className="task-project-cell">{task.projectName}</td>
+                        {recentProjects.map(project => (
+                            <tr key={project.id}>
+                                <td className="task-name-cell">{project.name}</td>
+                                <td className="task-project-cell">{project.description || 'No description'}</td>
                                 <td>
-                                    <span className={`status-badge ${getStatusColor(task.status)}`}>
-                                        {task.status.replace('_', ' ')}
+                                    <span className={`status-badge ${getStatusColor(project.status)}`}>
+                                        {project.status.replace('_', ' ')}
                                     </span>
                                 </td>
                                 <td>
-                                    <span className={`priority-badge ${getPriorityColor(task.priority)}`}>
-                                        {task.priority}
+                                    <span className={`priority-badge ${getPriorityColor(project.priority)}`}>
+                                        {project.priority}
                                     </span>
                                 </td>
                                 <td>
-                                    {new Date(task.createdAt).toLocaleDateString()}
+                                    {new Date(project.createdAt).toLocaleDateString()}
                                 </td>
-                                {/* TODO: Add action column */}
-                                {/* <td className="text-right">
-                                    <button className="task-action-btn">
-                                        <MoreHorizontal size={18} />
-                                    </button>
-                                </td> */}
                             </tr>
                         ))}
                     </tbody>
