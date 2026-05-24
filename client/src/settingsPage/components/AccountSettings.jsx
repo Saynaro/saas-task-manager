@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { User, Lock, LogOut, Loader2 } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
+import { apiFetch } from '../../utils/apiFetch';
 import './Settings.css';
 
 export function AccountSettings({ user, onUpdate }) {
@@ -23,7 +24,7 @@ export function AccountSettings({ user, onUpdate }) {
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            const res = await fetch('http://localhost:5001/api/auth/me', {
+            const res = await apiFetch('http://localhost:5001/api/auth/me', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -46,7 +47,7 @@ export function AccountSettings({ user, onUpdate }) {
 
     const handleLogout = async () => {
         try {
-            await fetch('http://localhost:5001/api/auth/logout', { 
+            await apiFetch('http://localhost:5001/api/auth/logout', { 
                 method: 'POST', 
                 credentials: 'include' 
             });

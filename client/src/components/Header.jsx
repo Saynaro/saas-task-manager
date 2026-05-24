@@ -3,6 +3,7 @@ import { Menu, Bell, Check, X, Loader2, Plus, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { WorkspaceModal } from './WorkspaceModal';
 import './Header.css';
+import { apiFetch } from '../utils/apiFetch';
 
 export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUser }) {
     const [invitations, setInvitations] = useState([]);
@@ -20,7 +21,7 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
         
         setIsSwitching(true);
         try {
-            const res = await fetch("http://localhost:5001/api/auth/select-workspace", {
+            const res = await apiFetch("http://localhost:5001/api/auth/select-workspace", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
@@ -44,7 +45,7 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
     useEffect(() => {
         const fetchInvitations = async () => {
             try {
-                const res = await fetch("http://localhost:5001/api/invitations/my", {
+                const res = await apiFetch("http://localhost:5001/api/invitations/my", {
                     credentials: "include"
                 });
                 if (res.ok) {
@@ -80,7 +81,7 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
     const handleInvitationAction = async (id, action) => {
         setLoadingIds(prev => new Set(prev).add(id));
         try {
-            const res = await fetch(`http://localhost:5001/api/invitations/${id}/${action}`, {
+            const res = await apiFetch(`http://localhost:5001/api/invitations/${id}/${action}`, {
                 method: 'POST',
                 credentials: 'include'
             });

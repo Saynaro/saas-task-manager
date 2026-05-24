@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Link } from 'react-router'
 import toast from 'react-hot-toast'
+import { setAccessToken } from '../utils/apiFetch'
+import { apiFetch } from '../utils/apiFetch'
 import './Auth.css'
 
 export function LoginPage({ onLoginSuccess }) {
@@ -26,7 +28,7 @@ export function LoginPage({ onLoginSuccess }) {
     //connection to backend
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/login", {
+      const response = await apiFetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,11 +46,12 @@ export function LoginPage({ onLoginSuccess }) {
         toast.error(data.message || data.error || "Login failed");
         return;
       }
-      
+
       //handle response
       if (response.ok) {
         toast.success("Welcome back!");
         onLoginSuccess?.(data.data.user);
+        setAccessToken(data.data.accessToken);
         window.location.href = "/";
       }
       console.log(data);

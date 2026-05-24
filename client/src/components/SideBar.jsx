@@ -3,6 +3,7 @@ import { NavLink } from "react-router";
 import { LayoutDashboard, Users, CheckCircle, Settings, Plus, LogOut } from 'lucide-react';
 import { ConfirmationModal } from './ConfirmationModal';
 import './SideBar.css';
+import { apiFetch } from '../utils/apiFetch';
 
 const navLinks = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -23,7 +24,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
 
     const handleLogout = async () => {
         try {
-            await fetch('http://localhost:5001/api/auth/logout', { 
+            await apiFetch('http://localhost:5001/api/auth/logout', { 
                 method: 'POST', 
                 credentials: 'include' 
             });

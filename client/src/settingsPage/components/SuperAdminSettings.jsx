@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Globe, Users, Shield, Building2, Loader2, Trash2 } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
+import { apiFetch } from '../../utils/apiFetch';
 import './SuperAdminSettings.css';
 
 export function SuperAdminSettings() {
@@ -12,7 +13,7 @@ export function SuperAdminSettings() {
 
     const fetchStats = async () => {
         try {
-            const res = await fetch("http://localhost:5001/api/admin/stats", {
+            const res = await apiFetch("http://localhost:5001/api/admin/stats", {
                 credentials: "include"
             });
             if (res.ok) {
@@ -33,7 +34,7 @@ export function SuperAdminSettings() {
     const handleDeleteWorkspace = async () => {
         if (!wsToDelete) return;
         try {
-            const res = await fetch(`http://localhost:5001/api/admin/workspaces/${wsToDelete.id}`, {
+            const res = await apiFetch(`http://localhost:5001/api/admin/workspaces/${wsToDelete.id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });

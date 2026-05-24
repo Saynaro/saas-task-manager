@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Calendar, User, Clock, CheckCircle2, MessageSquare, Paperclip, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { apiFetch } from '../utils/apiFetch';
 import './MemberTaskModal.css';
 
 export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
@@ -62,7 +63,7 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
 
         // Auto-save to backend
         try {
-            const res = await fetch(`http://localhost:5001/api/projects/${task?.id}`, {
+            const res = await apiFetch(`http://localhost:5001/api/projects/${task?.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

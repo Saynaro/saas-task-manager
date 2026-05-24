@@ -3,6 +3,7 @@ import { X, Plus, Trash2, Calendar, Users, Paperclip, Check } from 'lucide-react
 import toast from 'react-hot-toast';
 import { ConfirmationModal } from './ConfirmationModal';
 import './TaskModal.css';
+import { apiFetch } from '../utils/apiFetch';
 
 export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, onDelete, currentUser }) {
     const today = new Date().toISOString().split('T')[0];
@@ -35,7 +36,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                     return;
                 }
                 try {
-                    const res = await fetch("http://localhost:5001/api/workspaces/members", {
+                    const res = await apiFetch("http://localhost:5001/api/workspaces/members", {
                         credentials: "include"
                     });
                     if (res.ok) {
@@ -119,7 +120,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
 
     const handleDeleteProject = async () => {
         try {
-            const res = await fetch(`http://localhost:5001/api/projects/${task?.id}`, {
+            const res = await apiFetch(`http://localhost:5001/api/projects/${task?.id}`, {
                 method: "DELETE",
                 credentials: "include"
             });
@@ -154,7 +155,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
 
             const method = mode === 'create' ? "POST" : "PATCH";
 
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method,
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

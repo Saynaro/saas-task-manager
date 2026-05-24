@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import toast from 'react-hot-toast'
+import { setAccessToken } from '../utils/apiFetch'
+import { apiFetch } from '../utils/apiFetch'
+
 import './Auth.css'
 
 export function RegisterPage({ onLoginSuccess }) {
@@ -31,7 +34,7 @@ export function RegisterPage({ onLoginSuccess }) {
 
     // connect to backend
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
+      const response = await apiFetch("http://localhost:5001/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,6 +59,7 @@ export function RegisterPage({ onLoginSuccess }) {
       if (response.ok) {
         toast.success("Account created successfully!");
         onLoginSuccess?.(data.data.user);
+        setAccessToken(data.data.accessToken);
         window.location.href = "/";
       }
       console.log(data);

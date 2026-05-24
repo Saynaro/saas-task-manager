@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Building, Users, CreditCard, Grid, UserPlus, Trash2, Loader2, Mail } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
+import { apiFetch } from '../../utils/apiFetch';
 import './Settings.css';
 
 export function WorkspaceSettings({ workspace, members, onUpdate }) {
@@ -31,7 +32,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const handleSaveIdentity = async () => {
         setIsSaving(true);
         try {
-            const res = await fetch('http://localhost:5001/api/workspaces/update', {
+            const res = await apiFetch('http://localhost:5001/api/workspaces/update', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -62,7 +63,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
         if (!userToDelete) return;
         
         try {
-            const res = await fetch(`http://localhost:5001/api/workspaces/members/${userToDelete.id}`, {
+            const res = await apiFetch(`http://localhost:5001/api/workspaces/members/${userToDelete.id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });

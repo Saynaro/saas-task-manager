@@ -6,6 +6,7 @@ import { TaskCards } from "./components/TaskCards"
 import { TaskModal } from "../components/TaskModal"
 import { MemberTaskModal } from "../components/MemberTaskModal"
 import "./TasksPage.css"
+import { apiFetch } from '../utils/apiFetch';
 
 export function TasksPage({ currentUser, refreshUser }) {
     const location = useLocation();
@@ -27,7 +28,7 @@ export function TasksPage({ currentUser, refreshUser }) {
             setMembers([]); // Clear old data
             setLoading(true);
             try {
-                const response = await fetch("http://localhost:5001/api/projects", {
+                const response = await apiFetch("http://localhost:5001/api/projects", {
                     credentials: "include"
                 });
                 if (response.ok) {

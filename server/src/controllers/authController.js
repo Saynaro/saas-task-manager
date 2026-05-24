@@ -1,10 +1,12 @@
 import { prisma } from "../config/db.js";
 import bcrypt from "bcrypt";
-import { generateToken } from "../utils/generateToken.js";
+import { generateAccessToken, generateRefreshToken } from "../utils/generateToken.js";
 
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+
 
 
 ///////// REGISTER ////////
@@ -74,7 +76,8 @@ export const register = async (req, res) => {
             return newUser;
         });
 
-        const token = generateToken(user.id, user.role, res);
+        const accessToken = generateAccessToken(user.id, user.role);
+        await generateRefreshToken(user.id, res);
 
         res.status(201).json({
             status: "success",
@@ -86,7 +89,7 @@ export const register = async (req, res) => {
                     email: user.email,
                     avatarUrl: user.avatarUrl,
                 },
-                token,
+                accessToken,
             },
         });
 
@@ -136,7 +139,8 @@ export const login = async (req, res) => {
             });
         }
 
-        const token = generateToken(user.id, user.role, res);
+        const accessToken = generateAccessToken(user.id, user.role);
+        await generateRefreshToken(user.id, res);
 
         res.status(200).json({
             status: "success",
@@ -148,7 +152,7 @@ export const login = async (req, res) => {
                     email: user.email,
                     avatarUrl: user.avatarUrl,
                 },
-                token,
+                accessToken,
             },
         });
 
@@ -166,26 +170,114 @@ export const login = async (req, res) => {
 ///////// LOGOUT ////////
 export const logout = async (req, res) => {
     try {
-        res.cookie("jwt", "", {
-            httpOnly: true,
-            expires: new Date(0),
-            secure: true,
-            sameSite: "none",
-            path: "/"
-        });
+        const token = req.cookies?.refreshToken;
 
-        res.status(200).json({
-            status: "success",
-            message: "Logged out successfully",
-        });
-    } catch (error) {
-        console.error("LOGOUT ERROR:", error);
-        res.status(500).json({
-            error: "Internal server error"
-        })
+        if (token) {
+            const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+            const storedTokens = await prisma.refreshToken.findMany({
+                where: {
+                    userId: decoded.id,
+                }
+            })
+
+            for (const t of storedTokens) {
+                const match = await bcrypt.compare(token, t.token);
+                if (match) {
+                    await prisma.refreshToken.delete({
+                        where: {
+                            id: t.id
+                        }
+                    });
+                    break;
+                }
+            }
+
+            if (!validToken) {
+                return res.status(401).json({
+                    error: "No valid refresh token found"
+                });
+            }
+        }
+
+    } catch (err) {
+        // token is invalid or expired - clean cookie
+        console.error("Logout token error:", err.message);
     }
 };
 
+
+
+///////// REFRESH ////////
+export const refresh = async (req, res) => {
+
+    const token = req.cookies?.refreshToken;
+    if (!token) {
+        return res.status(401).json({
+            error: "No refresh token found"
+        });
+    }
+
+    try {
+
+        // verify token for taking user id
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+
+        const storedTokens = await prisma.refreshToken.findMany({
+            where: {
+                userId: decoded.id,
+                expriesAt: {
+                    gt: new Date()  // greater than current date
+                },
+            },
+            include: {
+                user: true
+            }
+        })
+
+        let validToken = null;
+        for (const t of storedTokens) {
+            const match = await bcrypt.compare(token, t.token);
+            if (match) {
+                validToken = t;
+                break;
+            }
+        }
+
+        if (!validToken) {
+            return res.status(401).json({
+                error: "No valid refresh token found"
+            });
+        }
+
+
+        // delete old token
+        await prisma.refreshToken.delete({
+            where: {
+                id: validToken.id
+            }
+        });
+
+
+        // generate new tokens
+        const accessToken = generateAccessToken(validToken.user.id, validToken.user.role);
+        await generateRefreshToken(validToken.user.id, res);
+
+        res.status(200).json({
+            status: "success",
+            accessToken,
+        });
+
+    } catch (error) {
+        return res.status(401).json({ error: "Invalid refresh token" });
+    }
+}
+
+
+
+
+///////// GET ME ////////
 
 
 export const getMe = async (req, res) => {
@@ -214,6 +306,9 @@ export const getMe = async (req, res) => {
 
 
 
+
+
+///////// UPDATE ME ////////
 export const updateMe = async (req, res) => {
     try {
         const { firstName, lastName, email, avatarUrl, jobTitle, bio } = req.body;
@@ -250,7 +345,7 @@ export const updateMe = async (req, res) => {
 export const selectWorkspace = async (req, res) => {
     try {
         const { workspaceId } = req.body;
-        
+
         res.cookie("activeWorkspace", workspaceId, {
             httpOnly: true,
             secure: true,

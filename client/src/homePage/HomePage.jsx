@@ -8,6 +8,7 @@ import { Layout } from '../components/Layout';
 import { TaskModal } from '../components/TaskModal';
 
 import './HomePage.css';
+import { apiFetch } from '../utils/apiFetch';
 
 export function HomePage({ currentUser, refreshUser }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,7 +22,7 @@ export function HomePage({ currentUser, refreshUser }) {
         const fetchData = async () => {
             if (currentUser?.role === 'ADMIN') {
                 try {
-                    const res = await fetch("http://localhost:5001/api/admin/stats", {
+                    const res = await apiFetch("http://localhost:5001/api/admin/stats", {
                         credentials: "include"
                     });
                     if (res.ok) {
@@ -34,7 +35,7 @@ export function HomePage({ currentUser, refreshUser }) {
             } else {
                 setProjects([]); // Clear old projects
                 try {
-                    const response = await fetch("http://localhost:5001/api/projects", {
+                    const response = await apiFetch("http://localhost:5001/api/projects", {
                         credentials: "include"
                     });
                     if (response.ok) {

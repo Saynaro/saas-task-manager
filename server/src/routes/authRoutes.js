@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, logout, getMe, updateMe, selectWorkspace } from "../controllers/authController.js";
+import { register, login, logout, getMe, updateMe, selectWorkspace, refresh } from "../controllers/authController.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -10,6 +10,7 @@ router.post("/logout", logout);
 router.get("/me", authMiddleware, getMe);
 router.patch("/me", authMiddleware, updateMe);
 router.post("/select-workspace", authMiddleware, selectWorkspace);
+router.post("/refresh", refresh);
 
 
 export default router;

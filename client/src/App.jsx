@@ -10,14 +10,53 @@ import { TeamPage } from './teamPage/TeamPage'
 import { RegisterPage } from './authPages/RegisterPage'
 import { LoginPage } from './authPages/LoginPage'
 
+import { setAccessToken } from './utils/apiFetch'
+import { apiFetch } from './utils/apiFetch'
+
+
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const restoreSession = async () => {
+      try {
+        const res = await fetch("http://localhost:5001/api/auth/refresh", {
+          method: "POST",
+          credentials: "include"
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setAccessToken(data.accessToken);
+
+          const meRes = await fetch("http://localhost:5001/api/auth/me", {
+            credentials: "include",
+            headers: { "Authorization": `Bearer ${data.accessToken}` }
+          });
+          const meData = await meRes.json();
+          setCurrentUser(meData.data?.user || null);
+        } else {
+          setCurrentUser(null);
+        }
+      } catch {
+        setCurrentUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    restoreSession();
+  }, []);
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+  };
+
   const fetchCurrentUser = async () => {
     if (!currentUser) setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5001/api/auth/me", {
+      const response = await apiFetch("http://localhost:5001/api/auth/me", {
         credentials: "include",
         headers: {
           "Content-Type": "application/json"
@@ -44,15 +83,8 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    fetchCurrentUser();
-  }, []);
-
-  const handleLoginSuccess = (user) => {
-    setCurrentUser(user);
-  };
-
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f8fafc', fontStyle: 'italic', color: '#64748b' }}>Loading...</div>;
+
 
   return (
     <>
