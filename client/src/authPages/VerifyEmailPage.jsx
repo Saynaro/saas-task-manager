@@ -1,31 +1,62 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router';
+import { apiFetch } from '../utils/apiFetch';
 import './Auth.css';
 
-export function VerifyEmailPage() {
+export function VerifyEmailPage({ refreshUser }) {
     const navigate = useNavigate();
     const [status, setStatus] = useState('loading'); // 'loading', 'success', 'error', 'prompt'
+    const verificationStarted = useRef(false);
 
     useEffect(() => {
         const token = new URLSearchParams(window.location.search).get('token');
-        if (!token) {
-            setStatus('prompt');
+        
+        if (token) {
+            if (verificationStarted.current) return;
+            verificationStarted.current = true;
+
+            setStatus('loading');
+            fetch(`http://localhost:5001/api/email/verify-email?token=${token}`)
+                .then(res => res.json())
+                .then(async (data) => {
+                    if (data.success || data.message === "Email verified successfully") {
+                        setStatus('success');
+                        if (refreshUser) {
+                            await refreshUser();
+                        }
+                        setTimeout(() => navigate('/'), 3000);
+                    } else {
+                        setStatus('error');
+                    }
+                })
+                .catch(() => setStatus('error'));
             return;
         }
 
-        setStatus('loading');
-        fetch(`http://localhost:5001/api/email/verify-email?token=${token}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.success || data.message === "Email verified successfully") {
-                    setStatus('success');
-                    setTimeout(() => navigate('/'), 3000);
-                } else {
-                    setStatus('error');
+        setStatus('prompt');
+
+        // Check verification status periodically
+        const checkInterval = setInterval(async () => {
+            try {
+                const res = await apiFetch("http://localhost:5001/api/auth/me");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.data?.user?.isVerified) {
+                        clearInterval(checkInterval);
+                        setStatus('success');
+                        if (refreshUser) {
+                            await refreshUser();
+                        }
+                        setTimeout(() => navigate('/'), 3000);
+                    }
                 }
-            })
-            .catch(() => setStatus('error'));
-    }, [navigate]);
+            } catch (err) {
+                console.error("Error checking verification status:", err);
+            }
+        }, 3000);
+
+        return () => clearInterval(checkInterval);
+    }, [navigate, refreshUser]);
 
     return (
         <div className="auth-bg">

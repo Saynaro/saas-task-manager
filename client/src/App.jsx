@@ -120,7 +120,7 @@ function App() {
         <Route path='/register' element={<RegisterPage onLoginSuccess={handleLoginSuccess} />} />
         <Route path='/login' element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
         <Route path='/oauth/callback' element={<OAuthCallbackPage onLoginSuccess={handleLoginSuccess} />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage refreshUser={fetchCurrentUser} />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>

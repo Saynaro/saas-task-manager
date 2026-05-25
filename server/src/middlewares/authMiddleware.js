@@ -26,6 +26,7 @@ export const authMiddleware = async (req, res, next) => {
                 lastName: true,
                 avatarUrl: true,
                 role: true,
+                isVerified: true,
                 workspaces: {
                     include: {
                         workspace: true
@@ -58,6 +59,7 @@ export const authMiddleware = async (req, res, next) => {
             lastName: user.lastName,
             avatarUrl: user.avatarUrl,
             role: user.role,
+            isVerified: user.isVerified,
             workspace: primaryWorkspace,
             allWorkspaces: user.workspaces.map(w => ({
                 id: w.workspace.id,

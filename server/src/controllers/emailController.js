@@ -186,3 +186,22 @@ export const resetPassword = async (req, res) => {
     }
 };
 
+export const resendVerificationEmail = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const email = req.user.email;
+
+        await sendVerificationEmail(userId, email);
+
+        res.status(200).json({
+            success: true,
+            message: "Verification email sent successfully"
+        });
+    } catch (error) {
+        console.error("Error resending verification email:", error);
+        res.status(500).json({
+            error: "Failed to send verification email"
+        });
+    }
+};
+

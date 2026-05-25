@@ -179,7 +179,7 @@ export function AccountSettings({ user, onUpdate }) {
                                     <User size={20} className="icon" />
                                     <div>
                                         <h3 className="settings-card-title">Personal Information</h3>
-                                        <p className="settings-card-subtitle">Update your name, role, and bio.</p>
+                                        <p className="settings-card-subtitle">Update your name, surname, avatar and bio.</p>
                                     </div>
                                 </div>
                                 <img
@@ -270,11 +270,11 @@ export function AccountSettings({ user, onUpdate }) {
                                 <div className="settings-form-group">
                                     <label>Current Password</label>
                                     <div className="password-wrapper">
-                                        <input 
-                                            type={showCurrentPassword ? "text" : "password"} 
+                                        <input
+                                            type={showCurrentPassword ? "text" : "password"}
                                             name="currentPassword"
-                                            placeholder="Enter current password" 
-                                            className="settings-input" 
+                                            placeholder="Enter current password"
+                                            className="settings-input"
                                             value={passwordData.currentPassword}
                                             onChange={handlePasswordChange}
                                         />
@@ -291,11 +291,11 @@ export function AccountSettings({ user, onUpdate }) {
                                 <div className="settings-form-group">
                                     <label>New Password</label>
                                     <div className="password-wrapper">
-                                        <input 
-                                            type={showNewPassword ? "text" : "password"} 
+                                        <input
+                                            type={showNewPassword ? "text" : "password"}
                                             name="newPassword"
-                                            placeholder="Enter new password" 
-                                            className="settings-input" 
+                                            placeholder="Enter new password"
+                                            className="settings-input"
                                             value={passwordData.newPassword}
                                             onChange={handlePasswordChange}
                                         />
@@ -312,11 +312,11 @@ export function AccountSettings({ user, onUpdate }) {
                                 <div className="settings-form-group">
                                     <label>Confirm New Password</label>
                                     <div className="password-wrapper">
-                                        <input 
-                                            type={showConfirmNewPassword ? "text" : "password"} 
+                                        <input
+                                            type={showConfirmNewPassword ? "text" : "password"}
                                             name="confirmNewPassword"
-                                            placeholder="Confirm new password" 
-                                            className="settings-input" 
+                                            placeholder="Confirm new password"
+                                            className="settings-input"
                                             value={passwordData.confirmNewPassword}
                                             onChange={handlePasswordChange}
                                         />
@@ -332,7 +332,7 @@ export function AccountSettings({ user, onUpdate }) {
                                 </div>
                             </div>
                             <div className="settings-actions-bar">
-                                <button 
+                                <button
                                     className="settings-primary-btn"
                                     onClick={handleUpdatePassword}
                                     disabled={isUpdatingPassword}
