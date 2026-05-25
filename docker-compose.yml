@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. Database
+  # Database
   db:
     image: postgres:16-alpine
     env_file:
@@ -16,7 +16,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data # To prevent data from being deleted when restarting
 
-  # 2. Backend
+  # Backend
   backend:
     build: 
       context: ./server
@@ -32,7 +32,7 @@ services:
     depends_on:
       - db # Waiting for the database to start
 
-  # 3. Frontend
+  # Frontend
   frontend:
     build: 
       context: ./client
@@ -46,6 +46,14 @@ services:
     depends_on:
       - backend # Waiting for the backend to start
 
-# Description of the volume for the database
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
 volumes:
   postgres_data:
+  redis_data:

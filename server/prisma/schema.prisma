@@ -8,14 +8,16 @@ datasource db {
 }
 
 model User {
-  id                  String            @id @default(uuid())
-  email               String            @unique
-  avatarUrl           String?
-  createdAt           DateTime          @default(now())
-  firstName           String?
-  lastName            String?
-  passwordHash        String
-  updatedAt           DateTime          @updatedAt
+  id           String   @id @default(uuid())
+  email        String   @unique
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  firstName    String?
+  lastName     String?
+  passwordHash String
+  updatedAt    DateTime @updatedAt
+  isVerified   Boolean  @default(false)
+
   role                Role              @default(MEMBER)
   activities          ActivityLog[]
   comments            Comment[]

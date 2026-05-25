@@ -65,7 +65,7 @@
 //             data: {
 //                 name: `Project ${i}`,
 //                 description: `Description for project ${i}`,
-//                 workspaceId: workspaces[0].id, // Все в первый воркспейс для удобства теста
+//                 workspaceId: workspaces[0].id, // All projects in the first workspace
 //                 isPrivate: i % 2 === 0,
 //                 members: {
 //                     create: {

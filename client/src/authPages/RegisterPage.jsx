@@ -67,9 +67,9 @@ export function RegisterPage({ onLoginSuccess }) {
         const meData = await meRes.json();
         const fullUser = meData.data?.user || data.data.user;
 
-        toast.success("Account created successfully!");
+        toast.success("Account created successfully! Please verify your email.");
         onLoginSuccess?.(fullUser);
-        navigate("/");
+        navigate("/verify-email");
       }
       console.log(data);
     } catch (error) {
@@ -137,7 +137,7 @@ export function RegisterPage({ onLoginSuccess }) {
                 className={isEmailInvalid ? "invalid-input" : ""}
                 required
               />
-              {isEmailInvalid && <span className="error-text">Неверный формат электронной почты.</span>}
+              {isEmailInvalid && <span className="error-text">Invalid email format</span>}
             </div>
             <div className="form-group">
               <label htmlFor="reg-invite">Invite Code</label>
@@ -188,9 +188,9 @@ export function RegisterPage({ onLoginSuccess }) {
               </button>
             </div>
             {isPasswordInvalid ? (
-              <span className="error-text">Пароль должен содержать не менее 8 символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.</span>
+              <span className="error-text">Password must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, and one number.</span>
             ) : (
-              <span className="form-hint">Не менее 8 символов.</span>
+              <span className="form-hint">Password must be at least 8 characters long.</span>
             )}
           </div>
 

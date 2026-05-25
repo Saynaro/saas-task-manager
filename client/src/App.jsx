@@ -10,6 +10,9 @@ import { TeamPage } from './teamPage/TeamPage'
 import { RegisterPage } from './authPages/RegisterPage'
 import { LoginPage } from './authPages/LoginPage'
 import { OAuthCallbackPage } from './authPages/OauthCallbackPage'
+import { ForgotPasswordPage } from './authPages/ForgotPasswordPage'
+import { ResetPasswordPage } from './authPages/ResetPasswordPage'
+import { VerifyEmailPage } from './authPages/VerifyEmailPage'
 
 import { setAccessToken } from './utils/apiFetch'
 import { apiFetch } from './utils/apiFetch'
@@ -117,6 +120,9 @@ function App() {
         <Route path='/register' element={<RegisterPage onLoginSuccess={handleLoginSuccess} />} />
         <Route path='/login' element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
         <Route path='/oauth/callback' element={<OAuthCallbackPage onLoginSuccess={handleLoginSuccess} />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
       <Toaster position="top-center" reverseOrder={false} />
     </>

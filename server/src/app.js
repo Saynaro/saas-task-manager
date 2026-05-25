@@ -5,12 +5,14 @@ import cors from "cors";
 
 import { config } from "dotenv";
 import { prisma } from './config/db.js';
+import { apiRateLimit } from './middlewares/rateLimiter.js';
 
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import invitationRoutes from "./routes/invitationRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import emailRoutes from "./routes/emailRoutes.js";
 
 config();
 
@@ -25,10 +27,13 @@ app.use(cors({
 }));
 
 
+app.use(apiRateLimit);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/invitations", invitationRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/email", emailRoutes);
 
 export default app;

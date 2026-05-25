@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../config/db.js";
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../utils/generateToken.js";
+import { sendVerificationEmail } from "../controllers/emailController.js";
 
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -80,6 +81,9 @@ export const register = async (req, res) => {
         const accessToken = generateAccessToken(user.id, user.role);
         await generateRefreshToken(user.id, res);
 
+        await sendVerificationEmail(user.id, user.email);
+
+
         res.status(201).json({
             status: "success",
             data: {
@@ -92,6 +96,7 @@ export const register = async (req, res) => {
                 },
                 accessToken,
             },
+            message: "Please check your email to verify your account"
         });
 
     } catch (error) {

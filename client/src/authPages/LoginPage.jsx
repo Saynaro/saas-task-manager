@@ -102,13 +102,13 @@ export function LoginPage({ onLoginSuccess }) {
               autoComplete="email"
               className={isEmailInvalid ? "invalid-input" : ""}
             />
-            {isEmailInvalid && <span className="error-text">Пожалуйста, введите корректный адрес электронной почты.</span>}
+            {isEmailInvalid && <span className="error-text">Invalid email format</span>}
           </div>
 
           <div className="form-group">
             <div className="label-row">
               <label htmlFor="login-password">Password</label>
-              <a href="#" className="auth-link forgot-link">Forgot password?</a>
+              <Link to="/forgot-password" className="auth-link forgot-link">Forgot password?</Link>
             </div>
             <div className="password-wrapper">
               <input
@@ -141,7 +141,7 @@ export function LoginPage({ onLoginSuccess }) {
               </button>
             </div>
             {isPasswordInvalid && (
-              <span className="error-text" style={{ marginTop: '4px' }}>Пароль должен содержать не менее 8 символов, как минимум одну заглавную букву, одну строчную букву и одну цифру.</span>
+              <span className="error-text" style={{ marginTop: '4px' }}>Password must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, and one number.</span>
             )}
           </div>
 
