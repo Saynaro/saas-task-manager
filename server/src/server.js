@@ -1,5 +1,10 @@
 import app from "./app.js";
+
 import { connectDB, disconnectDB } from "./config/db.js";
+import passport from "./config/passport.js";
+
+
+app.use(passport.initialize());
 
 const PORT = process.env.PORT || 5000;
 

@@ -158,7 +158,11 @@ export function LoginPage({ onLoginSuccess }) {
         </div>
 
         {/* Google SSO */}
-        <button className="google-btn" type="button">
+        <button className="google-btn" type="button"
+          onClick={() => {
+            window.location.href = 'http://localhost:5001/api/auth/google';
+          }}
+        >
           {/* Google coloured G */}
           <svg width="20" height="20" viewBox="0 0 48 48">
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />

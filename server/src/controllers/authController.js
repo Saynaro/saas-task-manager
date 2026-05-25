@@ -204,7 +204,7 @@ export const logout = async (req, res) => {
             sameSite: "Lax",
             path: "/"
         });
-        
+
         res.clearCookie("activeWorkspace", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -422,3 +422,20 @@ export const changePassword = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+
+
+
+///////// GOOGLE AUTH ////////
+export const googleCallback = async (req, res) => {
+    try {
+        const user = req.user;
+
+        const accessToken = generateAccessToken(user.id, user.role);
+        await generateRefreshToken(user.id, res);
+
+        //redirect to frontend with access token
+        res.redirect(`${process.env.CLIENT_URL}/oauth/callback?token=${accessToken}`);
+    } catch (error) {
+        res.redirect(`${process.env.CLIENT_URL}/login?error=oauth_failed`);
+    }
+}

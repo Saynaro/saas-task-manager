@@ -9,6 +9,7 @@ import { ActivityPage } from './activityPage/ActivityPage'
 import { TeamPage } from './teamPage/TeamPage'
 import { RegisterPage } from './authPages/RegisterPage'
 import { LoginPage } from './authPages/LoginPage'
+import { OAuthCallbackPage } from './authPages/OauthCallbackPage'
 
 import { setAccessToken } from './utils/apiFetch'
 import { apiFetch } from './utils/apiFetch'
@@ -115,6 +116,7 @@ function App() {
         <Route path='/team' element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><TeamPage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
         <Route path='/register' element={<RegisterPage onLoginSuccess={handleLoginSuccess} />} />
         <Route path='/login' element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
+        <Route path='/oauth/callback' element={<OAuthCallbackPage onLoginSuccess={handleLoginSuccess} />} />
       </Routes>
       <Toaster position="top-center" reverseOrder={false} />
     </>
