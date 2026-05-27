@@ -86,6 +86,7 @@ export function TasksPage({ currentUser, refreshUser }) {
                         onClose={() => setIsModalOpen(false)}
                         task={selectedTask}
                         onSuccess={handleProjectUpdate}
+                        currentUser={currentUser}
                     />
                 ) : (
                     <TaskModal

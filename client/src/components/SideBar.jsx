@@ -33,6 +33,17 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
         }
     };
 
+    const handleLogoutClick = () => {
+        if (isOpen) {
+            toggleMenu();
+            setTimeout(() => {
+                setIsConfirmOpen(true);
+            }, 300);
+        } else {
+            setIsConfirmOpen(true);
+        }
+    };
+
     const handleLogout = async () => {
         try {
             await fetch('http://localhost:5001/api/auth/logout', {
@@ -102,7 +113,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                 </div>
 
                 <div className="sidebar-footer">
-                    <button className="nav-logout-btn" onClick={() => setIsConfirmOpen(true)}>
+                    <button className="nav-logout-btn" onClick={handleLogoutClick}>
                         <LogOut size={20} className="nav-icon" />
                         <span>Logout</span>
                     </button>
@@ -116,7 +127,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                 title="Log out of account"
                 message="Are you sure you want to log out? You will need to log back in to access your dashboard."
                 confirmText="Logout"
-                confirmVariant="danger"
+                confirmVariant="logout"
             />
         </>
     );

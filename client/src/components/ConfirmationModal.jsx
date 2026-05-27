@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, X } from 'lucide-react';
+import { AlertCircle, X, LogOut } from 'lucide-react';
 import './ConfirmationModal.css';
 
 export function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, confirmText, confirmVariant = "danger" }) {
@@ -10,7 +10,11 @@ export function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, 
             <div className="confirm-modal-content" onClick={e => e.stopPropagation()}>
                 <div className="confirm-modal-header">
                     <div className={`warning-icon-wrapper ${confirmVariant}`}>
-                        <AlertCircle className="warning-icon" size={24} />
+                        {confirmVariant === 'logout' ? (
+                            <LogOut className="warning-icon" size={24} />
+                        ) : (
+                            <AlertCircle className="warning-icon" size={24} />
+                        )}
                     </div>
                     <button className="confirm-close-btn" onClick={onClose}>
                         <X size={20} />

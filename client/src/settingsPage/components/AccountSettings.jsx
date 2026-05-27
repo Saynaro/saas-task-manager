@@ -155,10 +155,6 @@ export function AccountSettings({ user, onUpdate }) {
                     <h2 className="settings-page-title">Account Settings</h2>
                     <p className="settings-page-subtitle">Manage your personal profile and preferences.</p>
                 </div>
-                <button className="settings-logout-btn" onClick={() => setIsLogOutOpen(true)}>
-                    <LogOut size={18} />
-                    Logout
-                </button>
             </div>
 
             <ConfirmationModal
@@ -168,7 +164,7 @@ export function AccountSettings({ user, onUpdate }) {
                 title="Logout"
                 message="Are you sure you want to log out?"
                 confirmText="Logout"
-                confirmVariant="danger"
+                confirmVariant="logout"
             />
 
             <div className="settings-layout">
@@ -186,6 +182,10 @@ export function AccountSettings({ user, onUpdate }) {
                             </button>
                         );
                     })}
+                    <button className="settings-nav-logout-btn" onClick={() => setIsLogOutOpen(true)}>
+                        <LogOut size={18} className="nav-icon" />
+                        Logout
+                    </button>
                 </div>
 
                 <div className="settings-content">

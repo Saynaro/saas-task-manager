@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Calendar, Users, Paperclip, Check } from 'lucide-react';
+import { X, Plus, Trash2, Calendar, Users, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ConfirmationModal } from './ConfirmationModal';
 import './TaskModal.css';
@@ -350,30 +350,6 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                                 </button>
                             </div>
                         )}
-                    </div>
-
-                    <div className="modal-form-group">
-                        <label>Add Attachments</label>
-                        <div className="attachments-list">
-                            {taskData.attachments.map(file => (
-                                <div key={file.id} className="attachment-item">
-                                    <Paperclip size={14} />
-                                    <span className="file-name">{file.name}</span>
-                                    <button className="remove-item-btn">
-                                        <Trash2 size={14} />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="add-attachment-row">
-                            <div className="input-with-icon flex-1">
-                                <input type="text" placeholder="Add File Link" className="modal-input" />
-                                <Paperclip size={16} className="input-icon" />
-                            </div>
-                            <button className="add-btn">
-                                <Plus size={16} /> Add
-                            </button>
-                        </div>
                     </div>
                 </div>
 

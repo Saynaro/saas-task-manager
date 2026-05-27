@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { X, Calendar, User, Clock, CheckCircle2, MessageSquare, Paperclip, ExternalLink } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, CheckCircle2, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../utils/apiFetch';
 import './MemberTaskModal.css';
 
-export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
+export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser }) {
     const [taskData, setTaskData] = useState({
         title: '',
         description: '',
@@ -15,6 +15,45 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
         attachments: [],
         members: []
     });
+
+    const [comments, setComments] = useState([
+        {
+            id: 1,
+            userName: "Alex Rivera",
+            userAvatar: "https://static.vecteezy.com/system/resources/thumbnails/048/216/761/small/modern-male-avatar-with-black-hair-and-hoodie-illustration-free-png.png",
+            text: "I've started working on the main screen layout. Will push updates soon.",
+            createdAt: "2 hours ago"
+        },
+        {
+            id: 2,
+            userName: "Sarah Chen",
+            userAvatar: "https://ui-avatars.com/api/?name=Sarah+Chen&background=0891b2&color=fff",
+            text: "Looks great! Let me know if you need help with the CSS styling.",
+            createdAt: "1 hour ago"
+        },
+        {
+            id: 3,
+            userName: "Sarah Chen",
+            userAvatar: "https://ui-avatars.com/api/?name=Sarah+Chen&background=0891b2&color=fff",
+            text: "Looks great! Let me know if you need help with the CSS styling.",
+            createdAt: "1 hour ago"
+        }
+    ]);
+    const [newCommentText, setNewCommentText] = useState('');
+    const chatEndRef = useRef(null);
+    const inputRef = useRef(null);
+
+    const handleInputFocus = () => {
+        setTimeout(() => {
+            inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [comments, isOpen]);
 
     useEffect(() => {
         if (task) {
@@ -34,6 +73,27 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
             });
         }
     }, [task, isOpen]);
+
+    const handleSendComment = (e) => {
+        e.preventDefault();
+        if (!newCommentText.trim()) return;
+
+        const userName = currentUser ? `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email : "You";
+        const userAvatar = currentUser?.role === 'OWNER' && currentUser?.workspace?.avatarUrl
+            ? currentUser.workspace.avatarUrl
+            : currentUser?.avatarUrl;
+
+        const newComment = {
+            id: Date.now(),
+            userName: userName,
+            userAvatar: userAvatar,
+            text: newCommentText.trim(),
+            createdAt: "Just now"
+        };
+
+        setComments(prev => [...prev, newComment]);
+        setNewCommentText('');
+    };
 
     if (!isOpen) return null;
 
@@ -155,18 +215,42 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess }) {
                 </div>
 
                 <div className="member-modal-section">
-                    <h2 className="section-title">Attachments</h2>
-                    <div className="member-attachments">
-                        <div className="attachment-row">
-                            <span className="attachment-num">01</span>
-                            <span className="attachment-link">https://react.dev/</span>
-                            <ExternalLink size={14} className="attachment-icon" />
+                    <h2 className="section-title">Discussion & Comments</h2>
+                    <div className="chat-container">
+                        <div className="chat-messages">
+                            {comments.map((comment) => (
+                                <div key={comment.id} className="chat-message">
+                                    <img
+                                        src={comment.userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.userName)}&background=random`}
+                                        alt={comment.userName}
+                                        className="chat-avatar"
+                                    />
+                                    <div className="chat-message-content">
+                                        <div className="chat-message-header">
+                                            <span className="chat-user-name">{comment.userName}</span>
+                                            <span className="chat-time">{comment.createdAt}</span>
+                                        </div>
+                                        <div className="chat-message-text">{comment.text}</div>
+                                    </div>
+                                </div>
+                            ))}
+                            <div ref={chatEndRef} />
                         </div>
-                        <div className="attachment-row">
-                            <span className="attachment-num">02</span>
-                            <span className="attachment-link">https://tailwindcss.com/docs/</span>
-                            <ExternalLink size={14} className="attachment-icon" />
-                        </div>
+                        <form onSubmit={handleSendComment} className="chat-input-form">
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                placeholder="Write a comment..."
+                                value={newCommentText}
+                                onChange={(e) => setNewCommentText(e.target.value)}
+                                onFocus={handleInputFocus}
+                                className="chat-input"
+                            />
+                            <button type="submit" className="chat-send-btn">
+                                <Send size={16} />
+                                <span>Send</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
 
