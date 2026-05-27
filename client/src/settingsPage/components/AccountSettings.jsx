@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Lock, LogOut, Loader2, Eye, EyeOff } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
@@ -12,10 +12,21 @@ export function AccountSettings({ user, onUpdate }) {
     const [formData, setFormData] = useState({
         firstName: user?.firstName || '',
         lastName: user?.lastName || '',
-        jobTitle: '', // Placeholder as it's not in schema
-        bio: ''       // Placeholder
+        avatarFile: null,
+        avatarPreview: null
     });
     const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                firstName: user.firstName || '',
+                lastName: user.lastName || '',
+                avatarFile: null,
+                avatarPreview: null
+            });
+        }
+    }, [user]);
 
     // Password Update States
     const [passwordData, setPasswordData] = useState({
@@ -93,16 +104,22 @@ export function AccountSettings({ user, onUpdate }) {
     const handleSave = async () => {
         setIsSaving(true);
         try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('firstName', formData.firstName);
+            formDataToSend.append('lastName', formData.lastName);
+            if (formData.avatarFile) {
+                formDataToSend.append('avatar', formData.avatarFile);
+            }
+
             const res = await apiFetch('http://localhost:5001/api/auth/me', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(formData)
+                body: formDataToSend
             });
 
             if (res.ok) {
+                const data = await res.json();
                 toast.success('Profile updated!');
-                if (onUpdate) onUpdate();
+                if (onUpdate) onUpdate(data.data.user);
             } else {
                 toast.error('Failed to update profile');
             }
@@ -182,12 +199,38 @@ export function AccountSettings({ user, onUpdate }) {
                                         <p className="settings-card-subtitle">Update your name, surname, avatar and bio.</p>
                                     </div>
                                 </div>
-                                <img
-                                    src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&background=random`}
-                                    alt="profile"
-                                    className="settings-profile-avatar"
-                                    width={80}
-                                />
+                                <div className="avatar-upload-wrapper">
+                                    <img
+                                        src={formData.avatarPreview || user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&background=random`}
+                                        alt="profile"
+                                        className="settings-profile-avatar"
+                                        width={80}
+                                    />
+                                    <label className="avatar-upload-label" htmlFor="avatar-input">
+                                        Change
+                                    </label>
+                                    <input
+                                        id="avatar-input"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        style={{ display: 'none' }}
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (!file) return;
+                                            if (file.size > 2 * 1024 * 1024) {
+                                                toast.error("Max file size is 2MB");
+                                                return;
+                                            }
+                                            const reader = new FileReader();
+                                            reader.onload = () => setFormData(prev => ({
+                                                ...prev,
+                                                avatarFile: file,
+                                                avatarPreview: reader.result
+                                            }));
+                                            reader.readAsDataURL(file);
+                                        }}
+                                    />
+                                </div>
                             </div>
                             <div className="settings-card-body">
                                 <div className="settings-form-row">

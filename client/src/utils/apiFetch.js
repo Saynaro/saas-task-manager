@@ -9,11 +9,12 @@ export const getAccessToken = () => {
 };
 
 export const apiFetch = async (url, options = {}) => {
+    const isFormData = options.body instanceof FormData;
     const res = await fetch(url, {
         ...options,
         credentials: "include",
         headers: {
-            "Content-Type": "application/json",
+            ...(!isFormData && { "Content-Type": "application/json" }),
             ...(accessToken && { "Authorization": `Bearer ${accessToken}` }),
             ...options.headers,
         },
@@ -33,10 +34,9 @@ export const apiFetch = async (url, options = {}) => {
                 ...options,
                 credentials: "include",
                 headers: {
-                    "Content-Type": "application/json",
+                    ...(!isFormData && { "Content-Type": "application/json" }),
                     "Authorization": `Bearer ${data.accessToken}`,
                     ...options.headers,
-
                 },
             });
         }

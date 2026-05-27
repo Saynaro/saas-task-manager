@@ -36,7 +36,7 @@ export const TaskDonutChart = ({ projects = [] }) => {
             <h3 className="chart-title">Project Distribution</h3>
 
             <div className="chart-body">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <PieChart>
                         <Pie
                             data={total > 0 ? data : [{ name: 'No data', value: 1, color: '#e2e8f0' }]}
@@ -93,7 +93,7 @@ export const TaskPriorityChart = ({ projects = [] }) => {
         <div className="chart-card">
             <h3 className="chart-title">Project Priority Levels</h3>
             <div className="chart-body">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <BarChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                         <XAxis 
                             dataKey="name" 

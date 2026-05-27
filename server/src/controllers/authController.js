@@ -329,16 +329,17 @@ export const getMe = async (req, res) => {
 ///////// UPDATE ME ////////
 export const updateMe = async (req, res) => {
     try {
-        const { firstName, lastName, email, avatarUrl, jobTitle, bio } = req.body;
+        const { firstName, lastName } = req.body;
         const userId = req.user.id;
+
+        const avatarUrl = req.file ? req.file.path : undefined;
 
         const updatedUser = await prisma.user.update({
             where: { id: userId },
             data: {
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                avatarUrl: avatarUrl
+                ...(firstName !== undefined && { firstName }),
+                ...(lastName !== undefined && { lastName }),
+                ...(avatarUrl !== undefined && { avatarUrl }),
             }
         });
 
@@ -347,8 +348,8 @@ export const updateMe = async (req, res) => {
             data: {
                 user: {
                     id: updatedUser.id,
-                    firstname: updatedUser.firstName,
-                    lastname: updatedUser.lastName,
+                    firstName: updatedUser.firstName,
+                    lastName: updatedUser.lastName,
                     email: updatedUser.email,
                     avatarUrl: updatedUser.avatarUrl,
                 }
@@ -360,6 +361,9 @@ export const updateMe = async (req, res) => {
     }
 };
 
+
+
+///////// SELECT WORKSPACE ////////
 export const selectWorkspace = async (req, res) => {
     try {
         const { workspaceId } = req.body;
