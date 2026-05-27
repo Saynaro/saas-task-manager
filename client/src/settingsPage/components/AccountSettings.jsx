@@ -196,7 +196,7 @@ export function AccountSettings({ user, onUpdate }) {
                                     <User size={20} className="icon" />
                                     <div>
                                         <h3 className="settings-card-title">Personal Information</h3>
-                                        <p className="settings-card-subtitle">Update your name, surname, avatar and bio.</p>
+                                        <p className="settings-card-subtitle">Update your name, surname and avatar.</p>
                                     </div>
                                 </div>
                                 <div className="avatar-upload-wrapper">
@@ -265,28 +265,9 @@ export function AccountSettings({ user, onUpdate }) {
                                     />
                                     <span className="settings-lock-hint"><Lock size={12} /> Email cannot be changed here</span>
                                 </div>
-                                <div className="settings-form-group">
-                                    <label>Job Title</label>
-                                    <input
-                                        type="text"
-                                        name="jobTitle"
-                                        value={formData.jobTitle}
-                                        onChange={handleInputChange}
-                                        className="settings-input"
-                                    />
-                                </div>
-                                <div className="settings-form-group">
-                                    <label>Bio</label>
-                                    <textarea
-                                        name="bio"
-                                        className="settings-textarea"
-                                        value={formData.bio}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
                             </div>
                             <div className="settings-actions-bar">
-                                <button className="settings-cancel-btn" onClick={() => setFormData({ firstName: user.firstName, lastName: user.lastName, jobTitle: '', bio: '' })}>Cancel</button>
+                                <button className="settings-cancel-btn" onClick={() => setFormData({ firstName: user.firstName, lastName: user.lastName, avatarFile: null, avatarPreview: null })}>Cancel</button>
                                 <button
                                     className="settings-primary-btn"
                                     onClick={handleSave}

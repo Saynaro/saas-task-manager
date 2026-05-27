@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { LayoutDashboard, Users, CheckCircle, Settings, Plus, LogOut } from 'lucide-react';
 import { ConfirmationModal } from './ConfirmationModal';
 import './SideBar.css';
@@ -13,6 +13,7 @@ const navLinks = [
 
 export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const navigate = useNavigate();
 
     // Filter nav links based on role
     const filteredNavLinks = navLinks.filter(link => {
@@ -21,6 +22,16 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
         }
         return true;
     });
+
+    const handleNavClick = (e, path) => {
+        if (isOpen) {
+            e.preventDefault();
+            toggleMenu();
+            setTimeout(() => {
+                navigate(path);
+            }, 300);
+        }
+    };
 
     const handleLogout = async () => {
         try {
@@ -66,6 +77,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                                     <NavLink
                                         to={link.path}
                                         className={({ isActive }) => isActive ? 'active' : ''}
+                                        onClick={(e) => handleNavClick(e, link.path)}
                                     >
                                         <IconComponent size={20} className="nav-icon" />
                                         <span>{link.name}</span>
@@ -80,6 +92,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                             <NavLink
                                 to="/settings"
                                 className={({ isActive }) => isActive ? 'active' : ''}
+                                onClick={(e) => handleNavClick(e, '/settings')}
                             >
                                 <Settings size={20} className="nav-icon" />
                                 <span>Settings</span>

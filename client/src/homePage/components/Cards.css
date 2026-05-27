@@ -148,7 +148,7 @@
 
 @media (max-width: 640px) {
     .cards-grid-container {
-        grid-template-columns: 1fr;
+        width: 71%;
         gap: 12px;
     }
 }

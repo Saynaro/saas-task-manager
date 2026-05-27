@@ -271,7 +271,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .settings-logo-text {
@@ -385,35 +385,64 @@
 .settings-theme-btn.active {
     background: white;
     color: #2563eb;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Table refinements */
 .settings-table th {
     padding: 16px 24px;
 }
+
 .settings-table td {
     padding: 20px 24px;
 }
+
 .settings-role-badge {
     padding: 6px 12px;
     font-weight: 700;
     letter-spacing: 0.02em;
 }
 
-/* Responsive fixes */
-@media (max-width: 900px) {
+/* Responsive fixes for medium screens (tablets, small laptops) and mobile */
+@media (max-width: 1150px) {
     .settings-layout {
         flex-direction: column;
+        gap: 24px;
     }
+
     .settings-sidebar {
         width: 100%;
         flex-direction: row;
         overflow-x: auto;
         padding: 8px;
+        box-sizing: border-box;
     }
+
     .settings-nav-btn {
         white-space: nowrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .settings-card-body {
+        padding: 20px;
+    }
+
+    .settings-actions-bar {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-content {
+        width: 100%;
     }
 }
 
@@ -444,7 +473,7 @@
     border-radius: 10px;
     object-fit: cover;
     border: 2px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .settings-user-info strong {
@@ -594,4 +623,3 @@
 .avatar-upload-label:active {
     transform: translateY(0);
 }
-

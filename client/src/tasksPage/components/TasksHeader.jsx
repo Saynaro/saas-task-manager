@@ -1,4 +1,3 @@
-import { FileText } from 'lucide-react';
 import './TasksHeader.css';
 
 export function TasksHeader({ tasks, activeFilter, setActiveFilter }) {
@@ -37,10 +36,6 @@ export function TasksHeader({ tasks, activeFilter, setActiveFilter }) {
                     Completed <span className={`tab-badge ${activeFilter === 'COMPLETED' ? 'tab-badge-active' : ''}`}>{completed}</span>
                 </button>
             </div>
-            
-            <button className="download-report-btn">
-                <FileText size={16} /> Download Report
-            </button>
         </div>
     );
 }

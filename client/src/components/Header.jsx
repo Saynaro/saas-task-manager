@@ -153,7 +153,8 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                     ) : (
                         <button className="create-ws-header-btn" onClick={() => openWorkspaceModal()}>
                             <Plus size={16} />
-                            Create workspace
+                            <span className="desktop-txt">Create workspace</span>
+                            <span className="mobile-txt">New Workspace</span>
                         </button>
                     )}
                 </div>
