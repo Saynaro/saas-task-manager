@@ -112,7 +112,7 @@
 
 @media (max-width: 480px) {
     .chart-card {
-        width: 71%;
+        width: 100%;
     }
 
     .chart-legend {

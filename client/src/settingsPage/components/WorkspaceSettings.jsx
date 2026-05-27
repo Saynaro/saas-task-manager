@@ -12,14 +12,18 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const [userToDelete, setUserToDelete] = useState(null);
     const [formData, setFormData] = useState({
         name: workspace?.name || '',
-        slug: workspace?.slug || ''
+        slug: workspace?.slug || '',
+        logoFile: null,
+        logoPreview: null
     });
 
     useEffect(() => {
         if (workspace) {
             setFormData({
                 name: workspace.name || '',
-                slug: workspace.slug || ''
+                slug: workspace.slug || '',
+                logoFile: null,
+                logoPreview: null
             });
         }
     }, [workspace]);
@@ -32,11 +36,15 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const handleSaveIdentity = async () => {
         setIsSaving(true);
         try {
+            const body = new FormData();
+            if (formData.name !== undefined) body.append('name', formData.name);
+            if (formData.slug !== undefined) body.append('slug', formData.slug);
+            if (formData.logoFile) body.append('avatar', formData.logoFile);
+
             const res = await apiFetch('http://localhost:5001/api/workspaces/update', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify(formData)
+                body
             });
 
             if (res.ok) {
@@ -141,13 +149,48 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                             </div>
                             <div className="settings-card-body">
                                 <div className="settings-logo-section">
-                                    <div className="settings-logo-box">
-                                        <span className="settings-logo-text">WORK<br />SPACE</span>
+                                    <div className="avatar-upload-wrapper">
+                                        {formData.logoPreview || workspace?.avatarUrl ? (
+                                            <img
+                                                src={formData.logoPreview || workspace.avatarUrl}
+                                                alt="workspace logo"
+                                                className="settings-profile-avatar"
+                                                width={80}
+                                                style={{ borderRadius: '12px', objectFit: 'cover' }}
+                                            />
+                                        ) : (
+                                            <div className="settings-logo-box">
+                                                <span className="settings-logo-text">WORK<br />SPACE</span>
+                                            </div>
+                                        )}
+                                        <label className="avatar-upload-label" htmlFor="workspace-logo-input">
+                                            Change
+                                        </label>
+                                        <input
+                                            id="workspace-logo-input"
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            style={{ display: 'none' }}
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                if (!file) return;
+                                                if (file.size > 2 * 1024 * 1024) {
+                                                    toast.error('Max file size is 2MB');
+                                                    return;
+                                                }
+                                                const reader = new FileReader();
+                                                reader.onload = () => setFormData(prev => ({
+                                                    ...prev,
+                                                    logoFile: file,
+                                                    logoPreview: reader.result
+                                                }));
+                                                reader.readAsDataURL(file);
+                                            }}
+                                        />
                                     </div>
                                     <div className="settings-logo-info">
                                         <strong>Workspace Logo</strong>
                                         <p>Recommended 256×256px. Max 2MB.</p>
-                                        <button className="settings-upload-btn">Upload New</button>
                                     </div>
                                 </div>
 
@@ -178,7 +221,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                                 </div>
                             </div>
                             <div className="settings-actions-bar">
-                                <button className="settings-cancel-btn" onClick={() => setFormData({ name: workspace.name, slug: workspace.slug })}>Cancel</button>
+                                <button className="settings-cancel-btn" onClick={() => setFormData({ name: workspace.name, slug: workspace.slug, logoFile: null, logoPreview: null })}>Cancel</button>
                                 <button
                                     className="settings-primary-btn"
                                     onClick={handleSaveIdentity}

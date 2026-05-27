@@ -6,6 +6,8 @@
     font-family: 'Inter', system-ui, sans-serif;
     color: #1e293b;
     width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 /* ─── Page Header ─── */
@@ -443,7 +445,23 @@
 @media (max-width: 480px) {
     .settings-content {
         width: 100%;
+        overflow-x: hidden;
     }
+
+    .settings-card {
+        overflow: hidden;
+    }
+}
+
+.settings-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.settings-table {
+    width: 100%;
+    min-width: 480px;
+    border-collapse: collapse;
 }
 
 .settings-table th {
@@ -622,4 +640,20 @@
 
 .avatar-upload-label:active {
     transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+    .settings-logo-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    .settings-url-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .settings-url-prefix {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+    }
 }

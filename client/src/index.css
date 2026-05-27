@@ -8,6 +8,7 @@
 body,
 html {
   height: 100%;
+  overflow-x: hidden;
 }
 
 .add-task-btn {
@@ -32,6 +33,12 @@ html {
     .add-task-btn {
         width: 100%;
         justify-content: center;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        box-shadow: 0 4px 14px rgba(0, 93, 169, 0.35);
     }
 }

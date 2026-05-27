@@ -7,14 +7,14 @@
     flex: 1;
 }
 
-.tasks-header {
+.recent-tasks-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
 }
 
-.tasks-header h3 {
+.recent-tasks-header h3 {
     font-size: 18px;
     font-weight: 700;
     color: #1e293b;
@@ -170,10 +170,4 @@
 .task-action-btn:hover {
     background: #f1f5f9;
     color: #64748b;
-}
-
-@media (max-width: 480px) {
-    .recent-tasks-container {
-        width: 71%;
-    }
 }

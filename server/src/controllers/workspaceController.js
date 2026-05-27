@@ -81,6 +81,7 @@ export const updateWorkspace = async (req, res) => {
     try {
         const { name, slug } = req.body;
         const workspaceId = req.user?.workspace?.id;
+        const avatarUrl = req.file ? req.file.path : undefined;
 
         if (!workspaceId) {
             return res.status(400).json({ error: "Workspace not selected" });
@@ -116,8 +117,9 @@ export const updateWorkspace = async (req, res) => {
         const updated = await prisma.workspace.update({
             where: { id: workspaceId },
             data: {
-                name: name || undefined,
-                slug: slug || undefined
+                ...(name !== undefined && { name }),
+                ...(slug !== undefined && { slug }),
+                ...(avatarUrl !== undefined && { avatarUrl }),
             }
         });
 

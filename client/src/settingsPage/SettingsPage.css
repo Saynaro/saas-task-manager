@@ -5,6 +5,7 @@
     width: 100%;
     box-sizing: border-box;
     overflow-x: hidden;
+    max-width: 100%;
 }
 
 /* Premium toggle bar */
@@ -63,5 +64,13 @@
     }
     .toggle-container {
         width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 }

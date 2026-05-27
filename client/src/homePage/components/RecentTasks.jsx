@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router';
 import './RecentTasks.css';
 import { ArrowRight } from 'lucide-react';
 
 export function RecentTasks({ projects = [] }) {
+    const navigate = useNavigate();
     // Sort projects by createdAt descending and take top 7
     const recentProjects = [...projects]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -27,9 +29,9 @@ export function RecentTasks({ projects = [] }) {
 
     return (
         <div className="recent-tasks-container">
-            <div className="tasks-header">
+            <div className="recent-tasks-header">
                 <h3>Recent Projects</h3>
-                <button className="see-all-btn">
+                <button className="see-all-btn" onClick={() => navigate('/tasks')}>
                     See All <ArrowRight size={14} />
                 </button>
             </div>

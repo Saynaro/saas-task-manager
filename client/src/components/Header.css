@@ -11,12 +11,15 @@
     padding: 0 25px;
     border-bottom: 1px solid #eef0f2;
     z-index: 10;
+    box-sizing: border-box;
 }
 
 .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+    flex: 1;
 }
 
 .workspace-selector {
@@ -97,6 +100,7 @@
     display: flex;
     align-items: center;
     gap: 24px;
+    flex-shrink: 0;
 }
 
 .header-actions {
@@ -190,7 +194,15 @@
     }
 
     .search-container {
-        width: 200px;
+        display: none;
+    }
+
+    .workspace-selector-trigger h3 {
+        max-width: 140px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
     }
 
     .sidebar-overlay {
@@ -480,6 +492,8 @@
     padding: 4px 8px;
     border-radius: 6px;
     transition: background 0.2s;
+    min-width: 0;
+    max-width: 200px;
 }
 
 .workspace-selector-trigger.clickable {

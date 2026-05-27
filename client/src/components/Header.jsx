@@ -217,7 +217,14 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                 <div className="user-info">
                     <span className="user-role-badge">{userRole}</span>
                     <div className="profile-badge">
-                        <img src={currentUser?.avatarUrl || "https://static.vecteezy.com/system/resources/thumbnails/048/216/761/small/modern-male-avatar-with-black-hair-and-hoodie-illustration-free-png.png"} alt="User" />
+                        <img
+                            src={
+                                (currentUser?.role === 'OWNER' && currentUser?.workspace?.avatarUrl)
+                                    ? currentUser.workspace.avatarUrl
+                                    : currentUser?.avatarUrl || "https://static.vecteezy.com/system/resources/thumbnails/048/216/761/small/modern-male-avatar-with-black-hair-and-hoodie-illustration-free-png.png"
+                            }
+                            alt="User"
+                        />
                     </div>
                 </div>
             </div>
