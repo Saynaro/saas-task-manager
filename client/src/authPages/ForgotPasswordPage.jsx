@@ -33,13 +33,8 @@ export function ForgotPasswordPage() {
     return (
         <div className="auth-bg">
             <div className="auth-card">
-                {/* Logo */}
-                <div className="auth-logo">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                </div>
+        {/* Logo */}
+        <img src="/saas-pro-logo.svg" alt="SaaS Pro Logo" className="auth-logo-img" />
 
                 <h1 className="auth-title">Forgot Password</h1>
                 <p className="auth-subtitle">Enter your email and we'll send you a link to reset your password.</p>

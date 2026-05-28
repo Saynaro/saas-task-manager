@@ -78,13 +78,7 @@ export function LoginPage({ onLoginSuccess }) {
     <div className="auth-bg">
       <div className="auth-card">
         {/* Logo */}
-        <div className="auth-logo">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
-          </svg>
-        </div>
+        <img src="/saas-pro-logo.svg" alt="SaaS Pro Logo" className="auth-logo-img" />
 
         <h1 className="auth-title">Sign in to SaaS Pro</h1>
         <p className="auth-subtitle">Welcome back! Please enter your details.</p>

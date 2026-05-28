@@ -82,14 +82,11 @@ export function RegisterPage({ onLoginSuccess }) {
     <div className="auth-bg">
       <div className="auth-card">
         {/* Logo */}
-        <div className="auth-logo">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
-          </svg>
-        </div>
+        <img src="/saas-pro-logo.svg" alt="SaaS Pro Logo" className="auth-logo-img" />
 
         <h1 className="auth-title">Create your account</h1>
-        <br />
+        <p className="auth-subtitle">Welcome back! Please enter your details.</p>
+
 
         {/* <p className="auth-subtitle">Start your 14-day free trial. No credit card required.</p> */}
 
