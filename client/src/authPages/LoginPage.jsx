@@ -65,7 +65,7 @@ export function LoginPage({ onLoginSuccess }) {
 
         toast.success("Welcome back!");
         onLoginSuccess?.(fullUser);
-        navigate("/");
+        navigate("/dashboard");
       }
       console.log(data);
     } catch (error) {

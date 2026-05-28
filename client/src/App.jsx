@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router'
 import { useState, useEffect, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { HomePage } from './homePage/HomePage'
+import { LandingPage } from './landingPage/LandingPage'
 
 import { TasksPage } from './tasksPage/TasksPage'
 import { SettingsPage } from './settingsPage/SettingsPage'
@@ -112,7 +113,8 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><HomePage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
+        <Route path="/" element={<LandingPage currentUser={currentUser} />} />
+        <Route path="/dashboard" element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><HomePage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
         <Route path='/tasks' element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><TasksPage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
         <Route path='/settings' element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><SettingsPage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
         <Route path='/activity' element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><ActivityPage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />

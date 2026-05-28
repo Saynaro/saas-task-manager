@@ -6,7 +6,7 @@ import './SideBar.css';
 import { apiFetch } from '../utils/apiFetch';
 
 const navLinks = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Tasks', path: '/tasks', icon: CheckCircle },
     { name: 'Team Members', path: '/team', icon: Users },
 ];

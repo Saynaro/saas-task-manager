@@ -24,7 +24,7 @@ export function VerifyEmailPage({ refreshUser }) {
                         if (refreshUser) {
                             await refreshUser();
                         }
-                        setTimeout(() => navigate('/'), 3000);
+                        setTimeout(() => navigate('/dashboard'), 3000);
                     } else {
                         setStatus('error');
                     }
@@ -47,7 +47,7 @@ export function VerifyEmailPage({ refreshUser }) {
                         if (refreshUser) {
                             await refreshUser();
                         }
-                        setTimeout(() => navigate('/'), 3000);
+                        setTimeout(() => navigate('/dashboard'), 3000);
                     }
                 }
             } catch (err) {

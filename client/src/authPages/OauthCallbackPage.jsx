@@ -21,7 +21,7 @@ export function OAuthCallbackPage({ onLoginSuccess }) {
                 .then(res => res.json())
                 .then(data => {
                     onLoginSuccess?.(data.data?.user);
-                    navigate('/');
+                    navigate('/dashboard');
                 });
         } else {
             navigate('/login');
