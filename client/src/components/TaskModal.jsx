@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Plus, Trash2, Calendar, Users, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -19,8 +19,24 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
 
     const [newChecklistItem, setNewChecklistItem] = useState('');
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const checklistInputRef = useRef(null);
+
+    const handleInputFocus = () => {
+        setTimeout(() => {
+            checklistInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    };
     const [workspaceMembers, setWorkspaceMembers] = useState([]);
     const [isMemberPickerOpen, setIsMemberPickerOpen] = useState(false);
+    const memberPickerRef = useRef(null);
+
+    useEffect(() => {
+        if (isMemberPickerOpen) {
+            setTimeout(() => {
+                memberPickerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+    }, [isMemberPickerOpen]);
 
     const isMember = currentUser?.role === 'MEMBER';
     const canManageValue = currentUser?.role === 'ADMIN' || currentUser?.role === 'OWNER';
@@ -87,6 +103,9 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                 checklist: [...taskData.checklist, { id: Date.now(), text: newChecklistItem, completed: false }]
             });
             setNewChecklistItem('');
+            setTimeout(() => {
+                checklistInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         }
     };
 
@@ -145,7 +164,11 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                 description: taskData.description,
                 priority: taskData.priority.toUpperCase(),
                 dueDate: taskData.dueDate, // Will be parsed by new Date() in backend
-                tasks: taskData.checklist.map(item => ({ title: item.text })),
+                tasks: taskData.checklist.map(item => ({
+                    id: typeof item.id === 'string' ? item.id : undefined,
+                    title: item.text,
+                    status: item.completed ? 'DONE' : 'TODO'
+                })),
                 memberIds: taskData.assignee
             };
 
@@ -280,7 +303,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                                 )}
 
                                 {isMemberPickerOpen && (
-                                    <div className="member-picker-dropdown">
+                                    <div ref={memberPickerRef} className="member-picker-dropdown">
                                         <div className="member-picker-header">
                                             <span>Select Members</span>
                                             <button onClick={() => setIsMemberPickerOpen(false)}><X size={14} /></button>
@@ -338,12 +361,14 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                         {!isReadOnly && (
                             <div className="add-checklist-row">
                                 <input
+                                    ref={checklistInputRef}
                                     type="text"
                                     placeholder="Enter Task"
                                     className="modal-input"
                                     value={newChecklistItem}
                                     onChange={(e) => setNewChecklistItem(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && handleAddChecklist()}
+                                    onFocus={handleInputFocus}
                                 />
                                 <button type="button" className="add-btn" onClick={handleAddChecklist}>
                                     <Plus size={16} /> Add
@@ -355,7 +380,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
 
                 <div className="modal-footer">
                     <button type="button" className="main-submit-btn" onClick={handleSubmit}>
-                        {mode === 'create' ? 'CREATE TASK' : 'UPDATE TASK'}
+                        {mode === 'create' ? 'CREATE PROJECT' : 'UPDATE PROJECT'}
                     </button>
                 </div>
 

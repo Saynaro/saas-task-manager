@@ -1,5 +1,6 @@
+import { createServer } from "http";
+import { Server } from "socket.io";
 import app from "./app.js";
-
 import { connectDB, disconnectDB } from "./config/db.js";
 import passport from "./config/passport.js";
 
@@ -8,11 +9,41 @@ app.use(passport.initialize());
 
 const PORT = process.env.PORT || 5000;
 
+const httpServer = createServer(app);
+
+export const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.FRONTEND_URL || "http://localhost:5173" || "http://localhost:5174",
+        credentials: true,
+    },
+});
+
+
+io.on("connection", (socket) => {
+    console.log("Socket connected", socket.id);
+
+    socket.on("join_project", (projectId) => {
+        socket.join(`project:${projectId}`);
+        console.log(`Socket ${socket.id} joined project ${projectId}`);
+    });
+
+    socket.on("leave_project", (projectId) => {
+        socket.leave(`project:${projectId}`);
+        console.log(`Socket ${socket.id} left project ${projectId}`);
+
+    });
+
+    socket.on("disconnect", () => {
+        console.log("Socket disconnected:", socket.id);
+    });
+});
+
 const startServer = async () => {
     try {
         await connectDB();
 
-        const server = app.listen(PORT, '0.0.0.0', () => {
+        // httpServer instead of app.listen(PORT) to support socket.io
+        const server = httpServer.listen(PORT, '0.0.0.0', () => {
             console.log(`Server is running on PORT: ${PORT}`);
         });
 
@@ -27,7 +58,7 @@ const startServer = async () => {
             }, 30000);
 
             // Forcefully close all keep-alive connections
-            server.closeAllConnections?.(); // Node.js 18.2+
+            server.closeAllConnections?.();
 
             server.close(async () => {
                 try {

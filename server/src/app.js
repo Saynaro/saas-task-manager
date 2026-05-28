@@ -13,6 +13,7 @@ import invitationRoutes from "./routes/invitationRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 config();
 
@@ -35,5 +36,6 @@ app.use("/api/invitations", invitationRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/email", emailRoutes);
+app.use("/api/projects/:projectId/comments", commentRoutes);
 
 export default app;

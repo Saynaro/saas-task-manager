@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Building, Users, CreditCard, Grid, UserPlus, Trash2, Loader2, Mail } from 'lucide-react';
+import { Building, Users, UserPlus, Trash2, Loader2, Mail } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../utils/apiFetch';
@@ -95,8 +95,6 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const tabs = [
         { id: 'identity', label: 'Workspace Identity', icon: Building },
         { id: 'members', label: 'Members & Roles', icon: Users },
-        { id: 'billing', label: 'Billing', icon: CreditCard },
-        { id: 'integrations', label: 'Integrations', icon: Grid },
     ];
 
     return (
@@ -299,35 +297,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                         </div>
                     )}
 
-                    {activeTab === 'billing' && (
-                        <div className="settings-card">
-                            <div className="settings-card-header">
-                                <div className="settings-card-title-group">
-                                    <CreditCard size={20} className="icon" />
-                                    <div>
-                                        <h3 className="settings-card-title">Billing & Invoices</h3>
-                                        <p className="settings-card-subtitle">Manage your subscription and payment history.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="settings-empty-panel">No active subscriptions for this workspace.</div>
-                        </div>
-                    )}
 
-                    {activeTab === 'integrations' && (
-                        <div className="settings-card">
-                            <div className="settings-card-header">
-                                <div className="settings-card-title-group">
-                                    <Grid size={20} className="icon" />
-                                    <div>
-                                        <h3 className="settings-card-title">Integrations</h3>
-                                        <p className="settings-card-subtitle">Connect your favourite tools and services.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="settings-empty-panel">Connect tools like GitHub, Slack, and Zoom.</div>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

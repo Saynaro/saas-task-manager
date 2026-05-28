@@ -19,7 +19,7 @@ export function TaskCards({ tasks, onTaskClick }) {
             {tasks.map(task => {
                 const sTheme = getStatusTheme(task.status);
                 const pTheme = getPriorityTheme(task.priority);
-                
+
                 const tasksList = task.tasks || [];
                 const totalNum = tasksList.length;
                 const doneNum = tasksList.filter(t => t.status === 'DONE').length;
@@ -39,7 +39,7 @@ export function TaskCards({ tasks, onTaskClick }) {
                         <div className="task-card-content" style={{ borderLeft: `4px solid ${sTheme.border}` }}>
                             <h4>{task.name || task.title}</h4>
                             <p className="task-desc">{task.description}</p>
-                            
+
                             <div className="task-progress-text">
                                 Task Done: <strong>{doneNum} / {totalNum}</strong>
                             </div>
@@ -63,19 +63,16 @@ export function TaskCards({ tasks, onTaskClick }) {
                             <div className="card-avatar-group">
                                 {task.members && task.members.length > 0 ? (
                                     task.members.map(m => (
-                                        <img 
-                                            key={m.user.id} 
-                                            src={m.user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(`${m.user.firstName || ''} ${m.user.lastName || ''}`)}&background=random`} 
-                                            alt="avatar" 
+                                        <img
+                                            key={m.user.id}
+                                            src={m.user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(`${m.user.firstName || ''} ${m.user.lastName || ''}`)}&background=random`}
+                                            alt="avatar"
                                             title={`${m.user.firstName} ${m.user.lastName}`}
                                         />
                                     ))
                                 ) : (
                                     <div className="no-members-small">No members</div>
                                 )}
-                            </div>
-                            <div className="attachment-badge">
-                                <Paperclip size={14} /> {Math.floor(Math.random() * 4) + 1}
                             </div>
                         </div>
                     </div>

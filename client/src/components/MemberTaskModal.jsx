@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle2, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../utils/apiFetch';
+import socket from '../utils/socket';
 import './MemberTaskModal.css';
 
 export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser }) {
@@ -16,32 +17,64 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
         members: []
     });
 
-    const [comments, setComments] = useState([
-        {
-            id: 1,
-            userName: "Alex Rivera",
-            userAvatar: "https://static.vecteezy.com/system/resources/thumbnails/048/216/761/small/modern-male-avatar-with-black-hair-and-hoodie-illustration-free-png.png",
-            text: "I've started working on the main screen layout. Will push updates soon.",
-            createdAt: "2 hours ago"
-        },
-        {
-            id: 2,
-            userName: "Sarah Chen",
-            userAvatar: "https://ui-avatars.com/api/?name=Sarah+Chen&background=0891b2&color=fff",
-            text: "Looks great! Let me know if you need help with the CSS styling.",
-            createdAt: "1 hour ago"
-        },
-        {
-            id: 3,
-            userName: "Sarah Chen",
-            userAvatar: "https://ui-avatars.com/api/?name=Sarah+Chen&background=0891b2&color=fff",
-            text: "Looks great! Let me know if you need help with the CSS styling.",
-            createdAt: "1 hour ago"
-        }
-    ]);
+    const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState('');
-    const chatEndRef = useRef(null);
+    const [selectedTaskId, setSelectedTaskId] = useState(null);
+    const [isSending, setIsSending] = useState(false);
+    const chatContainerRef = useRef(null);
     const inputRef = useRef(null);
+
+    // get comments and connect to socket
+    useEffect(() => {
+        if (!isOpen || !task?.id) return;
+
+        const fetchComments = async () => {
+            try {
+                const res = await apiFetch(`http://localhost:5001/api/projects/${task?.id}/comments`);
+                const data = await res.json();
+
+                setComments(data.data || []);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchComments();
+
+        // connect to project room
+        socket.connect();
+        socket.emit("join_project", task.id);
+
+        // listen to new comment event
+        socket.on("new_comment", (comment) => {
+            setComments(prev => [...prev, comment]);
+        });
+
+
+        return () => {
+            socket.emit("leave_project", task.id);
+            socket.off("new_comment");
+            socket.disconnect();
+        }
+
+    }, [isOpen, task?.id])
+
+
+    // set first task like default
+    useEffect(() => {
+        if (task?.tasks?.length > 0) {
+            setSelectedTaskId(task.tasks[0].id)
+        }
+    }, [task])
+
+
+    // Scroll chat messages container down when comments change
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [comments]);
+
 
     const handleInputFocus = () => {
         setTimeout(() => {
@@ -49,11 +82,6 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
         }, 300);
     };
 
-    useEffect(() => {
-        if (isOpen) {
-            chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [comments, isOpen]);
 
     useEffect(() => {
         if (task) {
@@ -62,37 +90,46 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
                 description: task.description || '',
                 status: task.status || 'TODO',
                 priority: task.priority || 'Medium',
-                dueDate: task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'No date',
+                dueDate: task.dueDate ? new Date(task.dueDate).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                }) : 'No date',
                 checklist: task.tasks ? task.tasks.map((t, index) => ({
                     id: t.id || index,
                     text: t.title,
                     completed: t.status === 'DONE'
                 })) : [],
-                attachments: task.attachments || [],
                 members: task.members || []
             });
         }
     }, [task, isOpen]);
 
-    const handleSendComment = (e) => {
+    const handleSendComment = async (e) => {
         e.preventDefault();
-        if (!newCommentText.trim()) return;
+        if (!newCommentText.trim() || !selectedTaskId || isSending) return;
+
+        setIsSending(true);
+        try {
+            await apiFetch(`http://localhost:5001/api/projects/${task.id}/comments`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    content: newCommentText.trim(),
+                    taskId: selectedTaskId,
+                })
+            });
+
+            setNewCommentText('');
+        } catch (error) {
+            toast.error("Failed to send comment");
+        } finally {
+            setIsSending(false)
+        };
 
         const userName = currentUser ? `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() || currentUser.email : "You";
         const userAvatar = currentUser?.role === 'OWNER' && currentUser?.workspace?.avatarUrl
             ? currentUser.workspace.avatarUrl
             : currentUser?.avatarUrl;
-
-        const newComment = {
-            id: Date.now(),
-            userName: userName,
-            userAvatar: userAvatar,
-            text: newCommentText.trim(),
-            createdAt: "Just now"
-        };
-
-        setComments(prev => [...prev, newComment]);
-        setNewCommentText('');
     };
 
     if (!isOpen) return null;
@@ -156,6 +193,15 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
         }
     };
 
+    const formatTime = (dateString) => {
+        return new Date(dateString).toLocaleTimeString('en-GB', {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: "numeric",
+            month: "short"
+        })
+    }
+
     return (
         <div className="member-modal-overlay" onClick={onClose}>
             <div className="member-modal-content" onClick={e => e.stopPropagation()}>
@@ -217,39 +263,70 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
                 <div className="member-modal-section">
                     <h2 className="section-title">Discussion & Comments</h2>
                     <div className="chat-container">
-                        <div className="chat-messages">
+                        <div ref={chatContainerRef} className="chat-messages">
+                            {comments.length === 0 && (
+                                <p className="no-comments">
+                                    No Comments Yet!
+                                </p>
+                            )}
                             {comments.map((comment) => (
-                                <div key={comment.id} className="chat-message">
+                                <div key={comment.id} className={`chat-message ${comment.user?.id === currentUser?.id ? 'own' : ''}`}>
                                     <img
-                                        src={comment.userAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.userName)}&background=random`}
-                                        alt={comment.userName}
+                                        src={comment.user?.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user?.firstName + ' ' + comment.user?.lastName)}&background=random`}
+                                        alt={comment.user?.firstName + ' ' + comment.user?.lastName}
                                         className="chat-avatar"
                                     />
                                     <div className="chat-message-content">
                                         <div className="chat-message-header">
-                                            <span className="chat-user-name">{comment.userName}</span>
-                                            <span className="chat-time">{comment.createdAt}</span>
+                                            <span className="chat-user-name">
+                                                {comment.user?.firstName + ' ' + comment.user?.lastName}
+                                            </span>
+                                            <span className="chat-time">
+                                                {formatTime(comment.createdAt)}
+                                            </span>
                                         </div>
-                                        <div className="chat-message-text">{comment.text}</div>
+                                        {comment.task && (
+                                            <span className="chat-task-ref">re: {comment.task.title}</span>
+                                        )}
+                                        <div className="chat-message-text">
+                                            {comment.content}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
-                            <div ref={chatEndRef} />
                         </div>
+
+                        {/* Task selector + input */}
                         <form onSubmit={handleSendComment} className="chat-input-form">
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                placeholder="Write a comment..."
-                                value={newCommentText}
-                                onChange={(e) => setNewCommentText(e.target.value)}
-                                onFocus={handleInputFocus}
-                                className="chat-input"
-                            />
-                            <button type="submit" className="chat-send-btn">
-                                <Send size={16} />
-                                <span>Send</span>
-                            </button>
+                            <div className="chat-task-select-container">
+                                <span className="chat-task-select-label">Regarding:</span>
+                                <select
+                                    value={selectedTaskId || ''}
+                                    onChange={e => setSelectedTaskId(e.target.value)}
+                                    className="chat-task-select"
+                                >
+                                    {taskData.checklist.map(item => (
+                                        <option key={item.id} value={item.id}>
+                                            {item.text}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="chat-input-row">
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    placeholder="Write a comment..."
+                                    value={newCommentText}
+                                    onChange={e => setNewCommentText(e.target.value)}
+                                    onFocus={handleInputFocus}
+                                    className="chat-input"
+                                />
+                                <button type="submit" className="chat-send-btn" disabled={isSending}>
+                                    <Send size={16} />
+                                    <span>Send</span>
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

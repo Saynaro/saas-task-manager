@@ -103,7 +103,7 @@ export const getProjects = async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        let whereClause = { 
+        let whereClause = {
             workspaceId: workspaceId,
             members: {
                 some: { userId: userId }
@@ -201,12 +201,17 @@ export const updateProject = async (req, res) => {
             //  Update tasks (Checklist)
             if (tasks !== undefined) {
                 const existingTasks = await tx.task.findMany({ where: { projectId: id } });
-                
-                const tasksToCreate = tasks.map((t, index) => {
-                    const matchedTask = existingTasks.find(et => et.id === t.id || et.title === t.title);
-                    
+
+                const keptTaskIds = [];
+                const tasksToSync = tasks.map((t, index) => {
+                    const matchedTask = existingTasks.find(et =>
+                        (t.id && et.id === t.id) ||
+                        (!keptTaskIds.includes(et.id) && et.title === t.title)
+                    );
+
                     let assigneeId = null;
                     if (matchedTask) {
+                        keptTaskIds.push(matchedTask.id);
                         if (matchedTask.status === 'TODO' && t.status === 'DONE') {
                             assigneeId = userId;
                         } else if (matchedTask.status === 'DONE' && t.status === 'TODO') {
@@ -214,28 +219,59 @@ export const updateProject = async (req, res) => {
                         } else {
                             assigneeId = matchedTask.assigneeId;
                         }
+
+                        return {
+                            id: matchedTask.id,
+                            title: t.title,
+                            status: t.status || "TODO",
+                            projectId: id,
+                            creatorId: matchedTask.creatorId,
+                            assigneeId: assigneeId,
+                            order: index * 1000,
+                            workspaceId: project.workspaceId,
+                            isNew: false
+                        };
                     } else {
                         if (t.status === 'DONE') {
                             assigneeId = userId;
                         }
+                        return {
+                            title: t.title,
+                            status: t.status || "TODO",
+                            projectId: id,
+                            creatorId: userId,
+                            assigneeId: assigneeId,
+                            order: index * 1000,
+                            workspaceId: project.workspaceId,
+                            isNew: true
+                        };
                     }
-
-                    return {
-                        title: t.title,
-                        status: t.status || "TODO",
-                        projectId: id,
-                        creatorId: matchedTask ? matchedTask.creatorId : userId,
-                        assigneeId: assigneeId,
-                        order: index * 1000,
-                        workspaceId: project.workspaceId
-                    };
                 });
 
-                await tx.task.deleteMany({ where: { projectId: id } });
-                if (tasksToCreate.length > 0) {
-                    await tx.task.createMany({
-                        data: tasksToCreate
+                //  Delete tasks that are no longer in the payload
+                const tasksToDelete = existingTasks.filter(et => !keptTaskIds.includes(et.id));
+                if (tasksToDelete.length > 0) {
+                    await tx.task.deleteMany({
+                        where: {
+                            id: { in: tasksToDelete.map(t => t.id) }
+                        }
                     });
+                }
+
+                //  Update existing and create new
+                for (const t of tasksToSync) {
+                    if (t.isNew) {
+                        const { isNew, ...createData } = t;
+                        await tx.task.create({
+                            data: createData
+                        });
+                    } else {
+                        const { id: taskId, isNew, ...updateData } = t;
+                        await tx.task.update({
+                            where: { id: taskId },
+                            data: updateData
+                        });
+                    }
                 }
             }
 
