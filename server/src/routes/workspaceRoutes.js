@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.get("/members", getWorkspaceMembers);
-router.post("/", createWorkspace);
+router.post("/", uploadAvatar.single("avatar"), createWorkspace);
 router.patch("/update", uploadAvatar.single("avatar"), updateWorkspace);
 router.delete("/members/:userId", removeMember);
 

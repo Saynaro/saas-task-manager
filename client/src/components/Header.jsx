@@ -15,6 +15,8 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
     const wsRef = useRef(null);
 
     const userRole = currentUser?.role || 'USER';
+    const isMember = currentUser?.role === 'MEMBER';
+    const canSwitch = !isMember || (currentUser?.allWorkspaces?.length >= 2);
 
     const handleWorkspaceSelect = async (workspaceId) => {
         if (workspaceId === currentUser?.workspace?.id) return;
@@ -119,11 +121,11 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                     {currentUser?.workspace ? (
                         <>
                             <div 
-                                className="workspace-selector-trigger clickable"
-                                onClick={() => setIsWsSelectorOpen(!isWsSelectorOpen)}
+                                className={`workspace-selector-trigger ${canSwitch ? 'clickable' : ''}`}
+                                onClick={() => canSwitch && setIsWsSelectorOpen(!isWsSelectorOpen)}
                             >
                                 <h3>{currentUser.workspace.name}</h3>
-                                <ChevronDown size={16} className={`chevron-icon ${isWsSelectorOpen ? 'open' : ''}`} />
+                                {canSwitch && <ChevronDown size={16} className={`chevron-icon ${isWsSelectorOpen ? 'open' : ''}`} />}
                             </div>
 
                             {isWsSelectorOpen && (
@@ -142,20 +144,26 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                                             </div>
                                         ))}
                                     </div>
-                                    <div className="dropdown-divider" />
-                                    <button className="dropdown-action-btn" onClick={() => { openWorkspaceModal(); setIsWsSelectorOpen(false); }}>
-                                        <Plus size={14} />
-                                        Create New Workspace
-                                    </button>
+                                    {!isMember && (
+                                        <>
+                                            <div className="dropdown-divider" />
+                                            <button className="dropdown-action-btn" onClick={() => { openWorkspaceModal(); setIsWsSelectorOpen(false); }}>
+                                                <Plus size={14} />
+                                                Create New Workspace
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         </>
                     ) : (
-                        <button className="create-ws-header-btn" onClick={() => openWorkspaceModal()}>
-                            <Plus size={16} />
-                            <span className="desktop-txt">Create workspace</span>
-                            <span className="mobile-txt">New Workspace</span>
-                        </button>
+                        !isMember && (
+                            <button className="create-ws-header-btn" onClick={() => openWorkspaceModal()}>
+                                <Plus size={16} />
+                                <span className="desktop-txt">Create workspace</span>
+                                <span className="mobile-txt">New Workspace</span>
+                            </button>
+                        )
                     )}
                 </div>
             </div>

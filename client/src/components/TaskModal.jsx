@@ -44,52 +44,56 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
     // For members, let's keep it simple: if NOT admin/owner OR if is member
     const isReadOnly = isMember;
 
+    // Fetch workspace members whenever the modal opens
     useEffect(() => {
-        if (isOpen) {
-            const fetchMembers = async () => {
-                if (!currentUser?.workspace?.id) {
-                    setWorkspaceMembers([]);
-                    return;
-                }
-                try {
-                    const res = await apiFetch("http://localhost:5001/api/workspaces/members", {
-                        credentials: "include"
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        setWorkspaceMembers(data);
-                    }
-                } catch (err) {
-                    console.error("Error fetching workspace members:", err);
-                }
-            };
-            fetchMembers();
-
-            if (task && mode === 'update') {
-                setTaskData({
-                    title: task.name || task.title || '',
-                    description: task.description || '',
-                    priority: task.priority ? (task.priority.charAt(0) + task.priority.slice(1).toLowerCase()) : 'Medium',
-                    dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : today,
-                    checklist: task.tasks ? task.tasks.map((t, index) => ({
-                        id: t.id || index,
-                        text: t.title,
-                        completed: t.status === 'DONE'
-                    })) : [],
-                    attachments: task.attachments || [],
-                    assignee: task.members ? task.members.map(m => m.user.id) : []
-                });
-            } else {
-                setTaskData({
-                    title: '',
-                    description: '',
-                    priority: 'Low',
-                    dueDate: today,
-                    checklist: [],
-                    attachments: [],
-                    assignee: []
-                });
+        if (!isOpen) return;
+        const fetchMembers = async () => {
+            if (!currentUser?.workspace?.id) {
+                setWorkspaceMembers([]);
+                return;
             }
+            try {
+                const res = await apiFetch("http://localhost:5001/api/workspaces/members", {
+                    credentials: "include"
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setWorkspaceMembers(data);
+                }
+            } catch (err) {
+                console.error("Error fetching workspace members:", err);
+            }
+        };
+        fetchMembers();
+    }, [isOpen, currentUser?.workspace?.id]);
+
+    // Initialize form data when task or mode changes
+    useEffect(() => {
+        if (!isOpen) return;
+        if (task && mode === 'update') {
+            setTaskData({
+                title: task.name || task.title || '',
+                description: task.description || '',
+                priority: task.priority ? (task.priority.charAt(0) + task.priority.slice(1).toLowerCase()) : 'Medium',
+                dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : today,
+                checklist: task.tasks ? task.tasks.map((t, index) => ({
+                    id: t.id || index,
+                    text: t.title,
+                    completed: t.status === 'DONE'
+                })) : [],
+                attachments: task.attachments || [],
+                assignee: task.members ? task.members.map(m => m.user.id) : []
+            });
+        } else if (mode === 'create') {
+            setTaskData({
+                title: '',
+                description: '',
+                priority: 'Low',
+                dueDate: today,
+                checklist: [],
+                attachments: [],
+                assignee: []
+            });
         }
     }, [task, mode, isOpen]);
 

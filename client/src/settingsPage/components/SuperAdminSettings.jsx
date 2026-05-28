@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Globe, Users, Shield, Building2, Loader2, Trash2 } from 'lucide-react';
+import { Shield, Building2, Loader2, Trash2 } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../utils/apiFetch';
@@ -69,7 +69,7 @@ export function SuperAdminSettings() {
 
     return (
         <div className="super-admin-settings">
-            <ConfirmationModal 
+            <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleDeleteWorkspace}
@@ -87,68 +87,84 @@ export function SuperAdminSettings() {
                 <p>Manage all workspaces, users, and overall system health.</p>
             </header>
 
-            <div className="admin-grid">
-                <section className="admin-section all-workspaces">
-                    <div className="section-head">
-                        <Building2 size={20} />
-                        <h2>Global Workspaces</h2>
-                    </div>
-                    <div className="workspace-table-container">
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Workspace Name</th>
-                                    <th>Owner</th>
-                                    <th>Members</th>
-                                    <th>Projects</th>
-                                    <th style={{ textAlign: 'right' }}>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {stats?.workspaces?.map(ws => (
-                                    <tr key={ws.id}>
-                                        <td className="ws-name">{ws.name}</td>
-                                        <td>{ws.owner}</td>
-                                        <td>{ws.membersCount}</td>
-                                        <td>{ws.projectsCount}</td>
-                                        <td style={{ textAlign: 'right' }}>
-                                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                                                <button className="manage-btn">Manage</button>
-                                                <button 
-                                                    className="admin-delete-btn"
-                                                    onClick={() => {
-                                                        setWsToDelete(ws);
-                                                        setIsDeleteModalOpen(true);
-                                                    }}
-                                                >
-                                                    <Trash2 size={15} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <div className="admin-sidebar-stats">
-                    <div className="stat-card">
-                        <Users size={18} />
-                        <div className="stat-info">
-                            <span className="stat-label">Total Users</span>
-                            <span className="stat-count">{stats?.totalUsers?.toLocaleString()}</span>
-                        </div>
-                    </div>
-                    <div className="stat-card">
-                        <Globe size={18} />
-                        <div className="stat-info">
-                            <span className="stat-label">Active Workspaces</span>
-                            <span className="stat-count">{stats?.totalWorkspaces?.toLocaleString()}</span>
-                        </div>
-                    </div>
+            {/* Workspaces Table */}
+            <section className="admin-section all-workspaces">
+                <div className="section-head">
+                    <Building2 size={20} />
+                    <h2>Global Workspaces</h2>
                 </div>
-            </div>
+
+                {/* Desktop Table */}
+                <div className="workspace-table-container">
+                    <table className="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Workspace Name</th>
+                                <th style={{ textAlign: 'center' }}>Owner</th>
+                                <th style={{ textAlign: 'center' }}>Members</th>
+                                <th style={{ textAlign: 'center' }}>Projects</th>
+                                <th style={{ textAlign: 'center', width: '80px' }}>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {stats?.workspaces?.map(ws => (
+                                <tr key={ws.id}>
+                                    <td className="ws-name">{ws.name}</td>
+                                    <td style={{ textAlign: 'center' }}>{ws.owner}</td>
+                                    <td style={{ textAlign: 'center' }}>{ws.membersCount}</td>
+                                    <td style={{ textAlign: 'center' }}>{ws.projectsCount}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <button
+                                            className="admin-delete-btn"
+                                            style={{ margin: '0 auto' }}
+                                            onClick={() => {
+                                                setWsToDelete(ws);
+                                                setIsDeleteModalOpen(true);
+                                            }}
+                                        >
+                                            <Trash2 size={15} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="admin-mobile-cards">
+                    {stats?.workspaces?.map(ws => (
+                        <div key={ws.id} className="admin-ws-card">
+                            <div className="admin-ws-card-header">
+                                <span className="admin-ws-name">{ws.name}</span>
+                                <button
+                                    className="admin-delete-btn"
+                                    onClick={() => {
+                                        setWsToDelete(ws);
+                                        setIsDeleteModalOpen(true);
+                                    }}
+                                >
+                                    <Trash2 size={15} />
+                                </button>
+                            </div>
+                            <div className="admin-ws-card-meta">
+                                <span className="admin-ws-meta-item">
+                                    <span className="admin-ws-meta-label">Owner</span>
+                                    <span>{ws.owner}</span>
+                                </span>
+                                <span className="admin-ws-meta-item centered">
+                                    <span className="admin-ws-meta-label">Members</span>
+                                    <span>{ws.membersCount}</span>
+                                </span>
+                                <span className="admin-ws-meta-item centered">
+                                    <span className="admin-ws-meta-label">Projects</span>
+                                    <span>{ws.projectsCount}</span>
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
         </div>
     );
 }

@@ -53,6 +53,7 @@ export function TasksPage({ currentUser, refreshUser }) {
     const [activeFilter, setActiveFilter] = useState('ALL');
     const [selectedTask, setSelectedTask] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const handleProjectClick = (project) => {
         setSelectedTask(project);
@@ -77,7 +78,13 @@ export function TasksPage({ currentUser, refreshUser }) {
     return (
         <Layout onSuccess={handleProjectCreated} currentUser={currentUser} refreshUser={refreshUser}>
             <div className="tasks-page-content">
-                <TasksHeader tasks={projects} activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+                <TasksHeader
+                    tasks={projects}
+                    activeFilter={activeFilter}
+                    setActiveFilter={setActiveFilter}
+                    onNewProject={() => setIsCreateModalOpen(true)}
+                    currentUser={currentUser}
+                />
                 <TaskCards tasks={filteredProjects} onTaskClick={handleProjectClick} />
 
                 {currentUser?.role === 'MEMBER' ? (
@@ -99,6 +106,15 @@ export function TasksPage({ currentUser, refreshUser }) {
                         currentUser={currentUser}
                     />
                 )}
+
+                <TaskModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    task={null}
+                    mode="create"
+                    onSuccess={handleProjectCreated}
+                    currentUser={currentUser}
+                />
             </div>
         </Layout>
     );

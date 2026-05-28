@@ -1,14 +1,23 @@
+import { Plus } from 'lucide-react';
 import './TasksHeader.css';
 
-export function TasksHeader({ tasks, activeFilter, setActiveFilter }) {
+export function TasksHeader({ tasks, activeFilter, setActiveFilter, onNewProject, currentUser }) {
     const all = tasks.length;
     const pending = tasks.filter(t => t.status === 'TODO').length;
     const inProgress = tasks.filter(t => t.status === 'IN_PROGRESS').length;
     const completed = tasks.filter(t => t.status === 'DONE').length;
+    const isMember = currentUser?.role === 'MEMBER';
 
     return (
         <div className="tasks-header">
-            <h2>My Tasks</h2>
+            <div className="tasks-header-top">
+                <h2>My Tasks</h2>
+                {!isMember && (
+                    <button className="new-project-btn" onClick={onNewProject}>
+                        <Plus size={16} /> New Project
+                    </button>
+                )}
+            </div>
             
             <div className="tasks-tabs">
                 <button 

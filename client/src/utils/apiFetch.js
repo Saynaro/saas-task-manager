@@ -36,7 +36,7 @@ export const apiFetch = async (url, options = {}) => {
 
     let res = await makeRequest(accessToken);
 
-    if (res.status === 401) {
+    if (res.status === 401 && !url.includes('/api/auth/login') && !url.includes('/api/auth/register')) {
         // If the access token is already being refreshed by another request,
         // we subscribe to wait for the new token instead of starting a new refresh request.
         if (isRefreshing) {

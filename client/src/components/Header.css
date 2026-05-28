@@ -45,7 +45,7 @@
 .workspace-select:hover {
     border-color: #cbd5e1;
     background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .workspace-select:focus {
@@ -294,6 +294,7 @@
         height: 34px;
     }
 }
+
 .notification-wrapper {
     position: relative;
 }
@@ -348,8 +349,15 @@
 }
 
 @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .notif-dropdown-header {
@@ -447,8 +455,13 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .create-ws-header-btn {
@@ -493,7 +506,7 @@
     border-radius: 6px;
     transition: background 0.2s;
     min-width: 0;
-    max-width: 200px;
+    max-width: 250px;
 }
 
 .workspace-selector-trigger.clickable {
@@ -605,6 +618,13 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

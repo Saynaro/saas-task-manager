@@ -101,6 +101,12 @@ export function AccountSettings({ user, onUpdate }) {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleInputFocus = (e) => {
+        setTimeout(() => {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    };
+
     const handleSave = async () => {
         setIsSaving(true);
         try {
@@ -175,7 +181,16 @@ export function AccountSettings({ user, onUpdate }) {
                             <button
                                 key={tab.id}
                                 className={`settings-nav-btn ${activeTab === tab.id ? 'active' : ''}`}
-                                onClick={() => setActiveTab(tab.id)}
+                                onClick={(e) => {
+                                    setActiveTab(tab.id);
+                                    if (window.innerWidth <= 1150) {
+                                        e.currentTarget.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'nearest',
+                                            inline: 'center'
+                                        });
+                                    }
+                                }}
                             >
                                 <Icon size={18} className="nav-icon" />
                                 {tab.label}
@@ -241,6 +256,7 @@ export function AccountSettings({ user, onUpdate }) {
                                             name="firstName"
                                             value={formData.firstName}
                                             onChange={handleInputChange}
+                                            onFocus={handleInputFocus}
                                             className="settings-input"
                                         />
                                     </div>
@@ -251,6 +267,7 @@ export function AccountSettings({ user, onUpdate }) {
                                             name="lastName"
                                             value={formData.lastName}
                                             onChange={handleInputChange}
+                                            onFocus={handleInputFocus}
                                             className="settings-input"
                                         />
                                     </div>
@@ -301,6 +318,7 @@ export function AccountSettings({ user, onUpdate }) {
                                             className="settings-input"
                                             value={passwordData.currentPassword}
                                             onChange={handlePasswordChange}
+                                            onFocus={handleInputFocus}
                                         />
                                         <button
                                             type="button"
@@ -322,6 +340,7 @@ export function AccountSettings({ user, onUpdate }) {
                                             className="settings-input"
                                             value={passwordData.newPassword}
                                             onChange={handlePasswordChange}
+                                            onFocus={handleInputFocus}
                                         />
                                         <button
                                             type="button"
@@ -343,6 +362,7 @@ export function AccountSettings({ user, onUpdate }) {
                                             className="settings-input"
                                             value={passwordData.confirmNewPassword}
                                             onChange={handlePasswordChange}
+                                            onFocus={handleInputFocus}
                                         />
                                         <button
                                             type="button"

@@ -484,6 +484,7 @@
     color: #94a3b8;
     padding: 16px 20px;
     background: #f8fafc;
+    text-align: left;
 }
 
 .settings-table td {
@@ -802,5 +803,91 @@
         grid-template-columns: 1fr;
         padding: 20px;
         gap: 16px;
+    }
+}
+
+/* Status cell pill styles */
+.settings-status-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    background-color: #f8fafc;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.settings-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.settings-dot-active {
+    background-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* Responsive Table -> Cards layout on mobile screens */
+@media (max-width: 600px) {
+    .settings-table thead {
+        display: none !important;
+    }
+    
+    .settings-table {
+        min-width: 0 !important;
+    }
+    
+    .settings-table, 
+    .settings-table tbody, 
+    .settings-table tr, 
+    .settings-table td {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+    
+    .settings-table tr {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        position: relative;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    
+    .settings-table td {
+        border-bottom: none !important;
+        padding: 6px 0 !important;
+    }
+    
+    /* First cell: User profile details */
+    .settings-table td:nth-child(1) {
+        margin-bottom: 8px;
+    }
+    
+    /* Second cell: Role badge */
+    .settings-table td:nth-child(2) {
+        display: inline-block !important;
+        margin-right: 12px;
+    }
+    
+    /* Third cell: Status indicator */
+    .settings-table td:nth-child(3) {
+        display: inline-block !important;
+    }
+    
+    /* Fourth cell: Delete button */
+    .settings-table td:nth-child(4) {
+        position: absolute !important;
+        top: 16px;
+        right: 16px;
+        width: auto !important;
+        padding: 0 !important;
     }
 }

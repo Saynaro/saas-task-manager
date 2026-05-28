@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Mail, Globe, Palette, AlignLeft, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { X, Plus, Mail, Globe, Image as ImageIcon, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../utils/apiFetch';
 import './WorkspaceModal.css';
@@ -8,16 +8,11 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
     const [formData, setFormData] = useState({
         name: '',
         slug: '',
-        description: '',
-        color: '#3b82f6',
+        logoFile: null,
+        logoPreview: null,
         invites: []
     });
     const [currentEmail, setCurrentEmail] = useState('');
-
-    const colors = [
-        '#3b82f6', '#ef4444', '#10b981', '#f59e0b', 
-        '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6'
-    ];
 
     const slugify = (text) => {
         return text
@@ -29,13 +24,19 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
             .replace(/--+/g, '-');       // Replace multiple - with single -
     };
 
+    const handleInputFocus = (e) => {
+        setTimeout(() => {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    };
+
     useEffect(() => {
         if (!isOpen) {
             setFormData({
                 name: '',
                 slug: '',
-                description: '',
-                color: '#3b82f6',
+                logoFile: null,
+                logoPreview: null,
                 invites: []
             });
         }
@@ -79,12 +80,19 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
 
         setIsSubmitting(true);
         try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('name', formData.name);
+            formDataToSend.append('slug', formData.slug);
+            formDataToSend.append('invites', JSON.stringify(formData.invites));
+            if (formData.logoFile) {
+                formDataToSend.append('avatar', formData.logoFile);
+            }
+
             // 1. Create Workspace
             const res = await apiFetch("http://localhost:5001/api/workspaces", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify(formData)
+                body: formDataToSend
             });
 
             if (res.ok) {
@@ -92,7 +100,7 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
                 const newWsId = data.data?.id; // backend should return the workspace object in data.data
 
                 toast.success("Workspace created successfully!");
-                
+
                 // 2. Automatically select the new workspace
                 if (newWsId) {
                     await apiFetch("http://localhost:5001/api/auth/select-workspace", {
@@ -124,8 +132,12 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
             <div className="modal-content workspace-modal" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <div className="header-title-wrapper">
-                        <div className="workspace-preview-icon" style={{ backgroundColor: formData.color }}>
-                            {formData.name ? formData.name.charAt(0).toUpperCase() : <ImageIcon size={20} />}
+                        <div className="workspace-preview-icon">
+                            {formData.logoPreview ? (
+                                <img src={formData.logoPreview} alt="logo" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                            ) : (
+                                formData.name ? formData.name.charAt(0).toUpperCase() : <ImageIcon size={20} />
+                            )}
                         </div>
                         <div>
                             <h2>Create New Workspace</h2>
@@ -141,12 +153,13 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
                     <div className="modal-form-row">
                         <div className="modal-form-group flex-2">
                             <label><Plus size={14} /> Workspace Name</label>
-                            <input 
-                                type="text" 
-                                className="modal-input" 
+                            <input
+                                type="text"
+                                className="modal-input"
                                 placeholder="e.g. Design Studio"
                                 value={formData.name}
                                 onChange={handleNameChange}
+                                onFocus={handleInputFocus}
                                 autoFocus
                             />
                         </div>
@@ -154,51 +167,75 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
                             <label><Globe size={14} /> Workspace Slug</label>
                             <div className="slug-input-wrapper">
                                 <span className="slug-prefix">/</span>
-                                <input 
-                                    type="text" 
-                                    className="modal-input slug-input" 
+                                <input
+                                    type="text"
+                                    className="modal-input slug-input"
                                     placeholder="design-studio"
                                     value={formData.slug}
-                                    onChange={(e) => setFormData({...formData, slug: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                    onFocus={handleInputFocus}
                                 />
                             </div>
                         </div>
                     </div>
 
                     <div className="modal-form-group">
-                        <label><AlignLeft size={14} /> Description (Optional)</label>
-                        <textarea 
-                            className="modal-textarea" 
-                            placeholder="What is this workspace about?"
-                            value={formData.description}
-                            onChange={(e) => setFormData({...formData, description: e.target.value})}
-                        />
-                    </div>
-
-                    <div className="modal-form-group">
-                        <label><Palette size={14} /> Brand Color</label>
-                        <div className="color-presets">
-                            {colors.map(c => (
-                                <button 
-                                    key={c}
-                                    className={`color-swatch ${formData.color === c ? 'active' : ''}`}
-                                    style={{ backgroundColor: c }}
-                                    onClick={() => setFormData({...formData, color: c})}
+                        <label><ImageIcon size={14} /> Workspace Logo</label>
+                        <div className="workspace-logo-upload-row" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '8px' }}>
+                            <div className="avatar-upload-wrapper" style={{ position: 'relative' }}>
+                                {formData.logoPreview ? (
+                                    <img
+                                        src={formData.logoPreview}
+                                        alt="preview"
+                                        style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover', border: '1px solid #e2e8f0' }}
+                                    />
+                                ) : (
+                                    <div style={{ width: '80px', height: '80px', borderRadius: '12px', backgroundColor: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb', fontWeight: 'bold', fontSize: '24px', border: '1px dashed #bfdbfe' }}>
+                                        {formData.name ? formData.name.charAt(0).toUpperCase() : <ImageIcon size={28} />}
+                                    </div>
+                                )}
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label className="avatar-upload-label" htmlFor="workspace-logo-upload" style={{ display: 'inline-block', padding: '8px 16px', backgroundColor: '#eff6ff', color: '#2563eb', borderRadius: '6px', fontWeight: '600', fontSize: '13px', cursor: 'pointer', border: '1px solid #dbeafe', textAlign: 'center', transition: 'all 0.2s' }}>
+                                    Upload Logo
+                                </label>
+                                <input
+                                    id="workspace-logo-upload"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (!file) return;
+                                        if (file.size > 2 * 1024 * 1024) {
+                                            toast.error("Max file size is 2MB");
+                                            return;
+                                        }
+                                        const reader = new FileReader();
+                                        reader.onload = () => setFormData(prev => ({
+                                            ...prev,
+                                            logoFile: file,
+                                            logoPreview: reader.result
+                                        }));
+                                        reader.readAsDataURL(file);
+                                    }}
                                 />
-                            ))}
+                                <span style={{ fontSize: '12px', color: '#64748b' }}>JPG, PNG or WEBP. Max 2MB.</span>
+                            </div>
                         </div>
                     </div>
 
                     <div className="modal-form-group">
                         <label><Mail size={14} /> Invite Members</label>
                         <div className="invite-input-row">
-                            <input 
-                                type="email" 
-                                className="modal-input" 
+                            <input
+                                type="email"
+                                className="modal-input"
                                 placeholder="colleague@example.com"
                                 value={currentEmail}
                                 onChange={(e) => setCurrentEmail(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && addInvite()}
+                                onFocus={handleInputFocus}
                             />
                             <button className="add-invite-btn" onClick={addInvite}>
                                 Invite
@@ -219,9 +256,8 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
 
                 <div className="modal-footer">
                     <button className="cancel-btn" onClick={onClose}>Cancel</button>
-                    <button 
-                        className="workspace-submit-btn" 
-                        style={{ backgroundColor: formData.color }}
+                    <button
+                        className="workspace-submit-btn"
                         onClick={handleSubmit}
                         disabled={isSubmitting}
                     >

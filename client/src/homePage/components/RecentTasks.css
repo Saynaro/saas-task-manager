@@ -27,19 +27,35 @@
     gap: 6px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    padding: 6px 12px;
-    border-radius: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
-    color: #64748b;
+    color: #475569;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.see-all-btn svg {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .see-all-btn:hover {
-    background: #f1f5f9;
-    color: #334155;
-    border-color: #cbd5e1;
+    background: #ffffff;
+    color: #2563eb;
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+    transform: translateY(-1px);
+}
+
+.see-all-btn:hover svg {
+    transform: translateX(3px);
+}
+
+.see-all-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.05);
 }
 
 .tasks-table-wrapper {
@@ -170,4 +186,101 @@
 .task-action-btn:hover {
     background: #f1f5f9;
     color: #64748b;
+}
+
+/* Responsive design for Mobile/Phones - converts table to card list */
+@media (max-width: 600px) {
+    .recent-tasks-container {
+        padding: 16px;
+    }
+    
+    .tasks-table-wrapper {
+        overflow-x: visible;
+    }
+    
+    .tasks-table thead {
+        display: none !important;
+    }
+    
+    .tasks-table, 
+    .tasks-table tbody, 
+    .tasks-table tr, 
+    .tasks-table td {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+    
+    .tasks-table tr {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    
+    .tasks-table td {
+        border-bottom: none !important;
+        padding: 4px 0 !important;
+        text-align: left !important;
+    }
+    
+    /* Name column */
+    .tasks-table td:nth-child(1) {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 2px;
+        white-space: normal;
+        max-width: calc(100% - 110px); /* leave space for status badge top-right */
+        width: auto !important;
+        padding-right: 8px !important;
+    }
+    
+    /* Description column */
+    .tasks-table td:nth-child(2) {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 12px;
+        width: 100% !important;
+    }
+    
+    /* Status Badge — absolute top-right corner */
+    .tasks-table td:nth-child(3) {
+        position: absolute !important;
+        top: 16px;
+        right: 16px;
+        display: flex !important;
+        align-items: center;
+        width: auto !important;
+        padding: 0 !important;
+    }
+    
+    /* Priority Badge — inline under description */
+    .tasks-table td:nth-child(4) {
+        display: inline-flex !important;
+        align-items: center;
+        width: auto !important;
+        padding: 0 !important;
+    }
+    
+    /* Created At Date */
+    .tasks-table td:nth-child(5) {
+        display: block !important;
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 10px;
+        border-top: 1px dashed #f1f5f9;
+        padding-top: 10px !important;
+        text-align: left !important;
+        width: 100% !important;
+    }
+    
+    .tasks-table td:nth-child(5)::before {
+        content: "Created: ";
+        font-weight: 500;
+        color: #94a3b8;
+    }
 }

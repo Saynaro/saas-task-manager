@@ -17,6 +17,21 @@
     margin-bottom: 30px;
 }
 
+/* ─── Admin Dashboard ─── */
+.admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.admin-dash-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* reuse metric-card styles from Cards.css — already loaded globally */
 
 
 /* second container */
@@ -38,6 +53,11 @@
     .charts-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+
+    .admin-dash-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
     }
 }
 
@@ -78,6 +98,7 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
+        margin-bottom: 30px;
     }
 
     .content h1 {
@@ -86,5 +107,11 @@
 
     .second-container {
         gap: 16px;
+    }
+
+    .admin-dash-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
     }
 }

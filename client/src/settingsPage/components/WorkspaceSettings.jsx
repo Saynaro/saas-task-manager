@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Building, Users, UserPlus, Trash2, Loader2, Mail } from 'lucide-react';
+import { Building, Users, UserPlus, Trash2, Loader2, Mail, LogOut } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
+import { InviteModal } from '../../components/InviteModal';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../utils/apiFetch';
 import './Settings.css';
@@ -9,6 +10,8 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const [activeTab, setActiveTab] = useState('identity');
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isInviteOpen, setIsInviteOpen] = useState(false);
+    const [isLogOutOpen, setIsLogOutOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const [formData, setFormData] = useState({
         name: workspace?.name || '',
@@ -31,6 +34,12 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleInputFocus = (e) => {
+        setTimeout(() => {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
     };
 
     const handleSaveIdentity = async () => {
@@ -92,6 +101,18 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            await apiFetch('http://localhost:5001/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            window.location.href = '/login';
+        } catch (err) {
+            console.error('Logout failed:', err);
+        }
+    };
+
     const tabs = [
         { id: 'identity', label: 'Workspace Identity', icon: Building },
         { id: 'members', label: 'Members & Roles', icon: Users },
@@ -109,6 +130,16 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                 confirmVariant="danger"
             />
 
+            <ConfirmationModal 
+                isOpen={isLogOutOpen}
+                onClose={() => setIsLogOutOpen(false)}
+                onConfirm={handleLogout}
+                title="Logout"
+                message="Are you sure you want to log out?"
+                confirmText="Logout"
+                confirmVariant="logout"
+            />
+
             <div className="settings-page-header">
                 <div>
                     <h2 className="settings-page-title">Workspace Settings</h2>
@@ -124,13 +155,26 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                             <button
                                 key={tab.id}
                                 className={`settings-nav-btn ${activeTab === tab.id ? 'active' : ''}`}
-                                onClick={() => setActiveTab(tab.id)}
+                                onClick={(e) => {
+                                    setActiveTab(tab.id);
+                                    if (window.innerWidth <= 1150) {
+                                        e.currentTarget.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'nearest',
+                                            inline: 'center'
+                                        });
+                                    }
+                                }}
                             >
                                 <Icon size={18} className="nav-icon" />
                                 {tab.label}
                             </button>
                         );
                     })}
+                    <button className="settings-nav-logout-btn" onClick={() => setIsLogOutOpen(true)}>
+                        <LogOut size={18} className="nav-icon" />
+                        Logout
+                    </button>
                 </div>
 
                 <div className="settings-content">
@@ -201,6 +245,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleInputChange}
+                                        onFocus={handleInputFocus}
                                         className="settings-input"
                                     />
                                 </div>
@@ -213,6 +258,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                                             name="slug"
                                             value={formData.slug}
                                             onChange={handleInputChange}
+                                            onFocus={handleInputFocus}
                                             className="settings-url-input"
                                         />
                                     </div>
@@ -241,7 +287,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                                         <p className="settings-card-subtitle">Manage who has access to this workspace.</p>
                                     </div>
                                 </div>
-                                <button className="settings-invite-btn">
+                                <button className="settings-invite-btn" onClick={() => setIsInviteOpen(true)}>
                                     <UserPlus size={16} /> Invite Member
                                 </button>
                             </div>
@@ -300,6 +346,13 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
 
                 </div>
             </div>
+            
+            <InviteModal 
+                isOpen={isInviteOpen}
+                onClose={() => setIsInviteOpen(false)}
+                workspaceName={workspace?.name}
+                workspaceId={workspace?.id}
+            />
         </div>
     );
 }

@@ -181,8 +181,18 @@ export const removeMember = async (req, res) => {
 
 export const createWorkspace = async (req, res) => {
     try {
-        const { name, slug, description, color, invites = [] } = req.body;
+        let { name, slug, invites } = req.body;
         const userId = req.user.id;
+        const avatarUrl = req.file ? req.file.path : null;
+
+        if (typeof invites === 'string') {
+            try {
+                invites = JSON.parse(invites);
+            } catch (e) {
+                invites = [];
+            }
+        }
+        if (!invites) invites = [];
 
         if (!name || !slug) {
             return res.status(400).json({ error: "Name and slug are required" });
@@ -193,6 +203,7 @@ export const createWorkspace = async (req, res) => {
                 data: {
                     name,
                     slug,
+                    avatarUrl,
                     creatorId: userId
                 }
             });

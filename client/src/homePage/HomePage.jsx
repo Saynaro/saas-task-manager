@@ -1,11 +1,10 @@
 
 import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Users, Globe, FolderOpen, UserCheck } from 'lucide-react';
 import { Cards } from './components/Cards';
-import { TaskDonutChart, TaskPriorityChart } from './Schema';
+import { TaskDonutChart, TaskPriorityChart, AdminWorkspaceBarChart, AdminStatsDonut } from './Schema';
 import { RecentTasks } from './components/RecentTasks';
 import { Layout } from '../components/Layout';
-import { TaskModal } from '../components/TaskModal';
 
 import './HomePage.css';
 import { apiFetch } from '../utils/apiFetch';
@@ -36,10 +35,6 @@ const getFormattedDate = () => {
 };
 
 export function HomePage({ currentUser, refreshUser }) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // Map workspaces to flatten projects and inject the workspace metadata
-
     const [projects, setProjects] = useState([]);
     const [adminStats, setAdminStats] = useState(null);
 
@@ -58,7 +53,7 @@ export function HomePage({ currentUser, refreshUser }) {
                     console.error("Admin stats fetch error:", err);
                 }
             } else {
-                setProjects([]); // Clear old projects
+                setProjects([]);
                 try {
                     const response = await apiFetch("http://localhost:5001/api/projects", {
                         credentials: "include"
@@ -80,6 +75,19 @@ export function HomePage({ currentUser, refreshUser }) {
         setProjects(prev => [newProject, ...prev]);
     };
 
+    const isAdmin = currentUser?.role === 'ADMIN';
+
+    // Derived admin totals
+    const totalProjects = adminStats?.workspaces?.reduce((s, ws) => s + (ws.projectsCount || 0), 0) ?? 0;
+    const totalMembers  = adminStats?.workspaces?.reduce((s, ws) => s + (ws.membersCount  || 0), 0) ?? 0;
+
+    const adminStatCards = [
+        { label: 'Total Users',        value: adminStats?.totalUsers ?? 0,      theme: 'card-total',     icon: <Users size={20} /> },
+        { label: 'Active Workspaces',  value: adminStats?.totalWorkspaces ?? 0, theme: 'card-pending',   icon: <Globe size={20} /> },
+        { label: 'Total Projects',     value: totalProjects,                    theme: 'card-progress',  icon: <FolderOpen size={20} /> },
+        { label: 'Total Members',      value: totalMembers,                     theme: 'card-completed', icon: <UserCheck size={20} /> },
+    ];
+
     return (
         <Layout currentUser={currentUser} onSuccess={handleProjectCreated} refreshUser={refreshUser}>
             <div className="content-header">
@@ -87,36 +95,54 @@ export function HomePage({ currentUser, refreshUser }) {
                     <h1>{getGreeting()}! {currentUser?.firstName || ''} {currentUser?.lastName || ''}</h1>
                     <p className='overview-text'>{getFormattedDate()}</p>
                 </div>
-                {(currentUser?.role === 'OWNER' || (currentUser?.role !== 'MEMBER' && currentUser?.workspace)) && (
-                    <button className="add-task-btn" onClick={() => setIsModalOpen(true)}>
-                        <Plus size={18} />
-                        <span>New project</span>
-                    </button>
-                )}
             </div>
 
-            {/* cards */}
-            <Cards projects={projects} stats={adminStats} />
-
-            {currentUser?.role !== 'ADMIN' && (
-                <div className="second-container">
-                    {/* Charts Grid */}
-                    <div className="charts-grid">
-                        <TaskDonutChart projects={projects} />
-                        <TaskPriorityChart projects={projects} />
+            {/* ── ADMIN Dashboard ── */}
+            {isAdmin ? (
+                <div className="admin-dashboard">
+                    {/* Stat Cards */}
+                    <div className="admin-dash-cards">
+                        {adminStatCards.map(card => (
+                            <div key={card.label} className={`metric-card ${card.theme}`}>
+                                <div className="card-accent" />
+                                <div className="card-content">
+                                    <div className="card-info">
+                                        <span className="card-label">{card.label}</span>
+                                        <h2 className="card-value">{card.value.toLocaleString()}</h2>
+                                    </div>
+                                    <div className="card-media">
+                                        <div className="icon-wrapper">{card.icon}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
-                    {/* Section tasks */}
-                    <RecentTasks projects={projects} />
+                    {/* Charts */}
+                    <div className="second-container">
+                        <div className="charts-grid">
+                            <AdminStatsDonut
+                                totalUsers={adminStats?.totalUsers ?? 0}
+                                totalWorkspaces={adminStats?.totalWorkspaces ?? 0}
+                                totalProjects={totalProjects}
+                            />
+                            <AdminWorkspaceBarChart workspaces={adminStats?.workspaces ?? []} />
+                        </div>
+                    </div>
                 </div>
+            ) : (
+                /* ── Regular User Dashboard ── */
+                <>
+                    <Cards projects={projects} stats={null} />
+                    <div className="second-container">
+                        <div className="charts-grid">
+                            <TaskDonutChart projects={projects} />
+                            <TaskPriorityChart projects={projects} />
+                        </div>
+                        <RecentTasks projects={projects} />
+                    </div>
+                </>
             )}
-
-            <TaskModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                mode="create"
-                onSuccess={handleProjectCreated}
-            />
         </Layout>
     );
 }
