@@ -821,28 +821,39 @@
 
 /* LIGHT THEME WRAPPER STYLES */
 .light-theme-wrapper {
-  background-color: #ffffff;
-  color: #1e293b;
+  background-color: #030712;
+  color: #94a3b8;
   position: relative;
   z-index: 20;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .text-dark {
-  color: #0f172a !important;
+  color: #f8fafc !important;
 }
+
+
 
 /* General Feature Sections */
 .features-section {
   padding: 100px 40px;
-  max-width: 1100px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  position: relative;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(0, 93, 169, 0.12) 0%, transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+  background-position: center, center;
 }
 
 .features-section.grey-bg {
-  background-color: rgba(15, 23, 42, 0.25);
+  background-color: #0b0f19;
+  background-image: none;
   max-width: 100%;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -1219,6 +1230,12 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.08) 0%, transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+  background-position: center, center;
 }
 
 .join-content-box {

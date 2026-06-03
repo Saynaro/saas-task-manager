@@ -13,7 +13,11 @@ const httpServer = createServer(app);
 
 export const io = new Server(httpServer, {
     cors: {
-        origin: process.env.FRONTEND_URL || "http://localhost:5173" || "http://localhost:5174",
+        origin: [
+            process.env.FRONTEND_URL,
+            "http://localhost:5173",
+            "http://localhost:5174"
+        ].filter(Boolean),
         credentials: true,
     },
 });

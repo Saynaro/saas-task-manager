@@ -267,6 +267,8 @@ export function LandingPage({ currentUser }) {
 
         {/* SECTION 1: WHY CHOOSE US */}
         <section id="features" className="features-section text-center-section">
+
+
           <h2 className="section-title text-dark text-center">Why Choose Us</h2>
           <p className="section-subtitle-dark text-center">Tools built for professional teams</p>
 
