@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .landing-container {
-  min-height: 100vh;
+  min-height: 100svh;
   background-color: #030712;
   background-image:
     radial-gradient(circle at 50% -20%, rgba(0, 93, 169, 0.18) 0%, transparent 50%),
@@ -144,7 +144,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: 
+  background:
     radial-gradient(circle at 50% 40%, rgba(3, 7, 18, 0.15) 0%, rgba(3, 7, 18, 0.8) 85%),
     linear-gradient(to bottom, transparent 60%, #030712 100%);
   pointer-events: none;
@@ -1408,7 +1408,7 @@
 .landing-site-footer {
   background-color: #050811;
   border-top: 1px solid rgba(255, 255, 255, 0.02);
-  padding: 80px 60px 40px 60px;
+  padding: 80px 60px calc(40px + env(safe-area-inset-bottom)) 60px;
   color: #94a3b8;
   z-index: 10;
   position: relative;
@@ -1566,6 +1566,10 @@
 }
 
 @media (max-width: 768px) {
+
+
+
+
   .landing-nav {
     padding: 14px 16px;
   }
@@ -1753,6 +1757,13 @@
 }
 
 @media (max-width: 576px) {
+
+  body {
+    background-color: #030712;
+    height: auto;
+
+  }
+
   .sim-content-header-bar {
     padding: 0 12px;
   }
@@ -1762,6 +1773,6 @@
   }
 
   .landing-site-footer {
-    padding: 60px 24px 30px 24px;
+    padding: 60px 24px calc(30px + env(safe-area-inset-bottom)) 24px;
   }
 }

@@ -8,6 +8,31 @@ export default function LegalPage({ type }) {
   const isPrivacy = type === 'privacy';
 
   useEffect(() => {
+    // Set dynamic dark background for body
+    document.body.style.backgroundColor = '#030712';
+    
+    // Set viewport theme-color dynamically for Safari on iOS
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'theme-color');
+      document.head.appendChild(meta);
+    }
+    const previousTheme = meta.getAttribute('content');
+    meta.setAttribute('content', '#030712');
+
+    return () => {
+      // Revert style and meta when unmounting
+      document.body.style.backgroundColor = '';
+      if (previousTheme) {
+        meta.setAttribute('content', previousTheme);
+      } else {
+        meta.removeAttribute('content');
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const scrollToTop = () => {
       window.scrollTo(0, 0);
       document.documentElement.scrollTo(0, 0);

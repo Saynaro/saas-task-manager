@@ -24,6 +24,26 @@ export function LandingPage({ currentUser }) {
   }, []);
 
   useEffect(() => {
+    // Set viewport theme-color for Safari top bar
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'theme-color');
+      document.head.appendChild(meta);
+    }
+    const previousTheme = meta.getAttribute('content');
+    meta.setAttribute('content', '#030712');
+
+    return () => {
+      if (previousTheme) {
+        meta.setAttribute('content', previousTheme);
+      } else {
+        meta.removeAttribute('content');
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (sessionStorage.getItem('shouldScrollToFooter') === 'true') {
       sessionStorage.removeItem('shouldScrollToFooter');
       const timeoutId = setTimeout(() => {

@@ -1,9 +1,9 @@
 .legal-container {
-  min-height: 100vh;
+  min-height: 100svh;
   background-color: #030712;
   color: #f1f5f9;
   font-family: 'Inter', system-ui, sans-serif;
-  padding: 60px 24px;
+  padding: 60px 24px calc(60px + env(safe-area-inset-bottom)) 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
