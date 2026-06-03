@@ -26,19 +26,14 @@ export function LandingPage({ currentUser }) {
   useEffect(() => {
     if (sessionStorage.getItem('shouldScrollToFooter') === 'true') {
       sessionStorage.removeItem('shouldScrollToFooter');
-      const scrollToFooter = () => {
+      const timeoutId = setTimeout(() => {
         const footerElement = document.querySelector('.landing-site-footer');
         if (footerElement) {
-          footerElement.scrollIntoView({ behavior: 'instant', block: 'end' });
+          footerElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
-      };
-
-      scrollToFooter();
-      const rafId = requestAnimationFrame(scrollToFooter);
-      const timeoutId = setTimeout(scrollToFooter, 50);
+      }, 100);
 
       return () => {
-        cancelAnimationFrame(rafId);
         clearTimeout(timeoutId);
       };
     }
