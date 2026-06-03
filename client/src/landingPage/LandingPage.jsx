@@ -1,12 +1,71 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
 import {
   ArrowRight, Command, Check, Layers, Users,
   ChevronDown, Search, FileText, Globe, CheckSquare, BarChart3, Settings, Bell, Play, Info, Activity, Zap, History
 } from 'lucide-react';
+import LineWaves from '../components/background/LineWaves';
+import LightRays from '../components/background/LightRays';
+import { toast } from 'react-hot-toast';
 import './LandingPage.css';
 
 export function LandingPage({ currentUser }) {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('shouldScrollToFooter') === 'true') {
+      sessionStorage.removeItem('shouldScrollToFooter');
+      const scrollToFooter = () => {
+        const footerElement = document.querySelector('.landing-site-footer');
+        if (footerElement) {
+          footerElement.scrollIntoView({ behavior: 'instant', block: 'end' });
+        }
+      };
+
+      scrollToFooter();
+      const rafId = requestAnimationFrame(scrollToFooter);
+      const timeoutId = setTimeout(scrollToFooter, 50);
+
+      return () => {
+        cancelAnimationFrame(rafId);
+        clearTimeout(timeoutId);
+      };
+    }
+  }, []);
+
+  const handleScroll = (e, id) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  const handleLinkClick = (e, label) => {
+    e.preventDefault();
+    toast.success(`${label} section is coming soon!`, {
+      icon: '',
+      style: {
+        background: '#1c3761ff',
+        color: '#fff',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+      }
+    });
+  };
 
   return (
     <div className="landing-container">
@@ -17,16 +76,18 @@ export function LandingPage({ currentUser }) {
             <span className="nav-logo-text">SaaS Pro</span>
           </Link>
           <div className="nav-links-row">
-            <a href="#features" className="nav-link-item">Features</a>
-            <a href="#pricing" className="nav-link-item">Pricing</a>
-            <a href="#about" className="nav-link-item">About Us</a>
+            <a href="#features" className="nav-link-item" onClick={(e) => handleScroll(e, 'features')}>Features</a>
+            <a href="#analytics" className="nav-link-item" onClick={(e) => handleScroll(e, 'analytics')}>Analytics</a>
+            <a href="#about" className="nav-link-item" onClick={(e) => handleScroll(e, 'about')}>About Us</a>
           </div>
         </div>
 
         <div className="nav-right">
           {currentUser ? (
             <Link to="/dashboard" className="nav-btn nav-btn-primary">
-              Go to Dashboard <ArrowRight size={15} />
+              <span className="desktop-nav-txt">Go to Dashboard</span>
+              <span className="mobile-nav-txt">Dashboard</span>
+              <ArrowRight size={15} />
             </Link>
           ) : (
             <>
@@ -39,6 +100,23 @@ export function LandingPage({ currentUser }) {
 
       {/* HERO SECTION */}
       <section className="hero-section">
+        <div className="hero-bg-canvas">
+          <LineWaves
+            speed={0.12}
+            innerLineCount={isMobile ? 18 : 40}
+            outerLineCount={isMobile ? 18 : 40}
+            warpIntensity={0.3}
+            rotation={isMobile ? -20 : -45}
+            edgeFadeWidth={0.0}
+            colorCycleSpeed={0.4}
+            brightness={0.3}
+            color1="#3b82f6"
+            color2="#8b5cf6"
+            color3="#06b6d4"
+            enableMouseInteraction={true}
+            mouseInfluence={1.5}
+          />
+        </div>
         <div className="hero-content">
 
 
@@ -267,7 +345,20 @@ export function LandingPage({ currentUser }) {
 
         {/* SECTION 1: WHY CHOOSE US */}
         <section id="features" className="features-section text-center-section">
-
+          <div className="features-bg-canvas">
+            <LightRays
+              raysOrigin="top-center"
+              raysColor="#0055ff"
+              raysSpeed={0.4}
+              lightSpread={0.8}
+              rayLength={2}
+              pulsating={false}
+              followMouse={true}
+              mouseInfluence={0.05}
+              noiseAmount={0.05}
+              distortion={0.02}
+            />
+          </div>
 
           <h2 className="section-title text-dark text-center">Why Choose Us</h2>
           <p className="section-subtitle-dark text-center">Tools built for professional teams</p>
@@ -300,7 +391,7 @@ export function LandingPage({ currentUser }) {
         </section>
 
         {/* SECTION 2: ANALYTICS AT YOUR FINGERTIPS */}
-        <section className="features-section grey-bg">
+        <section id="analytics" className="features-section grey-bg">
           <div className="max-width-restrictor">
             <h2 className="section-title text-dark text-center">Analytics at Your Fingertips</h2>
             <p className="section-subtitle-dark text-center">Get deep insights into your business performance with automated reporting and intelligent forecasting.</p>
@@ -397,34 +488,34 @@ export function LandingPage({ currentUser }) {
 
           <div className="footer-links-col">
             <h4>PRODUCT</h4>
-            <a href="#features">Features</a>
-            <a href="#integrations">Integrations</a>
-            <a href="#updates">Updates</a>
+            <a href="#features" onClick={(e) => handleScroll(e, 'features')}>Features</a>
+            <a href="#integrations" onClick={(e) => handleLinkClick(e, 'Integrations')}>Integrations</a>
+            <a href="#updates" onClick={(e) => handleLinkClick(e, 'Product Updates')}>Updates</a>
           </div>
 
           <div className="footer-links-col">
             <h4>COMPANY</h4>
-            <a href="#about">About Us</a>
-            <a href="#blog">Blog</a>
-            <a href="#careers">Careers</a>
-            <a href="#contact">Contact</a>
+            <a href="#about" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>About Us</a>
+            <a href="#blog" onClick={(e) => handleLinkClick(e, 'Blog')}>Blog</a>
+            <a href="mailto:khalidsainaro@gmail.com">Contact</a>
           </div>
 
           <div className="footer-links-col">
             <h4>LEGAL</h4>
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms of Service</a>
-            <a href="#support">Support</a>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms of Service</Link>
+            <a href="mailto:khalidsainaro@gmail.com">Support</a>
           </div>
         </div>
 
         <div className="footer-bottom-copyright">
           <div className="footer-bottom-flex">
             <span>© 2026 SaaS Pro Inc. All rights reserved.</span>
-            <div className="footer-bottom-right-icons">
+            {/* TODO: Add Language Switcher */}
+            {/* <div className="footer-bottom-right-icons">
               <Globe size={14} />
               <ChevronDown size={12} />
-            </div>
+            </div> */}
           </div>
         </div>
       </footer>

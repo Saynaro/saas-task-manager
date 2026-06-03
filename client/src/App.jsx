@@ -1,8 +1,9 @@
-import { Routes, Route } from 'react-router'
+import { Routes, Route, useLocation } from 'react-router'
 import { useState, useEffect, useRef } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { HomePage } from './homePage/HomePage'
 import { LandingPage } from './landingPage/LandingPage'
+import LegalPage from './landingPage/LegalPage'
 
 import { TasksPage } from './tasksPage/TasksPage'
 import { SettingsPage } from './settingsPage/SettingsPage'
@@ -29,6 +30,13 @@ const PrivateRoute = ({ children, currentUser, isLoading }) => {
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      sessionStorage.removeItem('shouldScrollToFooter');
+    }
+  }, [location.pathname]);
 
   const sessionRestored = useRef(false);
 
@@ -114,6 +122,8 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<LandingPage currentUser={currentUser} />} />
+        <Route path="/privacy" element={<LegalPage type="privacy" />} />
+        <Route path="/terms" element={<LegalPage type="terms" />} />
         <Route path="/dashboard" element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><HomePage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
         <Route path='/tasks' element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><TasksPage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
         <Route path='/settings' element={<PrivateRoute currentUser={currentUser} isLoading={isLoading}><SettingsPage currentUser={currentUser} refreshUser={fetchCurrentUser} /></PrivateRoute>} />
