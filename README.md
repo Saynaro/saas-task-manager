@@ -566,7 +566,7 @@ User ──< WorkspaceMember >── Workspace ──< Project ──< Task
 
 ## 👨‍💻 Auteur
 
-Développé avec ❤️ par **Saynaro**
+Développé par **SainaroKhalid**
 
 ---
 
