@@ -601,7 +601,7 @@ Chaque point d'entrée sensible dispose de son propre limiteur Redis indépendan
 
 ## 👨‍💻 Auteur
 
-Développé par **SainaroKhalid**
+Développé par **Sainaro Khalid**
 
 ---
 
