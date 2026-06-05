@@ -353,7 +353,7 @@ saas-task-manager/
 
 ```bash
 # 1. Cloner le dépôt
-git clone https://github.com/votre-username/saas-task-manager.git
+git clone https://github.com/Saynaro/saas-task-manager.git
 cd saas-task-manager
 
 # 2. Configurer les variables d'environnement
@@ -403,10 +403,10 @@ Créez un fichier `server/.env` avec les variables suivantes :
 
 ```env
 # ── Base de données ───────────────────────
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5433/saas_db"
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5433/task_manager"
 DB_USER=db_user
 DB_PASSWORD=db_password
-DB_NAME=saas_task_manager
+DB_NAME=task_manager
 
 # ── JWT ──────────────────────────────────
 JWT_ACCESS_SECRET=super_secret_access_key
@@ -428,10 +428,8 @@ GOOGLE_CLIENT_SECRET=google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost:5001/api/auth/google/callback
 
 # ── Nodemailer ───────────────────────────
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=email@gmail.com
-SMTP_PASS=app_password
+EMAIL_USER=email@gmail.com
+EMAIL_PASS=app_password
 
 # ── Application ──────────────────────────
 CLIENT_URL=http://localhost:5174
@@ -445,7 +443,7 @@ NODE_ENV=development
 
 ### 🔐 Authentification — `/api/auth`
 
-| Méthode | Route | Description | Auth |
+| Méthode | Route | Description | Auth Required |
 |---|---|---|---|
 | `POST` | `/register` | Créer un compte | ❌ |
 | `POST` | `/login` | Se connecter | ❌ |
@@ -457,17 +455,17 @@ NODE_ENV=development
 
 ### 🏢 Workspaces — `/api/workspace`
 
-| Méthode | Route | Description | Auth |
+| Méthode | Route | Description | Auth Required |
 |---|---|---|---|
 | `POST` | `/` | Créer un workspace | ✅ |
 | `GET` | `/` | Lister mes workspaces | ✅ |
 | `GET` | `/:workspaceId` | Détail d'un workspace | ✅ |
 | `PUT` | `/:workspaceId` | Modifier un workspace | ✅ OWNER/ADMIN |
-| `DELETE` | `/:workspaceId` | Supprimer un workspace | ✅ OWNER |
+| `DELETE` | `/:workspaceId` | Supprimer un workspace | ✅ OWNER/ADMIN |
 
 ### 📁 Projets — `/api/project`
 
-| Méthode | Route | Description | Auth |
+| Méthode | Route | Description | Auth Required |
 |---|---|---|---|
 | `POST` | `/` | Créer un projet | ✅ |
 | `GET` | `/:workspaceId` | Projets d'un workspace | ✅ |
@@ -476,7 +474,7 @@ NODE_ENV=development
 
 ### ✅ Tâches — intégrées aux projets
 
-| Méthode | Route | Description | Auth |
+| Méthode | Route | Description | Auth Required |
 |---|---|---|---|
 | `POST` | `/task` | Créer une tâche | ✅ |
 | `GET` | `/task/:projectId` | Tâches d'un projet | ✅ |
@@ -485,7 +483,7 @@ NODE_ENV=development
 
 ### 📨 Invitations — `/api/invitation`
 
-| Méthode | Route | Description | Auth |
+| Méthode | Route | Description | Auth Required |
 |---|---|---|---|
 | `POST` | `/invite` | Inviter un membre | ✅ OWNER/ADMIN |
 | `POST` | `/accept/:id` | Accepter une invitation | ✅ |
@@ -493,7 +491,7 @@ NODE_ENV=development
 
 ### 📧 Emails — `/api/email`
 
-| Méthode | Route | Description | Auth |
+| Méthode | Route | Description | Auth Required |
 |---|---|---|---|
 | `GET` | `/verify/:token` | Vérifier l'adresse email | ❌ |
 | `POST` | `/forgot-password` | Demande de réinitialisation | ❌ |
@@ -501,7 +499,7 @@ NODE_ENV=development
 
 ### 🛡️ Admin — `/api/admin`
 
-| Méthode | Route | Description | Auth |
+| Méthode | Route | Description | Auth Required |
 |---|---|---|---|
 | `GET` | `/users` | Lister tous les utilisateurs | ✅ ADMIN/OWNER |
 | `DELETE` | `/user/:id` | Supprimer un utilisateur | ✅ OWNER |
@@ -526,12 +524,16 @@ enum InvitationStatus { PENDING · ACCEPTED · DECLINED }
 
 **Relations principales :**
 
-```
-User ──< WorkspaceMember >── Workspace ──< Project ──< Task
-                                   │                    │
-                                   └──< Invitation      └──< Comment
-                                   └──< ActivityLog ────┘
-```
+| Entité | Se lie à | Type de relation |
+|---|---|---|
+| `User` ↔ `Workspace` | via `WorkspaceMember` | Plusieurs utilisateurs dans plusieurs workspaces (many-to-many) |
+| `User` ↔ `Project` | via `ProjectMember` | Plusieurs utilisateurs dans plusieurs projets (many-to-many) |
+| `Workspace` → `Project` | `workspaceId` | Un workspace contient plusieurs projets (one-to-many) |
+| `Project` → `Task` | `projectId` | Un projet contient plusieurs tâches (one-to-many) |
+| `Task` → `Comment` | `taskId` | Une tâche peut avoir plusieurs commentaires (one-to-many) |
+| `Task` → `ActivityLog` | `taskId` | Chaque action sur une tâche génère un log (one-to-many) |
+| `Workspace` → `Invitation` | `workspaceId` | Un workspace peut avoir plusieurs invitations en attente (one-to-many) |
+| `User` → `RefreshToken` | `userId` | Un utilisateur peut avoir plusieurs sessions actives (one-to-many) |
 
 ---
 
