@@ -800,11 +800,11 @@ export function LandingPage({ currentUser }) {
                         <div className="dp-chat-window">
                           <div className="dp-chat-messages">
                             {[
-                              { from: 'SC', name: 'Sarah', text: 'Hey team! Just pushed the new onboarding designs 🎨', time: '10:12', color: '#8b5cf6', self: false },
-                              { from: 'ML', name: 'Marcus', text: 'Looks great! I\'ll review the PR now', time: '10:14', color: '#06b6d4', self: false },
-                              { from: 'ME', name: 'You', text: 'Can we link this to the Sprint 3 task?', time: '10:15', color: '#3b82f6', self: true },
-                              { from: 'SC', name: 'Sarah', text: 'Done! Task updated ✅', time: '10:16', color: '#8b5cf6', self: false },
-                              { from: 'PP', name: 'Priya', text: 'I\'ll add the final assets by EOD', time: '10:18', color: '#f59e0b', self: false },
+                              { from: 'M1', name: 'Member 1', text: 'Hey team! Just pushed the new onboarding designs', time: '10:12', color: '#8b5cf6', self: false },
+                              { from: 'M2', name: 'Member 2', text: 'Looks great! I\'ll review the PR now', time: '10:14', color: '#06b6d4', self: false },
+                              { from: 'M3', name: 'Member 3', text: 'Can we link this to the Sprint 3 task?', time: '10:15', color: '#3b82f6', self: true },
+                              { from: 'M4', name: 'Member 4', text: 'Done! Task updated', time: '10:16', color: '#8b5cf6', self: false },
+                              { from: 'M5', name: 'Member 5', text: 'I\'ll add the final assets by EOD', time: '10:18', color: '#f59e0b', self: false },
                             ].map((msg, i) => (
                               <div key={i} className={`dp-chat-msg ${msg.self ? 'self' : ''}`}>
                                 {!msg.self && (

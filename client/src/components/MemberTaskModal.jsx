@@ -193,14 +193,30 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
         }
     };
 
-    const formatTime = (dateString) => {
+    const formatTimeOnly = (dateString) => {
         return new Date(dateString).toLocaleTimeString('en-GB', {
             hour: '2-digit',
             minute: '2-digit',
-            day: "numeric",
-            month: "short"
-        })
-    }
+        });
+    };
+
+    const formatDateLabel = (dateString) => {
+        const date = new Date(dateString);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        if (date.toDateString() === today.toDateString()) return 'Today';
+        if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+        return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    };
+
+    // Group comments by calendar day
+    const groupedComments = comments.reduce((groups, comment) => {
+        const key = new Date(comment.createdAt).toDateString();
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(comment);
+        return groups;
+    }, {});
 
     return (
         <div className="member-modal-overlay" onClick={onClose}>
@@ -245,7 +261,7 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
                 </div>
 
                 <div className="member-modal-section">
-                    <h2 className="section-title">Todo Checklist</h2>
+                    <h2 className="modal-section-title">Todo Checklist</h2>
                     <div className="member-checklist">
                         {taskData.checklist.map((item) => (
                             <div key={item.id} className="member-checklist-item" onClick={() => toggleChecklist(item.id)}>
@@ -261,7 +277,7 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
                 </div>
 
                 <div className="member-modal-section">
-                    <h2 className="section-title">Discussion & Comments</h2>
+                    <h2 className="modal-section-title">Discussion & Comments</h2>
                     <div className="chat-container">
                         <div ref={chatContainerRef} className="chat-messages">
                             {comments.length === 0 && (
@@ -269,31 +285,39 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
                                     No Comments Yet!
                                 </p>
                             )}
-                            {comments.map((comment) => (
-                                <div key={comment.id} className={`chat-message ${comment.user?.id === currentUser?.id ? 'own' : ''}`}>
-                                    <img
-                                        src={comment.user?.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user?.firstName + ' ' + comment.user?.lastName)}&background=random`}
-                                        alt={comment.user?.firstName + ' ' + comment.user?.lastName}
-                                        className="chat-avatar"
-                                    />
-                                    <div className="chat-message-content">
-                                        <div className="chat-message-header">
-                                            <span className="chat-user-name">
-                                                {comment.user?.firstName + ' ' + comment.user?.lastName}
-                                            </span>
-                                            <span className="chat-time">
-                                                {formatTime(comment.createdAt)}
-                                            </span>
-                                        </div>
-                                        {comment.task && (
-                                            <span className="chat-task-ref">re: {comment.task.title}</span>
-                                        )}
-                                        <div className="chat-message-text">
-                                            {comment.content}
-                                        </div>
+                            {Object.entries(groupedComments).map(([dateKey, dayComments]) => (
+                                <div key={dateKey}>
+                                    <div className="chat-date-separator">
+                                        <span>{formatDateLabel(dayComments[0].createdAt)}</span>
                                     </div>
+                                    {dayComments.map((comment) => (
+                                        <div key={comment.id} className={`chat-message ${comment.user?.id === currentUser?.id ? 'own' : ''}`}>
+                                            <img
+                                                src={comment.user?.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent((comment.user?.firstName || '') + ' ' + (comment.user?.lastName || ''))}&background=random`}
+                                                alt={(comment.user?.firstName || '') + ' ' + (comment.user?.lastName || '')}
+                                                className="chat-avatar"
+                                            />
+                                            <div className="chat-message-content">
+                                                <div className="chat-message-header">
+                                                    <span className="chat-user-name">
+                                                        {(comment.user?.firstName || '') + ' ' + (comment.user?.lastName || '')}
+                                                    </span>
+                                                </div>
+                                                <div className="chat-message-text">
+                                                    {comment.task && (
+                                                        <span className="chat-task-ref">re: {comment.task.title}</span>
+                                                    )}
+                                                    <div className="chat-bubble-row">
+                                                        <span className="chat-text-body">{comment.content}</span>
+                                                        <span className="chat-time">{formatTimeOnly(comment.createdAt)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             ))}
+
                         </div>
 
                         {/* Task selector + input */}
