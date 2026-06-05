@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
 import {
   ArrowRight, Command, Check, Layers, Users,
-  ChevronDown, Search, FileText, Globe, CheckSquare, BarChart3, Settings, Bell, Play, Info, Activity, Zap, History
+  ChevronDown, Search, FileText, Globe, CheckSquare, BarChart3, Settings, Bell, Play, Info, Activity, Zap, History, MessageCircle
 } from 'lucide-react';
 import LineWaves from '../components/background/LineWaves';
 import LightRays from '../components/background/LightRays';
@@ -43,6 +43,13 @@ export function LandingPage({ currentUser }) {
       icon: <History size={20} />,
       accent: '#10b981',
       features: ['Full audit log', 'Change tracking', 'Team insights'],
+    },
+    {
+      title: 'Real-time Chat',
+      description: 'Communicate instantly with your team right inside the workspace. No switching apps — discuss tasks, share updates, and stay in sync.',
+      icon: <MessageCircle size={20} />,
+      accent: '#f59e0b',
+      features: ['Instant messaging', 'Task-linked threads', 'Online presence'],
     },
   ];
 
@@ -780,6 +787,43 @@ export function LandingPage({ currentUser }) {
                               <span className="dp-act-time">{a.time}</span>
                             </div>
                           ))}
+                        </div>
+                      </div>
+                    )}
+                    {/* Slide 4: Real-time Chat */}
+                    {demoSlide === 4 && (
+                      <div className="demo-screen-content anim-fade-in">
+                        <div className="dp-header">
+                          <span className="dp-greeting">Team Chat</span>
+                          <span className="dp-tag" style={{ background: '#f59e0b20', color: '#f59e0b' }}>● 5 online</span>
+                        </div>
+                        <div className="dp-chat-window">
+                          <div className="dp-chat-messages">
+                            {[
+                              { from: 'SC', name: 'Sarah', text: 'Hey team! Just pushed the new onboarding designs 🎨', time: '10:12', color: '#8b5cf6', self: false },
+                              { from: 'ML', name: 'Marcus', text: 'Looks great! I\'ll review the PR now', time: '10:14', color: '#06b6d4', self: false },
+                              { from: 'ME', name: 'You', text: 'Can we link this to the Sprint 3 task?', time: '10:15', color: '#3b82f6', self: true },
+                              { from: 'SC', name: 'Sarah', text: 'Done! Task updated ✅', time: '10:16', color: '#8b5cf6', self: false },
+                              { from: 'PP', name: 'Priya', text: 'I\'ll add the final assets by EOD', time: '10:18', color: '#f59e0b', self: false },
+                            ].map((msg, i) => (
+                              <div key={i} className={`dp-chat-msg ${msg.self ? 'self' : ''}`}>
+                                {!msg.self && (
+                                  <div className="dp-chat-avatar" style={{ background: msg.color + '22', color: msg.color }}>{msg.from}</div>
+                                )}
+                                <div className="dp-chat-bubble-wrap">
+                                  {!msg.self && <span className="dp-chat-name">{msg.name}</span>}
+                                  <div className="dp-chat-bubble" style={msg.self ? { background: '#f59e0b', color: '#fff' } : {}}>
+                                    {msg.text}
+                                  </div>
+                                  <span className="dp-chat-time">{msg.time}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="dp-chat-input">
+                            <div className="dp-chat-input-box">Type a message...</div>
+                            <div className="dp-chat-send" style={{ background: '#f59e0b' }}>➤</div>
+                          </div>
                         </div>
                       </div>
                     )}
