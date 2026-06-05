@@ -1,13 +1,13 @@
 <h1 align="center">
   <br>
-  🚀 SaaS Task Manager
+  # 🚀 SaaS Pro — Plateforme SaaS Enterprise-Ready
   <br>
 </h1>
 
 <p align="center">
-  <strong>Une plateforme de gestion de tâches collaborative, moderne et sécurisée</strong>
+  <strong>Une solution robuste de gestion de projets collaborative, conçue avec une approche **"Security & DevOps by Design"**. </strong>
   <br>
-  <sub>Conçue pour les équipes qui veulent aller plus vite, ensemble.</sub>
+  <sub>Optimisée pour la scalabilité, l'application intègre une architecture conteneurisée (Docker), une gestion fine du trafic (Redis Rate Limiting) et une communication bidirectionnelle en temps réel (Socket.IO).</sub>
 </p>
 
 <p align="center">
