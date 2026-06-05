@@ -203,21 +203,21 @@ Grâce à **Socket.IO**, l'application offre :
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    CLIENT (React + Vite)                 │
-│  Landing Page · Dashboard · Tasks · Projects · Chat      │
-└─────────────────────┬───────────────────────────────────┘
-                       │  HTTP REST + WebSocket (Socket.IO)
-┌─────────────────────▼───────────────────────────────────┐
-│               BACKEND (Express.js + Node.js)             │
-│  Auth · Workspace · Project · Task · Email · Admin       │
+┌─────────────────────────────────────────────────────────-─┐
+│                    CLIENT (React + Vite)                  │
+│  Landing Page · Dashboard · Tasks · Projects · Chat       │
+└───────────────────────┬───────────────────────────────────┘
+                        │  HTTP REST + WebSocket (Socket.IO)
+┌───────────────────────▼───────────────────────────────────┐
+│               BACKEND (Express.js + Node.js)              │
+│  Auth · Workspace · Project · Task · Email · Admin        │
 │  Middlewares: JWT Auth · Rate Limiter · Multer            │
-│  Passport.js (Google OAuth2)                             │
-└──────┬───────────────────────────────────┬──────────────┘
+│  Passport.js (Google OAuth2)                              │
+└──────┬───────────────────────────────────┬────────────────┘
        │                                   │
 ┌──────▼──────┐                   ┌────────▼────────┐
-│ PostgreSQL  │                   │      Redis       │
-│   (Prisma)  │                   │  (Rate Limiting) │
+│ PostgreSQL  │                   │      Redis      │
+│   (Prisma)  │                   │ (Rate Limiting) │
 └─────────────┘                   └─────────────────┘
        │
 ┌──────▼──────┐
@@ -404,13 +404,13 @@ Créez un fichier `server/.env` avec les variables suivantes :
 ```env
 # ── Base de données ───────────────────────
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5433/saas_db"
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
+DB_USER=db_user
+DB_PASSWORD=db_password
 DB_NAME=saas_task_manager
 
 # ── JWT ──────────────────────────────────
-JWT_ACCESS_SECRET=your_super_secret_access_key
-JWT_REFRESH_SECRET=your_super_secret_refresh_key
+JWT_ACCESS_SECRET=super_secret_access_key
+JWT_REFRESH_SECRET=super_secret_refresh_key
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 
@@ -418,20 +418,20 @@ JWT_REFRESH_EXPIRES_IN=7d
 REDIS_URL=redis://localhost:6379
 
 # ── Cloudinary ───────────────────────────
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+CLOUDINARY_CLOUD_NAME=cloud_name
+CLOUDINARY_API_KEY=api_key
+CLOUDINARY_API_SECRET=api_secret
 
 # ── Google OAuth2 ────────────────────────
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CLIENT_ID=google_client_id
+GOOGLE_CLIENT_SECRET=google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost:5001/api/auth/google/callback
 
 # ── Nodemailer ───────────────────────────
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
+SMTP_USER=email@gmail.com
+SMTP_PASS=app_password
 
 # ── Application ──────────────────────────
 CLIENT_URL=http://localhost:5174
