@@ -72,7 +72,6 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
             socket.emit("leave_project", task.id);
             socket.off("new_comment");
             socket.off("online_users");
-            socket.disconnect();
         }
 
     }, [isOpen, task?.id, currentUser]);

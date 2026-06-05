@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from "react-router";
-import { LayoutDashboard, Users, CheckCircle, Settings, Plus, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, CheckCircle, Settings, Plus, LogOut, Activity } from 'lucide-react';
 import { ConfirmationModal } from './ConfirmationModal';
 import './SideBar.css';
 import { apiFetch } from '../utils/apiFetch';
@@ -8,6 +8,7 @@ import { apiFetch } from '../utils/apiFetch';
 const navLinks = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Tasks', path: '/tasks', icon: CheckCircle },
+    { name: 'Activity Log', path: '/activity', icon: Activity },
     { name: 'Team Members', path: '/team', icon: Users },
 ];
 

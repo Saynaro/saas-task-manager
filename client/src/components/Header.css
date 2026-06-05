@@ -507,6 +507,7 @@
     transition: background 0.2s;
     min-width: 0;
     max-width: 250px;
+    font-weight: 600;
 }
 
 .workspace-selector-trigger.clickable {

@@ -243,3 +243,62 @@ export const createWorkspace = async (req, res) => {
         res.status(500).json({ error: "Failed to create workspace" });
     }
 };
+
+export const getWorkspaceActivity = async (req, res) => {
+    try {
+        const workspaceId = req.user?.workspace?.id;
+        if (!workspaceId) {
+            return res.status(400).json({ error: "Workspace not selected" });
+        }
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const activities = await prisma.activityLog.findMany({
+            where: { workspaceId },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        firstName: true,
+                        lastName: true,
+                        avatarUrl: true,
+                        email: true
+                    }
+                },
+                task: {
+                    select: {
+                        id: true,
+                        title: true,
+                        projectId: true,
+                        project: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: "desc"
+            },
+            skip,
+            take: limit
+        });
+
+        // Check if there are more items beyond current page
+        const nextActivities = await prisma.activityLog.findMany({
+            where: { workspaceId },
+            skip: skip + limit,
+            take: 1,
+            select: { id: true }
+        });
+        const hasMore = nextActivities.length > 0;
+
+        res.status(200).json({ status: "success", data: activities, hasMore });
+    } catch (error) {
+        console.error("GET WORKSPACE ACTIVITY ERROR:", error);
+        res.status(500).json({ error: "Failed to fetch workspace activity logs" });
+    }
+};

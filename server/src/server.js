@@ -134,6 +134,16 @@ io.on("connection", (socket) => {
         emitOnlineUsers(projectId);
     });
 
+    socket.on("join_workspace", (workspaceId) => {
+        socket.join(`workspace:${workspaceId}`);
+        console.log(`Socket ${socket.id} joined workspace ${workspaceId}`);
+    });
+
+    socket.on("leave_workspace", (workspaceId) => {
+        socket.leave(`workspace:${workspaceId}`);
+        console.log(`Socket ${socket.id} left workspace ${workspaceId}`);
+    });
+
     socket.on("disconnect", () => {
         console.log("Socket disconnected:", socket.id);
         removeSocketFromAll(socket.id);

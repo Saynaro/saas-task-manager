@@ -1,4 +1,5 @@
 import { prisma } from "../config/db.js";
+import { logActivity } from "../utils/activityLogger.js";
 
 export const createProjectWithAllDetails = async (req, res) => {
     try {
@@ -18,15 +19,6 @@ export const createProjectWithAllDetails = async (req, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-
-        // TODO: implement workspaceId
-        // let actualWorkspaceId = workspaceId;
-        // if (!actualWorkspaceId) {
-        //     const userWs = await prisma.workspaceMember.findFirst({
-        //         where: { userId: creatorId }
-        //     });
-        //     actualWorkspaceId = userWs ? userWs.workspaceId : null;
-        // }
 
         const workspaceId = req.user?.workspace?.id;
         if (!workspaceId && req.user.role !== 'ADMIN') {
@@ -168,6 +160,8 @@ export const updateProject = async (req, res) => {
 
         if (!project) return res.status(404).json({ error: "Project not found" });
 
+        const activitiesToLog = [];
+
         const updatedProjectWithDetails = await prisma.$transaction(async (tx) => {
             // Update basic fields properly - only if defined
             const updateData = {};
@@ -220,6 +214,8 @@ export const updateProject = async (req, res) => {
                             assigneeId = matchedTask.assigneeId;
                         }
 
+                        const hasStatusChanged = matchedTask.status !== (t.status || "TODO");
+
                         return {
                             id: matchedTask.id,
                             title: t.title,
@@ -229,7 +225,10 @@ export const updateProject = async (req, res) => {
                             assigneeId: assigneeId,
                             order: index * 1000,
                             workspaceId: project.workspaceId,
-                            isNew: false
+                            isNew: false,
+                            statusChanged: hasStatusChanged,
+                            oldStatus: matchedTask.status,
+                            newStatus: t.status || "TODO"
                         };
                     } else {
                         if (t.status === 'DONE') {
@@ -262,15 +261,33 @@ export const updateProject = async (req, res) => {
                 for (const t of tasksToSync) {
                     if (t.isNew) {
                         const { isNew, ...createData } = t;
-                        await tx.task.create({
+                        const createdTask = await tx.task.create({
                             data: createData
                         });
+                        activitiesToLog.push({
+                            action: "TASK_CREATED",
+                            newValue: createdTask.title,
+                            userId,
+                            workspaceId: project.workspaceId || req.user?.workspace?.id,
+                            taskId: createdTask.id
+                        });
                     } else {
-                        const { id: taskId, isNew, ...updateData } = t;
+                        const { id: taskId, isNew, statusChanged, oldStatus, newStatus, ...updateData } = t;
                         await tx.task.update({
                             where: { id: taskId },
                             data: updateData
                         });
+
+                        if (statusChanged) {
+                            activitiesToLog.push({
+                                action: newStatus === "DONE" ? "TASK_COMPLETED" : "TASK_UNCOMPLETED",
+                                oldValue: oldStatus,
+                                newValue: newStatus,
+                                userId,
+                                workspaceId: project.workspaceId || req.user?.workspace?.id,
+                                taskId
+                            });
+                        }
                     }
                 }
             }
@@ -280,6 +297,11 @@ export const updateProject = async (req, res) => {
                 include: { tasks: true, members: { include: { user: true } } }
             });
         });
+
+        // Run activity logs after transaction completes successfully
+        for (const act of activitiesToLog) {
+            await logActivity(act);
+        }
 
         res.json({ status: "success", data: updatedProjectWithDetails });
     } catch (error) {

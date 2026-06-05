@@ -1,0 +1,330 @@
+.activity-page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.activity-page-header {
+    margin-bottom: 35px;
+}
+
+.activity-page-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.activity-subtitle {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* Timeline Layout */
+.activity-timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Vertical timeline line */
+.activity-timeline::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 20px;
+    bottom: 8px;
+    width: 2px;
+    background-color: #e2e8f0;
+    z-index: 1;
+}
+
+.activity-item-wrapper {
+    display: flex;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Timeline Node containing avatar and action badge */
+.activity-timeline-node {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid #ffffff;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.08);
+}
+
+.activity-icon-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 18px;
+    height: 18px;
+    background: transparent;
+    border-radius: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.1);
+    border: none;
+}
+
+.activity-icon-badge :global(svg),
+.activity-icon-svg {
+    width: 11px;
+    height: 11px;
+}
+
+/* Different badge type colors based on action classes */
+.activity-icon-badge.task-created {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+}
+
+.activity-icon-badge.task-completed {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+}
+
+.activity-icon-badge.task-uncompleted {
+    border-color: #fecaca;
+    background: #fef2f2;
+    border-radius: 50%;
+}
+
+.activity-icon-badge.comment-added {
+    border-color: #ddd6fe;
+    background: #f5f3ff;
+}
+
+/* Item Card styling */
+.activity-item-card {
+    flex: 1;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.activity-item-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    border-color: #cbd5e1;
+}
+
+/* Body Content */
+.activity-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.activity-message {
+    font-size: 14.5px;
+    color: #334155;
+    line-height: 1.5;
+}
+
+.activity-message strong {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.highlight-text {
+    font-weight: 600;
+    color: #2563eb;
+    background-color: #eff6ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.comment-preview {
+    font-style: italic;
+    color: #475569;
+    background-color: #f8fafc;
+    border: 1.5px solid #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 13px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Meta information */
+.activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.activity-project-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.activity-time-stamp {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Loading & Empty States */
+.activity-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: #64748b;
+    gap: 16px;
+}
+
+.activity-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.activity-empty {
+    text-align: center;
+    padding: 80px 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+}
+
+.empty-icon {
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.activity-empty h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.activity-empty p {
+    font-size: 14px;
+    color: #64748b;
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .activity-timeline {
+        padding-left: 20px;
+    }
+
+    .activity-timeline::before {
+        left: 9px;
+    }
+
+    .activity-avatar-container {
+        margin-left: -30px;
+    }
+
+    .activity-user-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    .activity-item {
+        padding: 12px 14px;
+    }
+}
+
+.activity-show-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding-left: 28px;
+}
+
+.activity-show-more-btn {
+    padding: 10px 24px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+}
+
+.activity-show-more-btn:hover:not(:disabled) {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+    transform: translateY(-1px);
+}
+
+.activity-show-more-btn:active {
+    transform: translateY(0);
+}
+
+.activity-show-more-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

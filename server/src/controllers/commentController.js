@@ -1,5 +1,6 @@
 import { prisma } from "../config/db.js";
 import { io } from "../server.js";
+import { logActivity } from "../utils/activityLogger.js";
 
 
 
@@ -80,6 +81,7 @@ export const createComment = async (req, res) => {
                     select: {
                         id: true,
                         title: true,
+                        workspaceId: true
                     }
                 }
             }
@@ -87,6 +89,15 @@ export const createComment = async (req, res) => {
 
         // send to  room for real time updates
         io.to(`project:${projectId}`).emit("new_comment", comment);
+
+        // Log comment creation activity
+        await logActivity({
+            action: "COMMENT_ADDED",
+            newValue: content,
+            userId,
+            workspaceId: comment.task?.workspaceId || req.user?.workspace?.id,
+            taskId
+        });
 
         res.status(201).json({
             status: "success",
