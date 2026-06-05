@@ -56,7 +56,6 @@ L'application dispose d'une **landing page moderne et animée** servant de vitri
 - 🎨 Design glassmorphisme avec animations dynamiques
 - 📣 Section héro percutante avec appel à l'action
 - 🧩 Présentation des fonctionnalités clés
-- 💰 Section tarification (Pricing)
 - 📱 Entièrement responsive (mobile, tablette, desktop)
 - ⚡ Transitions fluides et micro-animations
 - 🔗 Liens vers l'inscription / connexion
