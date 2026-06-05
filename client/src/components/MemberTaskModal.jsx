@@ -23,6 +23,9 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
     const [isSending, setIsSending] = useState(false);
     const chatContainerRef = useRef(null);
     const inputRef = useRef(null);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [isOnlineDropdownOpen, setIsOnlineDropdownOpen] = useState(false);
+    const onlineDropdownRef = useRef(null);
 
     // get comments and connect to socket
     useEffect(() => {
@@ -43,21 +46,47 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
 
         // connect to project room
         socket.connect();
-        socket.emit("join_project", task.id);
+        socket.emit("join_project", {
+            projectId: task.id,
+            user: currentUser ? {
+                id: currentUser.id,
+                firstName: currentUser.firstName,
+                lastName: currentUser.lastName,
+                avatarUrl: currentUser.role === 'OWNER' && currentUser?.workspace?.avatarUrl
+                    ? currentUser.workspace.avatarUrl
+                    : currentUser?.avatarUrl
+            } : null
+        });
 
         // listen to new comment event
         socket.on("new_comment", (comment) => {
             setComments(prev => [...prev, comment]);
         });
 
+        // listen to online users list
+        socket.on("online_users", (users) => {
+            setOnlineUsers(users || []);
+        });
 
         return () => {
             socket.emit("leave_project", task.id);
             socket.off("new_comment");
+            socket.off("online_users");
             socket.disconnect();
         }
 
-    }, [isOpen, task?.id])
+    }, [isOpen, task?.id, currentUser]);
+
+    // close online users dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (onlineDropdownRef.current && !onlineDropdownRef.current.contains(event.target)) {
+                setIsOnlineDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
 
     // set first task like default
@@ -277,7 +306,46 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
                 </div>
 
                 <div className="member-modal-section">
-                    <h2 className="modal-section-title">Discussion & Comments</h2>
+                    <div className="modal-section-header">
+                        <h2 className="modal-section-title">Discussion & Comments</h2>
+                        {onlineUsers.length > 0 && (
+                            <div className="chat-online-container" ref={onlineDropdownRef}>
+                                <button 
+                                    type="button"
+                                    className={`chat-online-badge ${isOnlineDropdownOpen ? 'active' : ''}`}
+                                    onClick={() => setIsOnlineDropdownOpen(!isOnlineDropdownOpen)}
+                                >
+                                    <span className="chat-online-dot"></span>
+                                    <span className="chat-online-text">online: {onlineUsers.length}</span>
+                                </button>
+                                
+                                {isOnlineDropdownOpen && (
+                                    <div className="chat-online-dropdown">
+                                        <div className="chat-online-dropdown-header">
+                                            Active Members ({onlineUsers.length})
+                                        </div>
+                                        <div className="chat-online-list">
+                                            {onlineUsers.map((user) => (
+                                                <div key={user.id} className="chat-online-user-item">
+                                                    <img
+                                                        src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(`${user.firstName || ''} ${user.lastName || ''}`)}&background=random`}
+                                                        alt={`${user.firstName || ''} ${user.lastName || ''}`}
+                                                        className="chat-online-user-avatar"
+                                                    />
+                                                    <div className="chat-online-user-info">
+                                                        <span className="chat-online-user-name">
+                                                            {`${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Anonymous'}
+                                                        </span>
+                                                        <span className="chat-online-user-status">Active now</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                     <div className="chat-container">
                         <div ref={chatContainerRef} className="chat-messages">
                             {comments.length === 0 && (

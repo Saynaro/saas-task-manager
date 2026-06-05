@@ -23,22 +23,120 @@ export const io = new Server(httpServer, {
 });
 
 
+// State for online users
+const projectRooms = new Map(); // projectId -> Map of userId -> { user, sockets: Set }
+const socketToProjects = new Map(); // socketId -> Set of projectIds
+const socketToUser = new Map(); // socketId -> user
+
+function addSocketToProject(socketId, projectId, user) {
+    if (!user || !user.id) return;
+    
+    if (!socketToProjects.has(socketId)) {
+        socketToProjects.set(socketId, new Set());
+    }
+    socketToProjects.get(socketId).add(projectId);
+    
+    socketToUser.set(socketId, user);
+    
+    if (!projectRooms.has(projectId)) {
+        projectRooms.set(projectId, new Map());
+    }
+    
+    const projectUsers = projectRooms.get(projectId);
+    if (!projectUsers.has(user.id)) {
+        projectUsers.set(user.id, {
+            user: {
+                id: user.id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                avatarUrl: user.avatarUrl
+            },
+            sockets: new Set()
+        });
+    }
+    projectUsers.get(user.id).sockets.add(socketId);
+}
+
+function removeSocketFromProject(socketId, projectId) {
+    const user = socketToUser.get(socketId);
+    if (!user || !user.id) return;
+    
+    if (socketToProjects.has(socketId)) {
+        socketToProjects.get(socketId).delete(projectId);
+        if (socketToProjects.get(socketId).size === 0) {
+            socketToProjects.delete(socketId);
+        }
+    }
+    
+    if (projectRooms.has(projectId)) {
+        const projectUsers = projectRooms.get(projectId);
+        if (projectUsers.has(user.id)) {
+            const userSession = projectUsers.get(user.id);
+            userSession.sockets.delete(socketId);
+            if (userSession.sockets.size === 0) {
+                projectUsers.delete(user.id);
+            }
+        }
+        if (projectUsers.size === 0) {
+            projectRooms.delete(projectId);
+        }
+    }
+}
+
+function removeSocketFromAll(socketId) {
+    const projectIds = socketToProjects.get(socketId);
+    if (projectIds) {
+        for (const projectId of projectIds) {
+            removeSocketFromProject(socketId, projectId);
+            emitOnlineUsers(projectId);
+        }
+    }
+    socketToUser.delete(socketId);
+    socketToProjects.delete(socketId);
+}
+
+function emitOnlineUsers(projectId) {
+    const projectUsers = projectRooms.get(projectId);
+    const usersList = [];
+    if (projectUsers) {
+        for (const [userId, userSession] of projectUsers.entries()) {
+            usersList.push(userSession.user);
+        }
+    }
+    io.to(`project:${projectId}`).emit("online_users", usersList);
+}
+
 io.on("connection", (socket) => {
     console.log("Socket connected", socket.id);
 
-    socket.on("join_project", (projectId) => {
+    socket.on("join_project", (data) => {
+        let projectId = data;
+        let user = null;
+        if (typeof data === "object" && data !== null) {
+            projectId = data.projectId;
+            user = data.user;
+        }
+
         socket.join(`project:${projectId}`);
         console.log(`Socket ${socket.id} joined project ${projectId}`);
+        
+        if (user) {
+            addSocketToProject(socket.id, projectId, user);
+            emitOnlineUsers(projectId);
+        }
     });
 
     socket.on("leave_project", (projectId) => {
         socket.leave(`project:${projectId}`);
         console.log(`Socket ${socket.id} left project ${projectId}`);
-
+        
+        removeSocketFromProject(socket.id, projectId);
+        emitOnlineUsers(projectId);
     });
 
     socket.on("disconnect", () => {
         console.log("Socket disconnected:", socket.id);
+        removeSocketFromAll(socket.id);
     });
 });
 
