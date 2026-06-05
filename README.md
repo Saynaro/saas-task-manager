@@ -81,19 +81,30 @@ L'application dispose d'une **landing page moderne et animée** servant de vitri
 
 ### 👥 Système de rôles (RBAC)
 
-L'application implémente un contrôle d'accès basé sur les rôles à deux niveaux :
+L'application implémente un contrôle d'accès basé sur les rôles avec **3 niveaux de permission** distincts :
+
+| Rôle | Périmètre | Permissions |
+|---|---|---|
+| 👑 **OWNER** | Workspace | Crée et gère les projets · Crée, modifie et supprime les tâches · Invite des utilisateurs dans le workspace |
+| 👤 **MEMBER** | Workspace | Consulte les projets · Marque les tâches comme terminées · Participe au chat en temps réel |
+| 🛡️ **ADMIN** | Plateforme | Accès aux statistiques globales (workspaces, utilisateurs) · Peut supprimer des workspaces |
 
 ```
-🌍 Workspace
-├── 👑 OWNER   → Contrôle total, suppression du workspace, gestion des membres
-├── 🛡️  ADMIN   → Gestion des membres, projets, invitation d'utilisateurs
-└── 👤 MEMBER  → Lecture et contribution aux projets assignés
-```
+👑 OWNER
+├── ✅ Créer / modifier / supprimer des projets
+├── ✅ Créer / modifier / supprimer des tâches
+├── ✅ Inviter des utilisateurs dans le workspace
+└── ✅ Gérer les membres
 
-```
-📁 Projet
-├── Créateur → Droits de gestion du projet
-└── Membres  → Accès aux tâches du projet
+👤 MEMBER
+├── 👁️  Consulter les projets et les tâches
+├── ✅ Marquer une tâche comme terminée (DONE)
+└── 💬 Écrire dans le chat du workspace
+
+🛡️ ADMIN  (rôle global plateforme)
+├── 📊 Voir les statistiques globales
+│     └── Nombre de workspaces · Nombre d'utilisateurs
+└── 🗑️  Supprimer des workspaces
 ```
 
 ---
