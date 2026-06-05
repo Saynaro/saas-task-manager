@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import toast from 'react-hot-toast';
+import { handleRateLimit } from '../utils/handleRateLimit';
 import './Auth.css';
 
 export function ResetPasswordPage() {
@@ -46,6 +47,7 @@ export function ResetPasswordPage() {
             });
 
             const data = await res.json();
+            if (handleRateLimit(res, data)) return;
             if (res.ok) {
                 toast.success("Password reset successfully!");
                 navigate('/login');

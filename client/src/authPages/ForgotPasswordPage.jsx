@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import toast from 'react-hot-toast';
+import { handleRateLimit } from '../utils/handleRateLimit';
 import './Auth.css';
 
 export function ForgotPasswordPage() {
@@ -17,6 +18,7 @@ export function ForgotPasswordPage() {
                 body: JSON.stringify({ email })
             });
             const data = await res.json();
+            if (handleRateLimit(res, data)) return;
             if (res.ok) {
                 toast.success(data.message || "Reset link sent!");
             } else {
@@ -33,8 +35,8 @@ export function ForgotPasswordPage() {
     return (
         <div className="auth-bg">
             <div className="auth-card">
-        {/* Logo */}
-        <img src="/saas-pro-logo.svg" alt="SaaS Pro Logo" className="auth-logo-img" />
+                {/* Logo */}
+                <img src="/saas-pro-logo.svg" alt="SaaS Pro Logo" className="auth-logo-img" />
 
                 <h1 className="auth-title">Forgot Password</h1>
                 <p className="auth-subtitle">Enter your email and we'll send you a link to reset your password.</p>

@@ -544,13 +544,46 @@ enum InvitationStatus { PENDING · ACCEPTED · DECLINED }
 | Mesure | Technologie | Description |
 |---|---|---|
 | **Tokens HttpOnly** | Cookie-parser | Les JWT ne sont jamais accessibles via JS (anti-XSS) |
-| **Rate Limiting** | Redis + rate-limiter-flexible | Limite les requêtes par IP (anti-bruteforce) |
+| **Rate Limiting granulaire** | Redis + rate-limiter-flexible | Limites différentes par route (anti-bruteforce) |
 | **Hachage des mots de passe** | Bcrypt | Hachage avec sel — jamais en clair |
 | **Validation des rôles** | Middleware custom | RBAC vérifié sur chaque route sensible |
 | **Vérification email** | Nodemailer + token UUID | Activation obligatoire avant connexion |
 | **CORS** | Express cors | Origines autorisées strictement configurées |
 | **Variables d'environnement** | dotenv | Aucune clé sensible dans le code source |
 | **Refresh Token en BDD** | Prisma (RefreshToken) | Révocation possible des sessions actives |
+| **Trust Proxy** | Express | `app.set('trust proxy', 1)` — IP réelle derrière reverse proxy |
+
+### 🚦 Rate Limiting — Limites par route
+
+Chaque point d'entrée sensible dispose de son propre limiteur Redis indépendant (`rate-limiter-flexible`), organisé par catégorie :
+
+**🔐 Auth**
+
+| Route | Limite | Fenêtre | Blocage |
+|---|---|---|---|
+| `POST /api/auth/login` | **10 tentatives** | 15 minutes | 15 minutes |
+| `POST /api/auth/register` | **5 tentatives** | 1 heure | 30 minutes |
+| `POST /api/auth/change-password` | **3 tentatives** | 1 heure | 30 minutes |
+| `POST /api/auth/refresh` | **100 requêtes** | 24 heures | — |
+
+**📧 Email**
+
+| Route | Limite | Fenêtre | Blocage |
+|---|---|---|---|
+| `POST /api/email/forgot-password` | **3 tentatives** | 1 heure | 1 heure |
+| `POST /api/email/reset-password` | **10 tentatives** | 1 heure | — |
+| `GET  /api/email/verify-email` | **20 requêtes** | 1 heure | — |
+| `POST /api/email/resend-verification` | **3 tentatives** | 1 heure | 30 minutes |
+
+**🌐 API globale**
+
+| Route | Limite | Fenêtre | Blocage |
+|---|---|---|---|
+| `Toutes les routes /api/*` | **100 requêtes** | 1 minute | — |
+
+> **En développement** (`NODE_ENV=development`), tous les limiteurs sont désactivés automatiquement pour ne pas gêner le travail local.
+
+> **En production**, chaque limiteur stocke les compteurs par IP dans Redis. La réponse `429 Too Many Requests` inclut le header `Retry-After` indiquant le temps d'attente en secondes. Le client affiche automatiquement un message toast : _"Too many attempts, try again in N minutes."_
 
 ---
 

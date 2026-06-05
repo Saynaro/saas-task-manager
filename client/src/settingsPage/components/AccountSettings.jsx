@@ -3,6 +3,7 @@ import { User, Lock, LogOut, Loader2, Eye, EyeOff } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../utils/apiFetch';
+import { handleRateLimit } from '../../utils/handleRateLimit';
 import './Settings.css';
 
 export function AccountSettings({ user, onUpdate }) {
@@ -86,6 +87,7 @@ export function AccountSettings({ user, onUpdate }) {
                 setShowConfirmNewPassword(false);
             } else {
                 const data = await res.json();
+                if (handleRateLimit(res, data)) return;
                 toast.error(data.message || data.error || 'Failed to update password');
             }
         } catch (err) {

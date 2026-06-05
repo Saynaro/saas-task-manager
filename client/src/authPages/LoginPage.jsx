@@ -4,7 +4,9 @@ import { Link } from 'react-router'
 import toast from 'react-hot-toast'
 import { setAccessToken } from '../utils/apiFetch'
 import { apiFetch } from '../utils/apiFetch'
+import { handleRateLimit } from '../utils/handleRateLimit'
 import './Auth.css'
+
 
 export function LoginPage({ onLoginSuccess }) {
   const navigate = useNavigate();
@@ -42,7 +44,10 @@ export function LoginPage({ onLoginSuccess }) {
 
       const data = await response.json();
 
+      if (handleRateLimit(response, data)) return;
+
       if (!response.ok) {
+
         if (data.error === "Invalid email or password" || data.message === "Invalid email or password" || response.status === 401) {
           toast.error("Invalid email or password");
         } else {

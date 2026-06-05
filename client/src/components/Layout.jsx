@@ -6,6 +6,7 @@ import { SideBar } from './SideBar';
 import { TaskModal } from './TaskModal';
 import { WorkspaceModal } from './WorkspaceModal';
 import { apiFetch } from '../utils/apiFetch';
+import { handleRateLimit } from '../utils/handleRateLimit';
 import './Layout.css';
 
 export function Layout({ children, currentUser, onSuccess, refreshUser }) {
@@ -36,6 +37,7 @@ export function Layout({ children, currentUser, onSuccess, refreshUser }) {
                 method: "POST"
             });
             const data = await res.json();
+            if (handleRateLimit(res, data)) return;
             if (res.ok) {
                 toast.success(data.message || "Verification email sent successfully!");
                 navigate('/verify-email');

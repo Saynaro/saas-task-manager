@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import toast from 'react-hot-toast'
 import { setAccessToken } from '../utils/apiFetch'
 import { apiFetch } from '../utils/apiFetch'
-
+import { handleRateLimit } from '../utils/handleRateLimit'
 import './Auth.css'
 
 export function RegisterPage({ onLoginSuccess }) {
@@ -50,6 +50,8 @@ export function RegisterPage({ onLoginSuccess }) {
       });
 
       const data = await response.json();
+
+      if (handleRateLimit(response, data)) return;
 
       if (!response.ok) {
         toast.error(data.message || data.error || "Registration failed");
