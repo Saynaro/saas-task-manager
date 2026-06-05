@@ -20,7 +20,7 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
 
     const handleWorkspaceSelect = async (workspaceId) => {
         if (workspaceId === currentUser?.workspace?.id) return;
-        
+
         setIsSwitching(true);
         try {
             const res = await apiFetch("http://localhost:5001/api/auth/select-workspace", {
@@ -120,7 +120,7 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                 <div className="workspace" ref={wsRef}>
                     {currentUser?.workspace ? (
                         <>
-                            <div 
+                            <div
                                 className={`workspace-selector-trigger ${canSwitch ? 'clickable' : ''}`}
                                 onClick={() => canSwitch && setIsWsSelectorOpen(!isWsSelectorOpen)}
                             >
@@ -133,8 +133,8 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                                     <div className="dropdown-label">Switch Workspace</div>
                                     <div className="workspace-list">
                                         {currentUser.allWorkspaces.map(ws => (
-                                            <div 
-                                                key={ws.id} 
+                                            <div
+                                                key={ws.id}
                                                 className={`workspace-item ${ws.id === currentUser.workspace.id ? 'active' : ''}`}
                                                 onClick={() => handleWorkspaceSelect(ws.id)}
                                             >
@@ -167,11 +167,11 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                     )}
                 </div>
             </div>
-            
+
             <div className="header-right">
                 <div className="header-actions">
                     <div className="notification-wrapper" ref={notifRef}>
-                        <button 
+                        <button
                             className={`notif-btn ${invitations.length > 0 ? 'has-notifs' : ''}`}
                             onClick={() => setIsNotifOpen(!isNotifOpen)}
                         >
@@ -196,16 +196,16 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                                                     </p>
                                                 </div>
                                                 <div className="notif-actions">
-                                                    <button 
-                                                        className="notif-accept" 
+                                                    <button
+                                                        className="notif-accept"
                                                         onClick={() => handleInvitationAction(inv.id, 'accept')}
                                                         disabled={loadingIds.has(inv.id)}
                                                     >
                                                         {loadingIds.has(inv.id) ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                                                         Accept
                                                     </button>
-                                                    <button 
-                                                        className="notif-decline" 
+                                                    <button
+                                                        className="notif-decline"
                                                         onClick={() => handleInvitationAction(inv.id, 'decline')}
                                                         disabled={loadingIds.has(inv.id)}
                                                     >
