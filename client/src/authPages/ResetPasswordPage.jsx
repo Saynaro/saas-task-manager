@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import toast from 'react-hot-toast';
 import { handleRateLimit } from '../utils/handleRateLimit';
+import logo from '../assets/saas-pro-logo.svg'
 import './Auth.css';
 
 export function ResetPasswordPage() {
@@ -66,7 +67,7 @@ export function ResetPasswordPage() {
         <div className="auth-bg">
             <div className="auth-card">
                 {/* Logo */}
-                <img src={`${import.meta.env.BASE_URL}saas-pro-logo.svg`} alt="SaaS Pro Logo" className="auth-logo-img" />
+                <img src={logo} alt="SaaS Pro Logo" className="auth-logo-img" />
 
                 <h1 className="auth-title">Reset Password</h1>
                 <p className="auth-subtitle">Please enter and confirm your new password below.</p>
