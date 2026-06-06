@@ -36,7 +36,7 @@ export function ForgotPasswordPage() {
         <div className="auth-bg">
             <div className="auth-card">
                 {/* Logo */}
-                <img src="/saas-pro-logo.svg" alt="SaaS Pro Logo" className="auth-logo-img" />
+                <img src={`${import.meta.env.BASE_URL}saas-pro-logo.svg`} alt="SaaS Pro Logo" className="auth-logo-img" />
 
                 <h1 className="auth-title">Forgot Password</h1>
                 <p className="auth-subtitle">Enter your email and we'll send you a link to reset your password.</p>

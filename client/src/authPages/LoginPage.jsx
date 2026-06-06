@@ -83,7 +83,7 @@ export function LoginPage({ onLoginSuccess }) {
     <div className="auth-bg">
       <div className="auth-card">
         {/* Logo */}
-        <img src="/saas-pro-logo.svg" alt="SaaS Pro Logo" className="auth-logo-img" />
+        <img src={`${import.meta.env.BASE_URL}saas-pro-logo.svg`} alt="SaaS Pro Logo" className="auth-logo-img" />
 
         <h1 className="auth-title">Sign in to SaaS Pro</h1>
         <p className="auth-subtitle">Welcome back! Please enter your details.</p>
