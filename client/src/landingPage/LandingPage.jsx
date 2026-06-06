@@ -20,7 +20,7 @@ export function LandingPage({ currentUser }) {
       title: 'Smart Dashboard',
       description: 'Track all your projects at a glance. Real-time metrics, project distribution charts, and priority breakdowns — all in one unified view.',
       icon: <BarChart3 size={20} />,
-      accent: '#3b82f6',
+      accent: '#5996f9ff',
       features: ['Real-time analytics', 'Priority charts', 'Team metrics'],
     },
     {
@@ -48,7 +48,7 @@ export function LandingPage({ currentUser }) {
       title: 'Real-time Chat',
       description: 'Communicate instantly with your team right inside the workspace. No switching apps — discuss tasks, share updates, and stay in sync.',
       icon: <MessageCircle size={20} />,
-      accent: '#f59e0b',
+      accent: '#2563eb',
       features: ['Instant messaging', 'Task-linked threads', 'Online presence'],
     },
   ];
@@ -658,7 +658,7 @@ export function LandingPage({ currentUser }) {
                       style={{ backgroundColor: demoSlides[demoSlide].accent }}
                       onClick={() => { closeDemo(); navigate('/register'); }}
                     >
-                      Get Started →
+                      Get Started
                     </button>
                   )}
                 </div>
@@ -795,7 +795,7 @@ export function LandingPage({ currentUser }) {
                       <div className="demo-screen-content anim-fade-in">
                         <div className="dp-header">
                           <span className="dp-greeting">Team Chat</span>
-                          <span className="dp-tag" style={{ background: '#f59e0b20', color: '#f59e0b' }}>● 5 online</span>
+                          <span className="dp-tag" style={{ background: '#22c55e20', color: '#22c55e' }}>● 5 online</span>
                         </div>
                         <div className="dp-chat-window">
                           <div className="dp-chat-messages">
@@ -812,7 +812,7 @@ export function LandingPage({ currentUser }) {
                                 )}
                                 <div className="dp-chat-bubble-wrap">
                                   {!msg.self && <span className="dp-chat-name">{msg.name}</span>}
-                                  <div className="dp-chat-bubble" style={msg.self ? { background: '#f59e0b', color: '#fff' } : {}}>
+                                  <div className="dp-chat-bubble" style={msg.self ? { background: '#2563eb', color: '#fff' } : {}}>
                                     {msg.text}
                                   </div>
                                   <span className="dp-chat-time">{msg.time}</span>
@@ -822,7 +822,7 @@ export function LandingPage({ currentUser }) {
                           </div>
                           <div className="dp-chat-input">
                             <div className="dp-chat-input-box">Type a message...</div>
-                            <div className="dp-chat-send" style={{ background: '#f59e0b' }}>➤</div>
+                            <div className="dp-chat-send" style={{ background: '#2563eb' }}>➤</div>
                           </div>
                         </div>
                       </div>
