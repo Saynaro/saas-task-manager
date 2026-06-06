@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import toast from 'react-hot-toast';
 import { handleRateLimit } from '../utils/handleRateLimit';
+import { API_BASE_URL } from '../utils/config';
 import logo from '../assets/saas-pro-logo.svg'
 import './Auth.css';
 
@@ -13,7 +14,7 @@ export function ForgotPasswordPage() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await fetch("http://localhost:5001/api/email/forgot-password", {
+            const res = await fetch(`${API_BASE_URL}/api/email/forgot-password`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email })

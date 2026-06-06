@@ -6,6 +6,7 @@ import { SideBar } from './SideBar';
 import { TaskModal } from './TaskModal';
 import { WorkspaceModal } from './WorkspaceModal';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 import { handleRateLimit } from '../utils/handleRateLimit';
 import './Layout.css';
 
@@ -33,7 +34,7 @@ export function Layout({ children, currentUser, onSuccess, refreshUser }) {
         e.preventDefault();
         setIsSending(true);
         try {
-            const res = await apiFetch("http://localhost:5001/api/email/resend-verification", {
+            const res = await apiFetch(`${API_BASE_URL}/api/email/resend-verification`, {
                 method: "POST"
             });
             const data = await res.json();

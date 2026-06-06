@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Plus, Mail, Globe, Image as ImageIcon, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 import './WorkspaceModal.css';
 
 export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
@@ -89,7 +90,7 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
             }
 
             // 1. Create Workspace
-            const res = await apiFetch("http://localhost:5001/api/workspaces", {
+            const res = await apiFetch(`${API_BASE_URL}/api/workspaces`, {
                 method: "POST",
                 credentials: "include",
                 body: formDataToSend
@@ -103,7 +104,7 @@ export function WorkspaceModal({ isOpen, onClose, onUpdate }) {
 
                 // 2. Automatically select the new workspace
                 if (newWsId) {
-                    await apiFetch("http://localhost:5001/api/auth/select-workspace", {
+                    await apiFetch(`${API_BASE_URL}/api/auth/select-workspace`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         credentials: "include",

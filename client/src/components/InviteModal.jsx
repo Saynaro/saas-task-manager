@@ -3,6 +3,7 @@ import { X, Mail, Send, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './InviteModal.css';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 
 export function InviteModal({ isOpen, onClose, workspaceName, workspaceId }) {
     const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ export function InviteModal({ isOpen, onClose, workspaceName, workspaceId }) {
 
         setLoading(true);
         try {
-            const res = await apiFetch("http://localhost:5001/api/invitations/send", {
+            const res = await apiFetch(`${API_BASE_URL}/api/invitations/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

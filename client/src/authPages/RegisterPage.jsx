@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import toast from 'react-hot-toast'
-import { setAccessToken } from '../utils/apiFetch'
-import { apiFetch } from '../utils/apiFetch'
+import { setAccessToken, apiFetch } from '../utils/apiFetch'
+import { API_BASE_URL } from '../utils/config'
 import { handleRateLimit } from '../utils/handleRateLimit'
 import logo from '../assets/saas-pro-logo.svg'
 import './Auth.css'
@@ -35,7 +35,7 @@ export function RegisterPage({ onLoginSuccess }) {
 
     // connect to backend
     try {
-      const response = await apiFetch("http://localhost:5001/api/auth/register", {
+      const response = await apiFetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ export function RegisterPage({ onLoginSuccess }) {
         setAccessToken(data.data.accessToken);
 
         // Fetch full profile (includes role, workspace, allWorkspaces)
-        const meRes = await fetch("http://localhost:5001/api/auth/me", {
+        const meRes = await fetch(`${API_BASE_URL}/api/auth/me`, {
           credentials: "include",
           headers: { "Authorization": `Bearer ${data.data.accessToken}` }
         });
@@ -214,7 +214,7 @@ export function RegisterPage({ onLoginSuccess }) {
         <br />
         <button className="google-btn" type="button"
           onClick={() => {
-            window.location.href = 'http://localhost:5001/api/auth/google';
+            window.location.href = `${API_BASE_URL}/api/auth/google`;
           }}
         >
           {/* Google coloured G */}

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { setAccessToken } from '../utils/apiFetch.js';
+import { API_BASE_URL } from '../utils/config';
 
 export function OAuthCallbackPage({ onLoginSuccess }) {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ export function OAuthCallbackPage({ onLoginSuccess }) {
 
 
             // get user data
-            fetch("http://localhost:5001/api/auth/me", {
+            fetch(`${API_BASE_URL}/api/auth/me`, {
                 credentials: "include",
                 headers: { "Authorization": `Bearer ${token}` }
             })

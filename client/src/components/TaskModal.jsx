@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { ConfirmationModal } from './ConfirmationModal';
 import './TaskModal.css';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 
 export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, onDelete, currentUser }) {
     const today = new Date().toISOString().split('T')[0];
@@ -53,7 +54,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
                 return;
             }
             try {
-                const res = await apiFetch("http://localhost:5001/api/workspaces/members", {
+                const res = await apiFetch(`${API_BASE_URL}/api/workspaces/members`, {
                     credentials: "include"
                 });
                 if (res.ok) {
@@ -143,7 +144,7 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
 
     const handleDeleteProject = async () => {
         try {
-            const res = await apiFetch(`http://localhost:5001/api/projects/${task?.id}`, {
+            const res = await apiFetch(`${API_BASE_URL}/api/projects/${task?.id}`, {
                 method: "DELETE",
                 credentials: "include"
             });
@@ -177,8 +178,8 @@ export function TaskModal({ isOpen, onClose, task, mode = 'create', onSuccess, o
             };
 
             const url = mode === 'create'
-                ? "http://localhost:5001/api/projects"
-                : `http://localhost:5001/api/projects/${task?.id}`;
+                ? `${API_BASE_URL}/api/projects`
+                : `${API_BASE_URL}/api/projects/${task?.id}`;
 
             const method = mode === 'create' ? "POST" : "PATCH";
 

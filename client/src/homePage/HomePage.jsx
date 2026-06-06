@@ -8,6 +8,7 @@ import { Layout } from '../components/Layout';
 
 import './HomePage.css';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 
 const getGreeting = () => {
     const hour = new Date().getHours();
@@ -42,7 +43,7 @@ export function HomePage({ currentUser, refreshUser }) {
         const fetchData = async () => {
             if (currentUser?.role === 'ADMIN') {
                 try {
-                    const res = await apiFetch("http://localhost:5001/api/admin/stats", {
+                    const res = await apiFetch(`${API_BASE_URL}/api/admin/stats`, {
                         credentials: "include"
                     });
                     if (res.ok) {
@@ -55,7 +56,7 @@ export function HomePage({ currentUser, refreshUser }) {
             } else {
                 setProjects([]);
                 try {
-                    const response = await apiFetch("http://localhost:5001/api/projects", {
+                    const response = await apiFetch(`${API_BASE_URL}/api/projects`, {
                         credentials: "include"
                     });
                     if (response.ok) {

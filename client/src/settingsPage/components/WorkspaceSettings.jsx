@@ -4,6 +4,7 @@ import { ConfirmationModal } from '../../components/ConfirmationModal';
 import { InviteModal } from '../../components/InviteModal';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../utils/apiFetch';
+import { API_BASE_URL } from '../../utils/config';
 import './Settings.css';
 
 export function WorkspaceSettings({ workspace, members, onUpdate }) {
@@ -50,7 +51,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
             if (formData.slug !== undefined) body.append('slug', formData.slug);
             if (formData.logoFile) body.append('avatar', formData.logoFile);
 
-            const res = await apiFetch('http://localhost:5001/api/workspaces/update', {
+            const res = await apiFetch(`${API_BASE_URL}/api/workspaces/update`, {
                 method: 'PATCH',
                 credentials: 'include',
                 body
@@ -80,7 +81,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
         if (!userToDelete) return;
         
         try {
-            const res = await apiFetch(`http://localhost:5001/api/workspaces/members/${userToDelete.id}`, {
+            const res = await apiFetch(`${API_BASE_URL}/api/workspaces/members/${userToDelete.id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -103,7 +104,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
 
     const handleLogout = async () => {
         try {
-            await apiFetch('http://localhost:5001/api/auth/logout', {
+            await apiFetch(`${API_BASE_URL}/api/auth/logout`, {
                 method: 'POST',
                 credentials: 'include'
             });

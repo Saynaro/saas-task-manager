@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { X, CheckCircle2, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 import socket from '../utils/socket';
 import './MemberTaskModal.css';
 
@@ -33,7 +34,7 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
 
         const fetchComments = async () => {
             try {
-                const res = await apiFetch(`http://localhost:5001/api/projects/${task?.id}/comments`);
+                const res = await apiFetch(`${API_BASE_URL}/api/projects/${task?.id}/comments`);
                 const data = await res.json();
 
                 setComments(data.data || []);
@@ -139,7 +140,7 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
 
         setIsSending(true);
         try {
-            await apiFetch(`http://localhost:5001/api/projects/${task.id}/comments`, {
+            await apiFetch(`${API_BASE_URL}/api/projects/${task.id}/comments`, {
                 method: 'POST',
                 body: JSON.stringify({
                     content: newCommentText.trim(),
@@ -188,7 +189,7 @@ export function MemberTaskModal({ isOpen, onClose, task, onSuccess, currentUser 
 
         // Auto-save to backend
         try {
-            const res = await apiFetch(`http://localhost:5001/api/projects/${task?.id}`, {
+            const res = await apiFetch(`${API_BASE_URL}/api/projects/${task?.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

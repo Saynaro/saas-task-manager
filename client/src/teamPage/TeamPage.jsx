@@ -5,6 +5,7 @@ import { InviteModal } from "../components/InviteModal";
 import { Plus } from 'lucide-react';
 import "./TeamPage.css";
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 
 export function TeamPage({ currentUser, refreshUser }) {
     const [members, setMembers] = useState([]);
@@ -18,7 +19,7 @@ export function TeamPage({ currentUser, refreshUser }) {
                 return;
             }
             try {
-                const res = await apiFetch("http://localhost:5001/api/workspaces/members", {
+                const res = await apiFetch(`${API_BASE_URL}/api/workspaces/members`, {
                     credentials: "include"
                 });
                 if (res.ok) {

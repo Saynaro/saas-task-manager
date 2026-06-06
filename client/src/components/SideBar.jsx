@@ -4,6 +4,7 @@ import { LayoutDashboard, Users, CheckCircle, Settings, Plus, LogOut, Activity }
 import { ConfirmationModal } from './ConfirmationModal';
 import './SideBar.css';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 
 const navLinks = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -47,7 +48,7 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
 
     const handleLogout = async () => {
         try {
-            await fetch('http://localhost:5001/api/auth/logout', {
+            await fetch(`${API_BASE_URL}/api/auth/logout`, {
                 method: 'POST',
                 credentials: 'include'
             });

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 import './Auth.css';
 
 export function VerifyEmailPage({ refreshUser }) {
@@ -16,7 +17,7 @@ export function VerifyEmailPage({ refreshUser }) {
             verificationStarted.current = true;
 
             setStatus('loading');
-            fetch(`http://localhost:5001/api/email/verify-email?token=${token}`)
+            fetch(`${API_BASE_URL}/api/email/verify-email?token=${token}`)
                 .then(res => res.json())
                 .then(async (data) => {
                     if (data.success || data.message === "Email verified successfully") {
@@ -38,7 +39,7 @@ export function VerifyEmailPage({ refreshUser }) {
         // Check verification status periodically
         const checkInterval = setInterval(async () => {
             try {
-                const res = await apiFetch("http://localhost:5001/api/auth/me");
+                const res = await apiFetch(`${API_BASE_URL}/api/auth/me`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.data?.user?.isVerified) {

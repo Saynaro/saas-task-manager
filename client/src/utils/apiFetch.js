@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "./config";
+
 let accessToken = null;
 let isRefreshing = false;
 let refreshSubscribers = [];
@@ -50,7 +52,7 @@ export const apiFetch = async (url, options = {}) => {
         isRefreshing = true;
 
         try {
-            const refreshRes = await fetch("http://localhost:5001/api/auth/refresh", {
+            const refreshRes = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
                 method: "POST",
                 credentials: "include",
             });

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layout } from "../components/Layout";
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 import socket from '../utils/socket';
 import { MessageSquare, CheckSquare, PlusSquare, AlertCircle, Calendar } from 'lucide-react';
 import "./ActivityPage.css";
@@ -22,7 +23,7 @@ export function ActivityPage({ currentUser }) {
                 setLoadingMore(true);
             }
             try {
-                const res = await apiFetch(`http://localhost:5001/api/workspaces/activity?page=${page}&limit=10`, {
+                const res = await apiFetch(`${API_BASE_URL}/api/workspaces/activity?page=${page}&limit=10`, {
                     credentials: "include"
                 });
                 if (res.ok) {

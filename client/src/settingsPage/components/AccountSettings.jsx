@@ -3,6 +3,7 @@ import { User, Lock, LogOut, Loader2, Eye, EyeOff } from 'lucide-react';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../utils/apiFetch';
+import { API_BASE_URL } from '../../utils/config';
 import { handleRateLimit } from '../../utils/handleRateLimit';
 import './Settings.css';
 
@@ -64,7 +65,7 @@ export function AccountSettings({ user, onUpdate }) {
 
         setIsUpdatingPassword(true);
         try {
-            const res = await apiFetch('http://localhost:5001/api/auth/change-password', {
+            const res = await apiFetch(`${API_BASE_URL}/api/auth/change-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -119,7 +120,7 @@ export function AccountSettings({ user, onUpdate }) {
                 formDataToSend.append('avatar', formData.avatarFile);
             }
 
-            const res = await apiFetch('http://localhost:5001/api/auth/me', {
+            const res = await apiFetch(`${API_BASE_URL}/api/auth/me`, {
                 method: 'PATCH',
                 body: formDataToSend
             });
@@ -141,7 +142,7 @@ export function AccountSettings({ user, onUpdate }) {
 
     const handleLogout = async () => {
         try {
-            await apiFetch('http://localhost:5001/api/auth/logout', {
+            await apiFetch(`${API_BASE_URL}/api/auth/logout`, {
                 method: 'POST',
                 credentials: 'include'
             });

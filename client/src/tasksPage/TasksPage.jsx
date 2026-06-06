@@ -7,6 +7,7 @@ import { TaskModal } from "../components/TaskModal"
 import { MemberTaskModal } from "../components/MemberTaskModal"
 import "./TasksPage.css"
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 
 export function TasksPage({ currentUser, refreshUser }) {
     const location = useLocation();
@@ -28,7 +29,7 @@ export function TasksPage({ currentUser, refreshUser }) {
             setMembers([]); // Clear old data
             setLoading(true);
             try {
-                const response = await apiFetch("http://localhost:5001/api/projects", {
+                const response = await apiFetch(`${API_BASE_URL}/api/projects`, {
                     credentials: "include"
                 });
                 if (response.ok) {

@@ -5,6 +5,7 @@ import { AccountSettings } from "./components/AccountSettings"
 import { SuperAdminSettings } from "./components/SuperAdminSettings"
 import "./SettingsPage.css"
 import { apiFetch } from '../utils/apiFetch';
+import { API_BASE_URL } from '../utils/config';
 
 export function SettingsPage({ currentUser, refreshUser }) {
     const [workspaceMembers, setWorkspaceMembers] = useState([]);
@@ -18,7 +19,7 @@ export function SettingsPage({ currentUser, refreshUser }) {
         setWorkspaceMembers([]);
         setIsLoading(true);
         try {
-            const res = await apiFetch("http://localhost:5001/api/workspaces/members", {
+            const res = await apiFetch(`${API_BASE_URL}/api/workspaces/members`, {
                 credentials: "include"
             });
             if (res.ok) {

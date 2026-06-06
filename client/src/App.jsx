@@ -17,11 +17,10 @@ import { ForgotPasswordPage } from './authPages/ForgotPasswordPage'
 import { ResetPasswordPage } from './authPages/ResetPasswordPage'
 import { VerifyEmailPage } from './authPages/VerifyEmailPage'
 
-import { setAccessToken } from './utils/apiFetch'
-import { apiFetch } from './utils/apiFetch'
+import { setAccessToken, apiFetch } from './utils/apiFetch'
+import { API_BASE_URL } from './utils/config'
 import { Navigate } from 'react-router-dom'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 const PrivateRoute = ({ children, currentUser, isLoading }) => {
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f8fafc', fontStyle: 'italic', color: '#64748b' }}>Loading...</div>;
