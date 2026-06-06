@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from 'react-router'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import socket from './utils/socket'
@@ -19,7 +19,9 @@ import { VerifyEmailPage } from './authPages/VerifyEmailPage'
 
 import { setAccessToken } from './utils/apiFetch'
 import { apiFetch } from './utils/apiFetch'
-import { Navigate } from 'react-router'
+import { Navigate } from 'react-router-dom'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
 const PrivateRoute = ({ children, currentUser, isLoading }) => {
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f8fafc', fontStyle: 'italic', color: '#64748b' }}>Loading...</div>;
@@ -46,9 +48,9 @@ function App() {
     sessionRestored.current = true;
 
     const restoreSession = async () => {
-      console.log("restoreSession started");
+      console.log("restoreSession started, target:", `${API_BASE_URL}/api/auth/refresh`);
       try {
-        const res = await fetch("http://localhost:5001/api/auth/refresh", {
+        const res = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
           method: "POST",
           credentials: "include"
         });
@@ -59,7 +61,7 @@ function App() {
           console.log("accessToken received:", data.accessToken);
           setAccessToken(data.accessToken);
 
-          const meRes = await fetch("http://localhost:5001/api/auth/me", {
+          const meRes = await fetch(`${API_BASE_URL}/api/auth/me`, {
             credentials: "include",
             headers: { "Authorization": `Bearer ${data.accessToken}` }
           });
@@ -183,7 +185,7 @@ function App() {
   const fetchCurrentUser = async () => {
     if (!currentUser) setIsLoading(true);
     try {
-      const response = await apiFetch("http://localhost:5001/api/auth/me", {
+      const response = await apiFetch(`${API_BASE_URL}/api/auth/me`, {
         credentials: "include",
         headers: {
           "Content-Type": "application/json"
