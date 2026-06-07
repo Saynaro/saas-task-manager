@@ -181,7 +181,7 @@ nav {
 /* ─── Mobile (≤ 480px) ─── */
 @media (max-width: 480px) {
     body {
-        background-color: #ffffff;
+        background-color: #f8fafc;
         height: auto;
     }
 

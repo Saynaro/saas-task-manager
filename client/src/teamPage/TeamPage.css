@@ -52,6 +52,12 @@
 }
 
 @media (max-width: 480px) {
+
+    body {
+        background-color: #f9fafb;
+        height: auto;
+    }
+
     .teampage-header h2 {
         font-size: 20px;
     }

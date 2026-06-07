@@ -22,6 +22,7 @@ html {
 
 /* Prevent iOS Safari auto-zoom on input focus (font-size < 16px triggers zoom) */
 @media (max-width: 768px) {
+
   input,
   textarea,
   select {
@@ -50,6 +51,12 @@ html {
 }
 
 @media (max-width: 480px) {
+
+  body {
+    background-color: #f9fafb;
+    height: auto;
+  }
+
   .add-task-btn {
     width: 100%;
     justify-content: center;
