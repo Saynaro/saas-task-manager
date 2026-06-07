@@ -52,7 +52,7 @@ function App() {
       isAuth = true;
     }
 
-    // 1. Update theme-color meta tag for Safari mobile browser chrome color
+    //  Update theme-color meta tag for Safari mobile browser chrome color
     let metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (!metaThemeColor) {
       metaThemeColor = document.createElement('meta');
@@ -61,7 +61,7 @@ function App() {
     }
     metaThemeColor.setAttribute('content', color);
 
-    // 2. Dynamically apply background color to html and body elements
+    //  Dynamically apply background color to html and body elements
     document.documentElement.style.backgroundColor = color;
     document.body.style.backgroundColor = color;
 
@@ -74,12 +74,12 @@ function App() {
     }
 
     // Cleanup: reset background styles on unmount
-    return () => {
-      document.documentElement.style.backgroundColor = '';
-      document.body.style.backgroundColor = '';
-      document.documentElement.classList.remove('auth-page');
-      document.body.classList.remove('auth-page');
-    };
+    // return () => {
+    //   document.documentElement.style.backgroundColor = '';
+    //   document.body.style.backgroundColor = '';
+    //   document.documentElement.classList.remove('auth-page');
+    //   document.body.classList.remove('auth-page');
+    // };
   }, [location.pathname]);
 
   useEffect(() => {
