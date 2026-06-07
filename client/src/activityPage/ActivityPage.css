@@ -96,7 +96,7 @@
     border: none;
 }
 
-.activity-icon-badge :global(svg),
+.activity-icon-badge svg,
 .activity-icon-svg {
     width: 11px;
     height: 11px;

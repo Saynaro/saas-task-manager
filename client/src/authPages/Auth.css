@@ -386,6 +386,12 @@
    RESPONSIVE — MOBILE (≤ 480px)
    ═══════════════════════════════════ */
 @media (max-width: 480px) {
+
+  body {
+    background-color: #ffffff;
+    height: auto;
+  }
+
   .auth-bg {
     padding: 0;
     background: #ffffff;
