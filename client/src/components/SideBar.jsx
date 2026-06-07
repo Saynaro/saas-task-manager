@@ -61,7 +61,11 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
 
     return (
         <>
-            <div className={`sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={toggleMenu}></div>
+            <div 
+                className={`sidebar-overlay ${isOpen ? 'active' : ''}`} 
+                onClick={toggleMenu}
+                onTouchMove={(e) => e.preventDefault()}
+            ></div>
 
             <div className={`sidebar ${isOpen ? 'open' : ''}`}>
                 <div className="sidebar-main">

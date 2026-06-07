@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { Header } from './Header';
@@ -20,6 +20,20 @@ export function Layout({ children, currentUser, onSuccess, refreshUser }) {
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+
+    useEffect(() => {
+        if (isMenuOpen) {
+            document.body.classList.add('menu-open');
+            document.documentElement.classList.add('menu-open');
+        } else {
+            document.body.classList.remove('menu-open');
+            document.documentElement.classList.remove('menu-open');
+        }
+        return () => {
+            document.body.classList.remove('menu-open');
+            document.documentElement.classList.remove('menu-open');
+        };
+    }, [isMenuOpen]);
 
     const openTaskModal = () => {
         setIsTaskModalOpen(true);
