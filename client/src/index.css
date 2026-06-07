@@ -52,7 +52,9 @@ html {
 
 @media (max-width: 480px) {
 
+  html,
   body {
+    /* Match page content color so Safari's overscroll/safe-area area shows the right color */
     background-color: #f9fafb;
     height: auto;
   }

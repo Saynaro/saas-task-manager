@@ -38,6 +38,12 @@
 
 /* ─── Mobile (≤ 480px) ─── */
 @media (max-width: 480px) {
+    .first-container {
+        /* Same trick as Login/Register: fill the full Safari viewport */
+        min-height: 100dvh;
+        min-height: -webkit-fill-available;
+    }
+
     .content {
         padding: 16px 12px;
         margin-top: 56px;
