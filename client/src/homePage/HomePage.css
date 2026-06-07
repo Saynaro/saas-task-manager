@@ -90,6 +90,11 @@
 /* ─── Mobile (≤ 480px) ─── */
 @media (max-width: 480px) {
 
+    body {
+        background-color: #f9fafb;
+        height: auto;
+    }
+
     .content {
         padding: 16px 12px;
         margin-top: 56px;

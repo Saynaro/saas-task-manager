@@ -40,10 +40,8 @@ function App() {
     // Determine the background color based on the current page path
     let color = '#f9fafb'; // Default background for application inner pages
     let isAuth = false;
-    let isLanding = false;
     if (['/', '/privacy', '/terms'].includes(path)) {
       color = '#030712'; // Landing and legal pages background
-      isLanding = true;
     } else if (['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'].includes(path)) {
       color = '#ffffff'; // Auth pages background
       isAuth = true;
@@ -70,22 +68,12 @@ function App() {
       document.body.classList.remove('auth-page');
     }
 
-    if (isLanding) {
-      document.documentElement.classList.add('landing-page');
-      document.body.classList.add('landing-page');
-    } else {
-      document.documentElement.classList.remove('landing-page');
-      document.body.classList.remove('landing-page');
-    }
-
     // Cleanup: reset background styles on unmount
     return () => {
       document.documentElement.style.backgroundColor = '';
       document.body.style.backgroundColor = '';
       document.documentElement.classList.remove('auth-page');
       document.body.classList.remove('auth-page');
-      document.documentElement.classList.remove('landing-page');
-      document.body.classList.remove('landing-page');
     };
   }, [location.pathname]);
 
