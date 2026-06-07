@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import toast from 'react-hot-toast';
 import { Header } from './Header';
@@ -21,15 +21,25 @@ export function Layout({ children, currentUser, onSuccess, refreshUser }) {
         setIsMenuOpen(!isMenuOpen);
     };
 
+    const originalHtmlBg = useRef('');
+    const originalBodyBg = useRef('');
+
     useEffect(() => {
         if (isMenuOpen) {
-            // Save current scroll position before locking
+            // Save current scroll position and background styles before locking
             const scrollY = window.scrollY;
+            originalHtmlBg.current = document.documentElement.style.backgroundColor;
+            originalBodyBg.current = document.body.style.backgroundColor;
+
             document.body.style.position = 'fixed';
             document.body.style.top = `-${scrollY}px`;
             document.body.style.left = '0';
             document.body.style.right = '0';
             document.body.style.overflow = 'hidden';
+
+            // Force background to #f9fafb so Safari browser chrome safe areas blend with the menu
+            document.documentElement.style.backgroundColor = '#f9fafb';
+            document.body.style.backgroundColor = '#f9fafb';
         } else {
             // Restore scroll position after unlocking
             const scrollY = document.body.style.top;
@@ -38,6 +48,15 @@ export function Layout({ children, currentUser, onSuccess, refreshUser }) {
             document.body.style.left = '';
             document.body.style.right = '';
             document.body.style.overflow = '';
+
+            // Restore original background color styles
+            if (originalHtmlBg.current !== undefined) {
+                document.documentElement.style.backgroundColor = originalHtmlBg.current;
+            }
+            if (originalBodyBg.current !== undefined) {
+                document.body.style.backgroundColor = originalBodyBg.current;
+            }
+
             if (scrollY) {
                 window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
             }
@@ -49,6 +68,14 @@ export function Layout({ children, currentUser, onSuccess, refreshUser }) {
             document.body.style.left = '';
             document.body.style.right = '';
             document.body.style.overflow = '';
+
+            if (originalHtmlBg.current !== undefined) {
+                document.documentElement.style.backgroundColor = originalHtmlBg.current;
+            }
+            if (originalBodyBg.current !== undefined) {
+                document.body.style.backgroundColor = originalBodyBg.current;
+            }
+
             if (scrollY) {
                 window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
             }
