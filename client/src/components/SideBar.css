@@ -180,10 +180,6 @@ nav {
 
 /* ─── Mobile (≤ 480px) ─── */
 @media (max-width: 480px) {
-    body {
-        background-color: #f9fafb;
-        height: auto;
-    }
 
     .sidebar {
         width: 260px;
