@@ -34,9 +34,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
+
+  // useEffect(() => {
+  //   document.querySelector('meta[name="theme-color"]')
+  //     ?.setAttribute('content', '#ffffff');
+  // }, []);
   useEffect(() => {
     const path = location.pathname;
-    
+
     // Determine the background color based on the current page path
     let color = '#f9fafb'; // Default background for application inner pages
     let isAuth = false;
