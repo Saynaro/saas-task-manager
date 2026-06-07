@@ -387,6 +387,7 @@
    ═══════════════════════════════════ */
 @media (max-width: 480px) {
 
+  html,
   body {
     background-color: #ffffff;
     height: auto;

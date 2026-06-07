@@ -35,6 +35,37 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
+    const path = location.pathname;
+    
+    // Determine the background color based on the current page path
+    let color = '#f9fafb'; // Default background for application inner pages
+    if (['/', '/privacy', '/terms'].includes(path)) {
+      color = '#030712'; // Landing and legal pages background
+    } else if (['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'].includes(path)) {
+      color = '#ffffff'; // Auth pages background
+    }
+
+    // 1. Update theme-color meta tag for Safari mobile browser chrome color
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (!metaThemeColor) {
+      metaThemeColor = document.createElement('meta');
+      metaThemeColor.name = 'theme-color';
+      document.head.appendChild(metaThemeColor);
+    }
+    metaThemeColor.setAttribute('content', color);
+
+    // 2. Dynamically apply background color to html and body elements
+    document.documentElement.style.backgroundColor = color;
+    document.body.style.backgroundColor = color;
+
+    // Cleanup: reset background styles on unmount
+    return () => {
+      document.documentElement.style.backgroundColor = '';
+      document.body.style.backgroundColor = '';
+    };
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (location.pathname !== '/') {
       sessionStorage.removeItem('shouldScrollToFooter');
     }

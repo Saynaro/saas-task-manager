@@ -173,7 +173,7 @@ nav {
         font-size: 20px;
         position: absolute;
         right: 15px;
-        top: 25px;
+        top: calc(25px + env(safe-area-inset-top, 0px));
         color: #4f566b;
     }
 }
@@ -181,15 +181,16 @@ nav {
 /* ─── Mobile (≤ 480px) ─── */
 @media (max-width: 480px) {
     body {
-        background-color: #f8fafc;
+        background-color: #f9fafb;
         height: auto;
     }
 
     .sidebar {
         width: 260px;
-        /* Match Login/Register: fill the full Safari viewport including bottom toolbar */
-        height: 100dvh;
-        height: -webkit-fill-available;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        height: auto;
     }
 
     .sidebar-footer {
@@ -198,7 +199,7 @@ nav {
     }
 
     .sidebar-header {
-        padding: 20px 20px 30px 20px;
+        padding: calc(20px + env(safe-area-inset-top, 0px)) 20px 30px 20px;
     }
 
     .sidebar-header h2 {
