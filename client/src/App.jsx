@@ -35,10 +35,10 @@ function App() {
   const location = useLocation();
 
 
-  // useEffect(() => {
-  //   document.querySelector('meta[name="theme-color"]')
-  //     ?.setAttribute('content', '#ffffff');
-  // }, []);
+  useEffect(() => {
+    document.querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', '#f9fafb');
+  }, []);
   useEffect(() => {
     const path = location.pathname;
 
