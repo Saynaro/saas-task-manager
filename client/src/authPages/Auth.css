@@ -387,8 +387,8 @@
    ═══════════════════════════════════ */
 @media (max-width: 480px) {
 
-  html,
-  body {
+  html.auth-page,
+  body.auth-page {
     background-color: #ffffff;
     height: auto;
   }
