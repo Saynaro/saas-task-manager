@@ -67,7 +67,10 @@ export function SideBar({ isOpen, toggleMenu, openCreateModal, currentUser }) {
                 onTouchMove={(e) => e.preventDefault()}
             ></div>
 
-            <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+            <div 
+                className={`sidebar ${isOpen ? 'open' : ''}`}
+                onTouchMove={(e) => e.preventDefault()}
+            >
                 <div className="sidebar-main">
                     <div className="sidebar-header">
                         <h2>Task Manager</h2>

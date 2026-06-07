@@ -191,7 +191,9 @@ nav {
         top: 0;
         bottom: 0;
         height: auto;
-        background-color: #f9fafb;
+        background-color: rgba(249, 250, 251, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
     }
 
     .sidebar-footer {

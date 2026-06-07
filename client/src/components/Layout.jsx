@@ -21,20 +21,6 @@ export function Layout({ children, currentUser, onSuccess, refreshUser }) {
         setIsMenuOpen(!isMenuOpen);
     };
 
-    useEffect(() => {
-        if (isMenuOpen) {
-            document.body.classList.add('menu-open');
-            document.documentElement.classList.add('menu-open');
-        } else {
-            document.body.classList.remove('menu-open');
-            document.documentElement.classList.remove('menu-open');
-        }
-        return () => {
-            document.body.classList.remove('menu-open');
-            document.documentElement.classList.remove('menu-open');
-        };
-    }, [isMenuOpen]);
-
     const openTaskModal = () => {
         setIsTaskModalOpen(true);
         if (isMenuOpen) setIsMenuOpen(false); // Close sidebar on mobile after clicking

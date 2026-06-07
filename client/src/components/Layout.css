@@ -79,11 +79,3 @@
 .verify-email-banner a:hover {
     color: #78350f;
 }
-
-/* Prevent background scrolling when mobile menu is open */
-html.menu-open,
-body.menu-open {
-    overflow: hidden !important;
-    height: 100dvh !important;
-    height: -webkit-fill-available !important;
-}
