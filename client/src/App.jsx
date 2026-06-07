@@ -231,7 +231,18 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
       </Routes>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        containerStyle={{
+          /* Always fixed to visible viewport — works correctly even when scrolled on mobile Safari */
+          position: 'fixed',
+          top: 'env(safe-area-inset-top, 16px)',
+          left: 0,
+          right: 0,
+          zIndex: 99999,
+        }}
+      />
     </>
   )
 }
