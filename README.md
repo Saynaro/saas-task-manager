@@ -11,6 +11,12 @@
 </p>
 
 <p align="center">
+  <a href="https://saaspro.online" target="_blank">
+    <strong>🌐 Version en ligne : https://saaspro.online</strong>
+  </a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React 19"/>
   <img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js"/>
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
@@ -42,12 +48,20 @@
 - [📡 API Routes](#-api-routes)
 - [🗄️ Modèle de données](#%EF%B8%8F-modèle-de-données)
 - [🔒 Sécurité](#-sécurité)
+- [📄 Licence](#-licence)
 
 ---
 
 ## 🌐 Aperçu
 
 **SaaS Task Manager** est une application web full-stack de type SaaS (Software as a Service) permettant à des équipes de gérer leurs projets et tâches en temps réel. Que vous soyez solo ou en grande équipe, l'application s'adapte à vos besoins grâce à un système de rôles granulaire, un tableau de bord analytique, et une communication instantanée via chat intégré.
+
+### 🚀 Déploiement & Accès
+
+L'application est déployée et accessible en ligne :
+- 🔗 **URL de production :** [https://saaspro.online](https://saaspro.online)
+- ⚡ **Frontend :** Déployé sur **Vercel**
+- 🖥️ **Backend :** Hébergé sur un serveur **Hetzner**
 
 ### 🎯 Landing Page
 
@@ -224,7 +238,7 @@ Grâce à **Socket.IO**, l'application offre :
 │   (Médias)  │
 └─────────────┘
 
-Tout orchestré via Docker Compose 🐳
+Tout orchestré via Docker Compose 🐳 (Déploiement de production : Frontend sur Vercel, Backend & BDD sur VPS Hetzner)
 ```
 
 ---
@@ -272,6 +286,8 @@ Tout orchestré via Docker Compose 🐳
 | **Nodemon** | Hot reload en développement |
 | **Prisma Studio** | Interface visuelle pour la BDD |
 | **ESLint** | Linting et qualité du code |
+| **Vercel** | Déploiement et hébergement du Frontend |
+| **Hetzner** | Hébergement du Backend, de PostgreSQL et de Redis |
 
 ---
 
@@ -595,6 +611,12 @@ Chaque point d'entrée sensible dispose de son propre limiteur Redis indépendan
 - 📦 **ES Modules** (`type: "module"`) côté serveur et client
 - 🎯 **Code clair et lisible** : nommage explicite, responsabilités séparées
 - 🔍 **ESLint** configuré avec les règles React Hooks
+
+---
+
+## 📄 Licence
+
+Ce projet est sous licence **ISC**. Voir le fichier [LICENSE](file:///Users/sainarokhalid/Desktop/SaaS%20Task%20Manager/LICENSE) pour plus de détails.
 
 ---
 
