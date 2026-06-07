@@ -82,6 +82,8 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
     }, []);
 
     const handleInvitationAction = async (id, action) => {
+        const invitation = invitations.find(inv => inv.id === id);
+        const workspaceName = invitation?.workspace?.name || "the workspace";
         setLoadingIds(prev => new Set(prev).add(id));
         try {
             const res = await apiFetch(`${API_BASE_URL}/api/invitations/${id}/${action}`, {
@@ -90,11 +92,14 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
             });
 
             if (res.ok) {
-                toast.success(action === 'accept' ? "Joined workspace!" : "Invitation declined");
-                setInvitations(prev => prev.filter(inv => inv.id !== id));
                 if (action === 'accept') {
-                    // Refresh page to show new workspace
-                    window.location.reload();
+                    toast.success(`You have been added to workspace: ${workspaceName}`);
+                } else {
+                    toast.success("Invitation declined");
+                }
+                setInvitations(prev => prev.filter(inv => inv.id !== id));
+                if (action === 'accept' && refreshUser) {
+                    await refreshUser();
                 }
             } else {
                 toast.error("Action failed");
