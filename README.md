@@ -80,16 +80,16 @@ Vous pouvez utiliser les comptes prédéfinis suivants pour vous connecter et te
 
 ### 📸 Aperçu de l'interface / UI Gallery
 
-> [!TIP]
-> **Comment ajouter vos captures d'écran :** Pour afficher vos images ici, créez un dossier `docs/screenshots/` à la racine de votre projet, déposez-y vos captures d'écran (ex. : `landing.png`, `dashboard.png`, `tasks.png`, `chat.png`) et les chemins ci-dessous s'afficheront automatiquement sur GitHub.
-
 <p align="center">
-  <img src="client/docs/screenshots/" width="48%" alt="Landing Page" />
-  <img src="docs/screenshots/dashboard.png" width="48%" alt="Dashboard" />
+  <img src="client/src/assets/screenshots/landing-page.gif" width="100%" alt="Landing Page Demo" />
 </p>
 <p align="center">
-  <img src="docs/screenshots/tasks.png" width="48%" alt="Tasks Page" />
-  <img src="docs/screenshots/chat.png" width="48%" alt="Real-time Chat & Activity" />
+  <img src="client/src/assets/screenshots/dashboard.png" width="48%" alt="Dashboard" />
+  <img src="client/src/assets/screenshots/tasks.png" width="48%" alt="Tasks Page" />
+</p>
+<p align="center">
+  <img src="client/src/assets/screenshots/chat.png" width="48%" alt="Real-time Chat" />
+  <img src="client/src/assets/screenshots/activity.png" width="48%" alt="Activity Log" />
 </p>
 
 ### 🎯 Landing Page
