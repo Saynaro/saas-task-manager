@@ -274,11 +274,11 @@ graph TD
     CloudinaryCDN["☁️ Cloudinary CDN<br/>Stockage d'avatars et logos"]:::cdn
 
     %% Relations
-    Client <-->|HTTPS / REST API| Server
-    Client <-->|WebSockets (Socket.IO)| Server
-    Server <-->|Prisma Queries| DB
-    Server <-->|Read / Write| RedisCache
-    Server -->|Upload / Fetch URL| CloudinaryCDN
+    Client <-->|"HTTPS / REST API"| Server
+    Client <-->|"WebSockets (Socket.IO)"| Server
+    Server <-->|"Prisma Queries"| DB
+    Server <-->|"Read / Write"| RedisCache
+    Server -->|"Upload / Fetch URL"| CloudinaryCDN
 
     subgraph Infrastructure de Production
         Client -.->|Déployé sur| Vercel["⚡ Vercel (Frontend)"]
