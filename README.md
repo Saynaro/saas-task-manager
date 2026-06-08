@@ -688,9 +688,3 @@ Ce projet est sous licence **ISC**. Voir le fichier [LICENSE](file:///Users/sain
 ## 👨‍💻 Auteur
 
 Développé par **Sainaro Khalid**
-
----
-
-<p align="center">
-  <sub>⭐ Si ce projet vous a plu, n'hésitez pas à lui mettre une étoile sur GitHub !</sub>
-</p>
