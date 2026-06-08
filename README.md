@@ -52,6 +52,7 @@
 - [📡 API Routes](#-api-routes)
 - [🗄️ Modèle de données](#%EF%B8%8F-modèle-de-données)
 - [🔒 Sécurité](#-sécurité)
+- [🧠 Défis techniques & Apprentissages](#-défis-techniques--apprentissages)
 - [📄 Licence](#-licence)
 
 ---
@@ -76,6 +77,20 @@ Vous pouvez utiliser les comptes prédéfinis suivants pour vous connecter et te
 * **Rôle : 👤 MEMBER (Membre)**
   * **Email :** `member@gmail.com`
   * **Mot de passe :** `Member1234`
+
+### 📸 Aperçu de l'interface / UI Gallery
+
+> [!TIP]
+> **Comment ajouter vos captures d'écran :** Pour afficher vos images ici, créez un dossier `docs/screenshots/` à la racine de votre projet, déposez-y vos captures d'écran (ex. : `landing.png`, `dashboard.png`, `tasks.png`, `chat.png`) et les chemins ci-dessous s'afficheront automatiquement sur GitHub.
+
+<p align="center">
+  <img src="client/docs/screenshots/" width="48%" alt="Landing Page" />
+  <img src="docs/screenshots/dashboard.png" width="48%" alt="Dashboard" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/tasks.png" width="48%" alt="Tasks Page" />
+  <img src="docs/screenshots/chat.png" width="48%" alt="Real-time Chat & Activity" />
+</p>
 
 ### 🎯 Landing Page
 
@@ -229,30 +244,33 @@ Grâce à **Socket.IO**, l'application offre :
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────────────────────────────────────────────-─┐
-│                    CLIENT (React + Vite)                  │
-│  Landing Page · Dashboard · Tasks · Projects · Chat       │
-└───────────────────────┬───────────────────────────────────┘
-                        │  HTTP REST + WebSocket (Socket.IO)
-┌───────────────────────▼───────────────────────────────────┐
-│               BACKEND (Express.js + Node.js)              │
-│  Auth · Workspace · Project · Task · Email · Admin        │
-│  Middlewares: JWT Auth · Rate Limiter · Multer            │
-│  Passport.js (Google OAuth2)                              │
-└──────┬───────────────────────────────────┬────────────────┘
-       │                                   │
-┌──────▼──────┐                   ┌────────▼────────┐
-│ PostgreSQL  │                   │      Redis      │
-│   (Prisma)  │                   │ (Rate Limiting) │
-└─────────────┘                   └─────────────────┘
-       │
-┌──────▼──────┐
-│  Cloudinary │
-│   (Médias)  │
-└─────────────┘
+```mermaid
+graph TD
+    %% Styling
+    classDef client fill:#61DAFB,stroke:#20232a,stroke-width:2px,color:#000;
+    classDef server fill:#339933,stroke:#215732,stroke-width:2px,color:#fff;
+    classDef db fill:#316192,stroke:#1d3a58,stroke-width:2px,color:#fff;
+    classDef redis fill:#DC382D,stroke:#911d15,stroke-width:2px,color:#fff;
+    classDef cdn fill:#3448C5,stroke:#1f2b75,stroke-width:2px,color:#fff;
 
-Tout orchestré via Docker Compose 🐳 (Déploiement de production : Frontend sur Vercel, Backend & BDD sur VPS Hetzner)
+    %% Nodes
+    Client["💻 CLIENT (React 19 + Vite 8)<br/>Landing Page · Dashboard · Tasks · Projects · Chat"]:::client
+    Server["🖥️ BACKEND (Express.js + Node.js)<br/>Auth · Workspace · Project · Task · Email · Admin"]:::server
+    DB[("🐘 PostgreSQL (via Prisma ORM)<br/>Données de l'application")]:::db
+    RedisCache[("🔴 Redis Cache & Rate Limiting<br/>Protection contre le bruteforce")]:::redis
+    CloudinaryCDN["☁️ Cloudinary CDN<br/>Stockage d'avatars et logos"]:::cdn
+
+    %% Relations
+    Client <-->|HTTPS / REST API| Server
+    Client <-->|WebSockets (Socket.IO)| Server
+    Server <-->|Prisma Queries| DB
+    Server <-->|Read / Write| RedisCache
+    Server -->|Upload / Fetch URL| CloudinaryCDN
+
+    subgraph Infrastructure de Production
+        Client -.->|Déployé sur| Vercel["⚡ Vercel (Frontend)"]
+        Server -.->|Hébergé sur| Hetzner[" VPS Hetzner (Backend + DB + Redis)"]
+    end
 ```
 
 ---
@@ -625,6 +643,26 @@ Chaque point d'entrée sensible dispose de son propre limiteur Redis indépendan
 - 📦 **ES Modules** (`type: "module"`) côté serveur et client
 - 🎯 **Code clair et lisible** : nommage explicite, responsabilités séparées
 - 🔍 **ESLint** configuré avec les règles React Hooks
+
+## 🧠 Défis techniques & Apprentissages
+
+Ce projet a été une excellente opportunité de concevoir et de déployer une infrastructure SaaS complète de A à Z. Voici les principaux défis relevés :
+
+### ⚡ 1. Synchronisation temps réel & Gestion du State (Socket.IO)
+* **Défi :** Éviter les boucles de rendu et synchroniser l'état global de l'application lors de la réception d'événements temps réel (ex. : notifications d'activité globale, création et complétion de tâches par d'autres membres).
+* **Solution :** Implémentation d'une gestion stricte des connexions et déconnexions de sockets au sein des hooks React `useEffect` (avec des fonctions de cleanup systématiques) et découplage des notifications d'activité pour éviter d'alerter l'utilisateur de ses propres actions.
+
+### 🔒 2. Sécurité avancée & Authentification hybride (JWT & OAuth2)
+* **Défi :** Sécuriser les tokens de session contre les attaques XSS tout en permettant une intégration fluide avec des services tiers comme Google OAuth2.
+* **Solution :** Choix d'une architecture à double token : un Access Token à courte durée en mémoire et un Refresh Token stocké dans un cookie sécurisé `httpOnly` (`secure: true`, `sameSite: "Lax"`). Configuration de Passport.js pour gérer la redirection et l'autorisation OAuth transparente.
+
+### 🚦 3. Protection contre les abus (Rate Limiting Redis)
+* **Défi :** Protéger les routes sensibles (connexion, inscription, réinitialisation de mot de passe) contre les attaques par force brute sans impacter l'expérience utilisateur des clients légitimes.
+* **Solution :** Mise en place d'un limiteur de débit distribué basé sur **Redis** (`rate-limiter-flexible`). Les limites s'adaptent selon la criticité de l'endpoint (ex. max 5 inscriptions par heure), avec blocage temporaire automatique et calcul dynamique du temps restant renvoyé dans le header `Retry-After`.
+
+### 🌐 4. Déploiement hybride et Cross-Origin (CORS)
+* **Défi :** Configurer les cookies et le partage de session entre le frontend (Vercel) et le backend/BDD (Hetzner VPS) sur des hôtes/domaines différents.
+* **Solution :** Résolution des problématiques de CORS en autorisant strictement les credentials et les en-têtes requis, et ajustement de la configuration des cookies pour qu'ils supportent HTTPS (`secure: true`, `sameSite: 'none'`) en production.
 
 ---
 

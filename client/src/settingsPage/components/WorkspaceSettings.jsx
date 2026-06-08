@@ -7,7 +7,7 @@ import { apiFetch } from '../../utils/apiFetch';
 import { API_BASE_URL } from '../../utils/config';
 import './Settings.css';
 
-export function WorkspaceSettings({ workspace, members, onUpdate }) {
+export function WorkspaceSettings({ workspace, members, currentUser, onUpdate }) {
     const [activeTab, setActiveTab] = useState('identity');
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -17,6 +17,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const [formData, setFormData] = useState({
         name: workspace?.name || '',
         slug: workspace?.slug || '',
+        userName: [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || '',
         logoFile: null,
         logoPreview: null
     });
@@ -26,11 +27,12 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
             setFormData({
                 name: workspace.name || '',
                 slug: workspace.slug || '',
+                userName: [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || '',
                 logoFile: null,
                 logoPreview: null
             });
         }
-    }, [workspace]);
+    }, [workspace, currentUser]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -46,6 +48,27 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
     const handleSaveIdentity = async () => {
         setIsSaving(true);
         try {
+            // Update User Name if it has changed
+            const currentFullName = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ');
+            if (formData.userName !== currentFullName) {
+                const nameParts = formData.userName.trim().split(/\s+/);
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+
+                const userBody = new FormData();
+                userBody.append('firstName', firstName);
+                userBody.append('lastName', lastName);
+
+                const userRes = await apiFetch(`${API_BASE_URL}/api/auth/me`, {
+                    method: 'PATCH',
+                    body: userBody
+                });
+
+                if (!userRes.ok) {
+                    toast.error('Failed to update user name');
+                }
+            }
+
             const body = new FormData();
             if (formData.name !== undefined) body.append('name', formData.name);
             if (formData.slug !== undefined) body.append('slug', formData.slug);
@@ -240,6 +263,17 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                                 <hr className="settings-divider" />
 
                                 <div className="settings-form-group">
+                                    <label>User Name</label>
+                                    <input
+                                        type="text"
+                                        name="userName"
+                                        value={formData.userName}
+                                        onChange={handleInputChange}
+                                        onFocus={handleInputFocus}
+                                        className="settings-input"
+                                    />
+                                </div>
+                                <div className="settings-form-group">
                                     <label>Workspace Name</label>
                                     <input
                                         type="text"
@@ -266,7 +300,7 @@ export function WorkspaceSettings({ workspace, members, onUpdate }) {
                                 </div>
                             </div>
                             <div className="settings-actions-bar">
-                                <button className="settings-cancel-btn" onClick={() => setFormData({ name: workspace.name, slug: workspace.slug, logoFile: null, logoPreview: null })}>Cancel</button>
+                                <button className="settings-cancel-btn" onClick={() => setFormData({ name: workspace.name, slug: workspace.slug, userName: [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || '', logoFile: null, logoPreview: null })}>Cancel</button>
                                 <button
                                     className="settings-primary-btn"
                                     onClick={handleSaveIdentity}

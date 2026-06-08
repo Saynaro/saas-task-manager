@@ -44,7 +44,7 @@ export function SettingsPage({ currentUser, refreshUser }) {
 
     const renderContent = () => {
         if (isSuperAdmin) return <SuperAdminSettings />;
-        if (isOwner) return <WorkspaceSettings workspace={currentUser?.workspace} members={workspaceMembers} onUpdate={handleUpdate} />;
+        if (isOwner) return <WorkspaceSettings workspace={currentUser?.workspace} members={workspaceMembers} currentUser={currentUser} onUpdate={handleUpdate} />;
         return <AccountSettings user={currentUser} onUpdate={refreshUser} />;
     };
 

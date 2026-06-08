@@ -17,6 +17,8 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
 
     const userRole = currentUser?.role || 'USER';
     const isMember = currentUser?.role === 'MEMBER';
+    const isAdmin = currentUser?.role === 'ADMIN';
+    const canCreateWorkspace = !isMember && !isAdmin;
     const canSwitch = !isMember || (currentUser?.allWorkspaces?.length >= 2);
 
     const handleWorkspaceSelect = async (workspaceId) => {
@@ -150,7 +152,7 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                                             </div>
                                         ))}
                                     </div>
-                                    {!isMember && (
+                                    {canCreateWorkspace && (
                                         <>
                                             <div className="dropdown-divider" />
                                             <button className="dropdown-action-btn" onClick={() => { openWorkspaceModal(); setIsWsSelectorOpen(false); }}>
@@ -163,7 +165,7 @@ export function Header({ toggleMenu, openWorkspaceModal, currentUser, refreshUse
                             )}
                         </>
                     ) : (
-                        !isMember && (
+                        canCreateWorkspace && (
                             <button className="create-ws-header-btn" onClick={() => openWorkspaceModal()}>
                                 <Plus size={16} />
                                 <span className="desktop-txt">Create workspace</span>
