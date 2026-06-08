@@ -89,7 +89,7 @@ Vous pouvez utiliser les comptes prédéfinis suivants pour vous connecter et te
 </p>
 <p align="center">
   <img src="client/src/assets/screenshots/chat.png" width="48%" alt="Real-time Chat" />
-  <img src="client/src/assets/screenshots/activity.png" width="48%" alt="Activity Log" />
+  <img src="client/src/assets/screenshots/activity1.png" width="48%" alt="Activity Log" />
 </p>
 
 ### 🎯 Landing Page
