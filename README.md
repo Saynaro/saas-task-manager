@@ -80,16 +80,29 @@ Vous pouvez utiliser les comptes prédéfinis suivants pour vous connecter et te
 
 ### 📸 Aperçu de l'interface / UI Gallery
 
+#### 🌐 Landing Page
 <p align="center">
   <img src="client/src/assets/screenshots/landing-page.gif" width="100%" alt="Landing Page Demo" />
 </p>
+
+#### 🏠 Dashboard & Analytics
 <p align="center">
-  <img src="client/src/assets/screenshots/dashboard.png" width="48%" alt="Dashboard" />
-  <img src="client/src/assets/screenshots/tasks.png" width="48%" alt="Tasks Page" />
+  <img src="client/src/assets/screenshots/dashboard.png" width="100%" alt="Dashboard" />
 </p>
+
+#### 📋 Gestion des tâches (Tasks)
 <p align="center">
-  <img src="client/src/assets/screenshots/chat.png" width="48%" alt="Real-time Chat" />
-  <img src="client/src/assets/screenshots/activity1.png" width="48%" alt="Activity Log" />
+  <img src="client/src/assets/screenshots/tasks.png" width="100%" alt="Tasks Page" />
+</p>
+
+#### 💬 Chat en temps réel
+<p align="center">
+  <img src="client/src/assets/screenshots/chat.png" width="100%" alt="Real-time Chat" />
+</p>
+
+#### 📜 Journal d'activité (Activity Feed)
+<p align="center">
+  <img src="client/src/assets/screenshots/activity1.png" width="100%" alt="Activity Log" />
 </p>
 
 ### 🎯 Landing Page
