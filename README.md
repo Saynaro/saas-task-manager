@@ -14,6 +14,8 @@
   <a href="https://saaspro.online" target="_blank">
     <strong>🌐 Version en ligne : https://saaspro.online</strong>
   </a>
+  <br>
+  <sub>Déploiement hybride : Frontend sur Vercel & Backend sur VPS Hetzner</sub>
 </p>
 
 <p align="center">
@@ -32,6 +34,8 @@
   <img src="https://img.shields.io/badge/Cloudinary-Upload-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white" alt="Cloudinary"/>
   <img src="https://img.shields.io/badge/Vite-Build-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite"/>
   <img src="https://img.shields.io/badge/TailwindCSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel"/>
+  <img src="https://img.shields.io/badge/Hetzner-D50C2F?style=for-the-badge&logo=hetzner&logoColor=white" alt="Hetzner"/>
 </p>
 
 ---
@@ -58,10 +62,20 @@
 
 ### 🚀 Déploiement & Accès
 
-L'application est déployée et accessible en ligne :
+L'application est entièrement déployée et accessible en ligne :
 - 🔗 **URL de production :** [https://saaspro.online](https://saaspro.online)
-- ⚡ **Frontend :** Déployé sur **Vercel**
-- 🖥️ **Backend :** Hébergé sur un serveur **Hetzner**
+- ⚡ **Frontend :** Déployé et hébergé sur **Vercel**
+- 🖥️ **Backend & Base de données :** Hébergés sur un serveur VPS **Hetzner**
+
+#### 🔑 Comptes de test (pour évaluation) :
+Vous pouvez utiliser les comptes prédéfinis suivants pour vous connecter et tester l'application :
+
+* **Rôle : 👑 OWNER (Propriétaire)**
+  * **Email :** `owner@gmail.com`
+  * **Mot de passe :** `Owner1234`
+* **Rôle : 👤 MEMBER (Membre)**
+  * **Email :** `member@gmail.com`
+  * **Mot de passe :** `Member1234`
 
 ### 🎯 Landing Page
 
